@@ -1,0 +1,4 @@
+add_executable(notificationtest notificationtest.cpp)
+target_link_libraries(notificationtest notifybackend)
+
+add_test(notification notificationtest)
