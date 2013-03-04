@@ -19,11 +19,29 @@
 
 
 #include "notification.hpp"
+#include <string>
 
-Notification::Notification() {
+using namespace std;
 
+struct NotificationPrivate {
+    Urgency urg;
+    string text;
+};
+
+Notification::Notification(const Urgency ur, const char *text) {
+    p = new NotificationPrivate();
+    p->urg = ur;
+    p->text = text;
 }
 
 Notification::~Notification() {
+    delete p;
 }
 
+Urgency Notification::getUrgency() const {
+    return p->urg;
+}
+
+const char * Notification::getText() const {
+    return p->text.c_str();
+}

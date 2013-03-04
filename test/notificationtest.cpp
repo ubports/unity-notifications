@@ -1,7 +1,7 @@
 #include "notification.hpp"
 
 void testNotification() {
-    Notification *n = new Notification();
+    Notification *n = new Notification(URGENCY_LOW, "this is text");
     delete n;
 }
 

@@ -21,10 +21,25 @@
 #ifndef NOTIFICATION_HPP_
 #define NOTIFICATION_HPP_
 
+enum Urgency {
+    URGENCY_LOW,
+    URGENCY_NORMAL,
+    URGENCY_CRITICAL
+};
+
+struct NotificationPrivate;
+
 class Notification {
+private:
+
+    NotificationPrivate *p;
+
 public:
-    Notification();
+    Notification(const Urgency ur, const char *text);
     ~Notification();
+
+    Urgency getUrgency() const;
+    const char* getText() const;
 };
 
 #endif /* NOTIFICATION_HPP_ */

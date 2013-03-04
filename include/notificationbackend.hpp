@@ -20,7 +20,13 @@
 #ifndef NOTIFICATIONBACKEND_HPP_
 #define NOTIFICATIONBACKEND_HPP_
 
+struct NotificationBackendPrivate;
+
 class NotificationBackend {
+private:
+
+    NotificationBackendPrivate *p;
+
 public:
     NotificationBackend();
     ~NotificationBackend();

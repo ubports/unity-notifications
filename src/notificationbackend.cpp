@@ -18,10 +18,19 @@
  */
 
 #include "notificationbackend.hpp"
+#include "notification.hpp"
+#include <vector>
+
+using namespace std;
+
+struct NotificationBackendPrivate {
+    vector<Notification*> notifications;
+};
 
 NotificationBackend::NotificationBackend() {
+    p = new NotificationBackendPrivate();
 }
 
 NotificationBackend::~NotificationBackend() {
+    delete p;
 }
-
