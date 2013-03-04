@@ -20,10 +20,19 @@
 #ifndef RENDERER_HPP_
 #define RENDERER_HPP_
 
+struct RendererPrivate;
+
 class Renderer {
+private:
+
+    RendererPrivate *p;
+
 public:
     Renderer();
     ~Renderer();
+
+    void changed(); // Will be a slot in a brave Qt world.
+    int numChanges() const;
 };
 
 #endif /* RENDERER_HPP_ */

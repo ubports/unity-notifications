@@ -19,9 +19,24 @@
 
 #include "renderer.hpp"
 
+struct RendererPrivate {
+    int numChanges;
+
+    RendererPrivate() : numChanges(0){}
+};
+
 Renderer::Renderer() {
+    p = RendererPrivate();
 }
 
 Renderer::~Renderer() {
+    delete p;
 }
 
+void Renderer::changed() {
+    p->numChanges++;
+}
+
+int Renderer::numChanges() const {
+    return p->numChanges;
+}
