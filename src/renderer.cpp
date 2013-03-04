@@ -17,14 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "renderer.hpp"
 
-#ifndef NOTIFICATION_HPP_
-#define NOTIFICATION_HPP_
+Renderer::Renderer() {
+}
 
-class Notification {
-public:
-    Notification();
-    ~Notification();
-};
+Renderer::~Renderer() {
+}
 
-#endif /* NOTIFICATION_HPP_ */

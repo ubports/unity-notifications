@@ -17,14 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef NOTIFICATIONBACKEND_HPP_
+#define NOTIFICATIONBACKEND_HPP_
 
-#ifndef NOTIFICATION_HPP_
-#define NOTIFICATION_HPP_
-
-class Notification {
+class NotificationBackend {
 public:
-    Notification();
-    ~Notification();
+    NotificationBackend();
+    ~NotificationBackend();
 };
 
-#endif /* NOTIFICATION_HPP_ */
+#endif /* NOTIFICATIONBACKEND_HPP_ */

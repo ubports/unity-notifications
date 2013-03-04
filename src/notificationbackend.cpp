@@ -17,14 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "notificationbackend.hpp"
 
-#ifndef NOTIFICATION_HPP_
-#define NOTIFICATION_HPP_
+NotificationBackend::NotificationBackend() {
+}
 
-class Notification {
-public:
-    Notification();
-    ~Notification();
-};
+NotificationBackend::~NotificationBackend() {
+}
 
-#endif /* NOTIFICATION_HPP_ */
