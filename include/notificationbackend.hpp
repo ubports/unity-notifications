@@ -39,9 +39,13 @@ public:
     bool hasNotification(const Notification *n) const;
     bool insertNotification(Notification *n);
 
-    // Sends signal "changed".
     size_t numNotifications() const;
     const Notification& getNotification(size_t i) const;
+    void deleteNotification(const Notification *n);
+
+    // This object sends signal "changed" when notification status
+    // changes.
+
 };
 
 #endif /* NOTIFICATIONBACKEND_HPP_ */

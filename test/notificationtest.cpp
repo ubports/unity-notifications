@@ -10,6 +10,8 @@ void testNotification() {
     assert(be.numNotifications() == 0);
     be.insertNotification(n);
     assert(be.numNotifications() == 1);
+    be.deleteNotification(n);
+    assert(be.numNotifications() == 0);
 }
 
 int main(int argc, char **argv) {

@@ -67,3 +67,14 @@ const Notification& NotificationBackend::getNotification(size_t i) const {
         throw out_of_range("Tried to access a non-existing notification.");
     return *(p->notifications[i]);
 }
+
+void NotificationBackend::deleteNotification(const Notification *n) {
+    for(vector<Notification*>::iterator it = p->notifications.begin();
+            it != p->notifications.end(); ++it)
+        if(*it == n) {
+            delete *it;
+            p->notifications.erase(it);
+            return;
+        }
+    throw runtime_error("Tried to remove Notification not in NotificationBackend.");
+}
