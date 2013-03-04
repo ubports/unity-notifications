@@ -22,6 +22,10 @@
 
 struct RendererPrivate;
 
+/*
+ * This class is a mock. It only pretends to render notifications.
+ */
+
 class Renderer {
 private:
 

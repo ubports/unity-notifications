@@ -20,7 +20,12 @@
 #ifndef NOTIFICATIONBACKEND_HPP_
 #define NOTIFICATIONBACKEND_HPP_
 
+#include<cstdlib>
+
 struct NotificationBackendPrivate;
+class Notification;
+
+const unsigned int MAX_NOTIFICATIONS = 50;
 
 class NotificationBackend {
 private:
@@ -30,6 +35,13 @@ private:
 public:
     NotificationBackend();
     ~NotificationBackend();
+
+    bool hasNotification(const Notification *n) const;
+    bool insertNotification(Notification *n);
+
+    // Sends signal "changed".
+    size_t numNotifications() const;
+    const Notification& getNotification(size_t i) const;
 };
 
 #endif /* NOTIFICATIONBACKEND_HPP_ */

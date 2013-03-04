@@ -26,7 +26,7 @@ struct RendererPrivate {
 };
 
 Renderer::Renderer() {
-    p = RendererPrivate();
+    p = new RendererPrivate();
 }
 
 Renderer::~Renderer() {

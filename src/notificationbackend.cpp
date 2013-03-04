@@ -20,6 +20,7 @@
 #include "notificationbackend.hpp"
 #include "notification.hpp"
 #include <vector>
+#include <stdexcept>
 
 using namespace std;
 
@@ -32,5 +33,37 @@ NotificationBackend::NotificationBackend() {
 }
 
 NotificationBackend::~NotificationBackend() {
+    for(size_t i=0; i < p->notifications.size(); i++)
+        delete p->notifications[i];
     delete p;
+}
+
+size_t NotificationBackend::numNotifications() const {
+    return p->notifications.size();
+}
+
+bool NotificationBackend::hasNotification(const Notification *n) const {
+    for(size_t i=0; i < p->notifications.size(); i++)
+        if(p->notifications[i] == n)
+            return true;
+    return false;
+}
+
+// Takes ownership of the argument.
+bool NotificationBackend::insertNotification(Notification *n) {
+    if(hasNotification(n)) {
+        throw runtime_error("Tried to reinsert a notification that is already in the system");
+    }
+    if(p->notifications.size() >= MAX_NOTIFICATIONS) {
+        delete n;
+        return false;
+    }
+    p->notifications.push_back(n);
+    return true;
+}
+
+const Notification& NotificationBackend::getNotification(size_t i) const {
+    if(i >= p->notifications.size())
+        throw out_of_range("Tried to access a non-existing notification.");
+    return *(p->notifications[i]);
 }
