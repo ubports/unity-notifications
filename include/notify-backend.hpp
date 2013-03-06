@@ -22,6 +22,8 @@
 #ifndef NOTIFY_BACKEND_
 #define NOTIFY_BACKEND_
 
+#include<cstdlib>
+
 typedef int NotificationID;
 
 enum Urgency {

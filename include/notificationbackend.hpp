@@ -22,8 +22,6 @@
 
 #include "notify-backend.hpp"
 
-#include<cstdlib>
-
 struct NotificationBackendPrivate;
 
 class NotificationBackend {
@@ -41,6 +39,9 @@ public:
     size_t numNotifications() const;
     const Notification& getNotification(size_t i) const;
     void deleteNotification(const Notification *n);
+
+    bool hasNotification(const NotificationID id) const;
+    const Notification& getNotificationByID(const NotificationID id) const;
 
     // This object sends signal "changed" when notification status
     // changes.

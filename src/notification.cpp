@@ -24,12 +24,14 @@
 using namespace std;
 
 struct NotificationPrivate {
+    NotificationID id;
     Urgency urg;
     string text;
 };
 
-Notification::Notification(const Urgency ur, const char *text) {
+Notification::Notification(NotificationID id, const Urgency ur, const char *text) {
     p = new NotificationPrivate();
+    p->id = id;
     p->urg = ur;
     p->text = text;
 }
@@ -44,4 +46,8 @@ Urgency Notification::getUrgency() const {
 
 const char * Notification::getText() const {
     return p->text.c_str();
+}
+
+NotificationID Notification::getID() const {
+    return p->id;
 }

@@ -3,8 +3,8 @@
 #include <cassert>
 #include <cstdio>
 
-void testNotification() {
-    Notification *n = new Notification(URGENCY_LOW, "this is text");
+void testSimpleInsertion() {
+    Notification *n = new Notification(42, URGENCY_LOW, "this is text");
     NotificationBackend be;
 
     assert(be.numNotifications() == 0);
@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
     fprintf(stderr, "NDEBUG is defined, tests will not work.");
     return 1;
 #else
-    testNotification();
+    testSimpleInsertion();
     return 0;
 #endif
 }

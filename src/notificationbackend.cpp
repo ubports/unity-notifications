@@ -78,3 +78,21 @@ void NotificationBackend::deleteNotification(const Notification *n) {
         }
     throw runtime_error("Tried to remove Notification not in NotificationBackend.");
 }
+
+bool NotificationBackend::hasNotification(const NotificationID id) const {
+    try {
+        getNotificationByID(id);
+        return true;
+    } catch(const out_of_range &e) {
+    }
+    return false;
+}
+
+const Notification& NotificationBackend::getNotificationByID(const NotificationID id) const {
+    for(vector<Notification*>::const_iterator it = p->notifications.begin();
+            it != p->notifications.end(); ++it)
+        if((*it)->getID() == id) {
+            return **it;
+        }
+    throw out_of_range("Tried to get Notification not in the queue.");
+}

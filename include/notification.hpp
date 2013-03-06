@@ -31,9 +31,10 @@ private:
     NotificationPrivate *p;
 
 public:
-    Notification(const Urgency ur, const char *text);
+    Notification(NotificationID id, const Urgency ur, const char *text);
     ~Notification();
 
+    NotificationID getID() const;
     Urgency getUrgency() const;
     const char* getText() const;
 };
