@@ -28,6 +28,7 @@ class NotificationBackend {
 private:
 
     NotificationBackendPrivate *p;
+    void reorder();
 
 public:
     NotificationBackend();

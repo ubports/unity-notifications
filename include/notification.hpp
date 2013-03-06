@@ -37,6 +37,8 @@ public:
     NotificationID getID() const;
     Urgency getUrgency() const;
     const char* getText() const;
+
+    bool operator<(const Notification &n) const; // Order by "interestingness".
 };
 
 #endif /* NOTIFICATION_HPP_ */

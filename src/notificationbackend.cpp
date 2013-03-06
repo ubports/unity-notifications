@@ -21,11 +21,16 @@
 #include "notification.hpp"
 #include <vector>
 #include <stdexcept>
+#include <algorithm>
 
 using namespace std;
 
 struct NotificationBackendPrivate {
     vector<Notification*> notifications;
+};
+
+struct less_mag : public binary_function<Notification*, Notification*, bool> {
+    bool operator()(const Notification *x, const Notification *y) const { return *x < *y; }
 };
 
 NotificationBackend::NotificationBackend() {
@@ -59,6 +64,7 @@ bool NotificationBackend::insertNotification(Notification *n) {
         return false;
     }
     p->notifications.push_back(n);
+    reorder();
     return true;
 }
 
@@ -95,4 +101,10 @@ const Notification& NotificationBackend::getNotificationByID(const NotificationI
             return **it;
         }
     throw out_of_range("Tried to get Notification not in the queue.");
+}
+
+void NotificationBackend::reorder() {
+    sort(p->notifications.begin(),
+            p->notifications.end(),
+            less_mag());
 }

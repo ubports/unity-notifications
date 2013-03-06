@@ -51,3 +51,8 @@ const char * Notification::getText() const {
 NotificationID Notification::getID() const {
     return p->id;
 }
+
+bool Notification::operator<(const Notification &n) const {
+    return p->urg > n.p->urg;
+}
+
