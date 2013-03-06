@@ -20,12 +20,11 @@
 #ifndef NOTIFICATIONBACKEND_HPP_
 #define NOTIFICATIONBACKEND_HPP_
 
+#include "notify-backend.hpp"
+
 #include<cstdlib>
 
 struct NotificationBackendPrivate;
-class Notification;
-
-const unsigned int MAX_NOTIFICATIONS = 50;
 
 class NotificationBackend {
 private:

@@ -17,28 +17,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RENDERER_HPP_
-#define RENDERER_HPP_
+// All core definitions of Notify-Backend.
 
-#include"notify-backend.hpp"
+#ifndef NOTIFY_BACKEND_
+#define NOTIFY_BACKEND_
 
-struct RendererPrivate;
+typedef int NotificationID;
 
-/*
- * This class is a mock. It only pretends to render notifications.
- */
-
-class Renderer {
-private:
-
-    RendererPrivate *p;
-
-public:
-    Renderer();
-    ~Renderer();
-
-    void changed(); // Will be a slot in a brave Qt world.
-    int numChanges() const;
+enum Urgency {
+    URGENCY_LOW,
+    URGENCY_NORMAL,
+    URGENCY_CRITICAL
 };
 
-#endif /* RENDERER_HPP_ */
+const unsigned int MAX_NOTIFICATIONS = 50;
+
+class Renderer;
+class NotificationBackend;
+class Notification;
+
+#endif

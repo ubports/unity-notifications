@@ -21,11 +21,7 @@
 #ifndef NOTIFICATION_HPP_
 #define NOTIFICATION_HPP_
 
-enum Urgency {
-    URGENCY_LOW,
-    URGENCY_NORMAL,
-    URGENCY_CRITICAL
-};
+#include "notify-backend.hpp"
 
 struct NotificationPrivate;
 
