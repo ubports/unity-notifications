@@ -19,6 +19,7 @@
 
 #include "notificationbackend.hpp"
 #include "notification.hpp"
+#include "renderer.hpp" // Remove once we have signals.
 #include <vector>
 #include <stdexcept>
 #include <algorithm>
@@ -33,13 +34,12 @@ struct less_mag : public binary_function<Notification*, Notification*, bool> {
     bool operator()(const Notification *x, const Notification *y) const { return *x < *y; }
 };
 
-NotificationBackend::NotificationBackend() {
+NotificationBackend::NotificationBackend(Renderer &re) : r(re) {
     p = new NotificationBackendPrivate();
 }
 
 NotificationBackend::~NotificationBackend() {
-    for(size_t i=0; i < p->notifications.size(); i++)
-        delete p->notifications[i];
+    clear();
     delete p;
 }
 
@@ -80,6 +80,7 @@ void NotificationBackend::deleteNotification(const Notification *n) {
         if(*it == n) {
             delete *it;
             p->notifications.erase(it);
+            r.changed();
             return;
         }
     throw runtime_error("Tried to remove Notification not in NotificationBackend.");
@@ -107,4 +108,12 @@ void NotificationBackend::reorder() {
     sort(p->notifications.begin(),
             p->notifications.end(),
             less_mag());
+    r.changed();
+}
+
+void NotificationBackend::clear() {
+    for(size_t i=0; i < p->notifications.size(); i++)
+        delete p->notifications[i];
+    p->notifications.clear();
+    r.changed();
 }

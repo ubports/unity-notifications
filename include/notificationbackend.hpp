@@ -28,10 +28,12 @@ class NotificationBackend {
 private:
 
     NotificationBackendPrivate *p;
+    Renderer &r; // Remove this once updates are sent with signals.
+
     void reorder();
 
 public:
-    NotificationBackend();
+    NotificationBackend(Renderer &re);
     ~NotificationBackend();
 
     bool hasNotification(const Notification *n) const;
@@ -43,6 +45,8 @@ public:
 
     bool hasNotification(const NotificationID id) const;
     const Notification& getNotificationByID(const NotificationID id) const;
+
+    void clear();
 
     // This object sends signal "changed" when notification status
     // changes.

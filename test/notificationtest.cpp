@@ -1,11 +1,14 @@
 #include "notification.hpp"
 #include "notificationbackend.hpp"
+#include "renderer.hpp"
+
 #include <cassert>
 #include <cstdio>
 
 void testSimpleInsertion() {
+    Renderer r;
     Notification *n = new Notification(42, URGENCY_LOW, "this is text");
-    NotificationBackend be;
+    NotificationBackend be(r);
 
     assert(be.numNotifications() == 0);
     be.insertNotification(n);
@@ -15,10 +18,11 @@ void testSimpleInsertion() {
 }
 
 void testOrder() {
+    Renderer r;
     Notification *n1 = new Notification(1, URGENCY_LOW, "low");
     Notification *n2 = new Notification(2, URGENCY_NORMAL, "high");
     Notification *n3 = new Notification(3, URGENCY_CRITICAL, "critical");
-    NotificationBackend be;
+    NotificationBackend be(r);
 
     be.insertNotification(n1);
     be.insertNotification(n2);
@@ -31,6 +35,28 @@ void testOrder() {
     assert(be.getNotification(2).getID() == n1->getID());
 }
 
+void testRenderCalls() {
+    Renderer r;
+    NotificationBackend be(r);
+    Notification *n1 = new Notification(1, URGENCY_LOW, "text");
+    Notification *n2 = new Notification(2, URGENCY_LOW, "here too");
+    Notification *n3 = new Notification(2, URGENCY_LOW, "third");
+
+    assert(r.numChanges() == 0);
+    be.insertNotification(n1);
+    assert(r.numChanges() == 1);
+    be.insertNotification(n2);
+    assert(r.numChanges() == 2);
+    be.insertNotification(n3);
+    assert(r.numChanges() == 3);
+
+    be.deleteNotification(n2);
+    assert(r.numChanges() == 4);
+    be.clear();
+    assert(r.numChanges() == 5);
+    assert(be.numNotifications() == 0);
+}
+
 int main(int argc, char **argv) {
 #ifdef NDEBUG
     fprintf(stderr, "NDEBUG is defined, tests will not work.");
@@ -38,6 +64,7 @@ int main(int argc, char **argv) {
 #else
     testSimpleInsertion();
     testOrder();
+    testRenderCalls();
     return 0;
 #endif
 }
