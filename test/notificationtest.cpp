@@ -40,7 +40,7 @@ void testRenderCalls() {
     NotificationBackend be(r);
     Notification *n1 = new Notification(1, URGENCY_LOW, "text");
     Notification *n2 = new Notification(2, URGENCY_LOW, "here too");
-    Notification *n3 = new Notification(2, URGENCY_LOW, "third");
+    Notification *n3 = new Notification(3, URGENCY_LOW, "third");
 
     assert(r.numChanges() == 0);
     be.insertNotification(n1);
@@ -57,6 +57,22 @@ void testRenderCalls() {
     assert(be.numNotifications() == 0);
 }
 
+void testFullQueue() {
+    Renderer r;
+    NotificationBackend be(r);
+    for(unsigned int i=0; i< MAX_NOTIFICATIONS; i++) {
+        Notification *n = new Notification(i, URGENCY_LOW, "text");
+        bool result = be.insertNotification(n);
+        assert(result);
+    }
+    Notification *wontFit = new Notification(1111, URGENCY_CRITICAL, "foo");
+    bool result = be.insertNotification(wontFit);
+    assert(!result);
+    assert(be.numNotifications() == MAX_NOTIFICATIONS);
+    delete wontFit;
+
+}
+
 int main(int argc, char **argv) {
 #ifdef NDEBUG
     fprintf(stderr, "NDEBUG is defined, tests will not work.");
@@ -65,6 +81,7 @@ int main(int argc, char **argv) {
     testSimpleInsertion();
     testOrder();
     testRenderCalls();
+    testFullQueue();
     return 0;
 #endif
 }

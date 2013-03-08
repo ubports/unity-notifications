@@ -47,20 +47,12 @@ size_t NotificationBackend::numNotifications() const {
     return p->notifications.size();
 }
 
-bool NotificationBackend::hasNotification(const Notification *n) const {
-    for(size_t i=0; i < p->notifications.size(); i++)
-        if(p->notifications[i] == n)
-            return true;
-    return false;
-}
-
 // Takes ownership of the argument.
 bool NotificationBackend::insertNotification(Notification *n) {
-    if(hasNotification(n)) {
+    if(hasNotification(n->getID())) {
         throw runtime_error("Tried to reinsert a notification that is already in the system");
     }
     if(p->notifications.size() >= MAX_NOTIFICATIONS) {
-        delete n;
         return false;
     }
     p->notifications.push_back(n);

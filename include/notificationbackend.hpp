@@ -36,8 +36,7 @@ public:
     NotificationBackend(Renderer &re);
     ~NotificationBackend();
 
-    bool hasNotification(const Notification *n) const;
-    bool insertNotification(Notification *n);
+    bool insertNotification(Notification *n); // This will become private, accessible to friend classes (dbus injector)
 
     size_t numNotifications() const;
     const Notification& getNotification(size_t i) const;
