@@ -26,17 +26,31 @@ NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(paren
     notifications.push_back(new Notification(3, URGENCY_LOW, "third"));
 }
 
+NotificationModel::~NotificationModel() {
+    for(int i=0; i<notifications.size(); i++)
+        delete notifications[i];
+    notifications.clear();
+}
+
 int NotificationModel::rowCount(const QModelIndex &parent) const {
-    printf("Count %d\n", notifications.size());
+    //printf("Count %d\n", notifications.size());
     return notifications.size();
 }
 
 QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
-    printf("Data %d.\n", parent.row());
+    //printf("Data %d.\n", parent.row());
     if (!parent.isValid())
             return QVariant();
 
     if (role != Qt::DisplayRole)
         return QVariant();
     return QVariant(tr(notifications[parent.row()]->getText()));
+}
+
+void NotificationModel::testInsert() {
+    printf("Insert.\n");
+}
+
+void NotificationModel::testDelete() {
+    printf("Delete.\n");
 }

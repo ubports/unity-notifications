@@ -30,8 +30,14 @@ class NotificationModel : public QAbstractListModel {
 
 public:
     NotificationModel(QObject *parent=nullptr);
+    virtual ~NotificationModel();
+
     virtual int rowCount(const QModelIndex &parent) const;
     virtual QVariant data(const QModelIndex &parent, int role) const;
+
+public slots:
+    void testInsert();
+    void testDelete();
 
 private:
     QList<Notification*> notifications;
