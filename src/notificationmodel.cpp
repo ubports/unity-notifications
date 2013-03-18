@@ -18,15 +18,25 @@
  */
 
 #include "notificationmodel.h"
+#include "notification.hpp"
 
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent) {
-
+    notifications.push_back(new Notification(1, URGENCY_LOW, "first"));
+    notifications.push_back(new Notification(2, URGENCY_LOW, "second"));
+    notifications.push_back(new Notification(3, URGENCY_LOW, "third"));
 }
 
 int NotificationModel::rowCount(const QModelIndex &parent) const {
-    return 0;
+    printf("Count %d\n", notifications.size());
+    return notifications.size();
 }
 
 QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
-    return QVariant();
+    printf("Data %d.\n", parent.row());
+    if (!parent.isValid())
+            return QVariant();
+
+    if (role != Qt::DisplayRole)
+        return QVariant();
+    return QVariant(tr(notifications[parent.row()]->getText()));
 }
