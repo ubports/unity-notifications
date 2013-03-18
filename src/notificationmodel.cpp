@@ -50,7 +50,7 @@ QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
 void NotificationModel::testInsert() {
     QModelIndex insertionPoint = QAbstractItemModel::createIndex(0, 0);
     beginInsertRows(insertionPoint, 0, 0);
-    notifications.push_back(new Notification(55, URGENCY_LOW, "New item appeared"));
+    notifications.push_front(new Notification(55, URGENCY_LOW, "New item appeared"));
     endInsertRows();
 }
 
