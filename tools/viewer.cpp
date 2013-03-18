@@ -1,14 +1,12 @@
 #include <QApplication>
 #include <QListView>
-#include <QStringListModel>
+#include "notificationmodel.hpp"
 
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
     QListView *view = new QListView(0);
-    QStringList list;
-    list << "one" << "two" << "three";
-    QStringListModel *m = new QStringListModel();
-    m->setStringList(list);
+    NotificationModel *m = new NotificationModel();
+
     view->setModel(m);
     view->show();
     view->setWindowTitle("List viewer test app");
