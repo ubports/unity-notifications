@@ -17,10 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef NOTIFICATIONMODEL_H
+#define NOTIFICATIONMODEL_H
+
 #include<QAbstractListModel>
+#include<QList>
+
+class Notification;
 
 class NotificationModel : public QAbstractListModel {
+    Q_OBJECT
+
 public:
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &parent, int role) const;
+    NotificationModel(QObject *parent=nullptr);
+    virtual int rowCount(const QModelIndex &parent) const;
+    virtual QVariant data(const QModelIndex &parent, int role) const;
+
+private:
+    QList<Notification*> notifications;
 };
+
+#endif

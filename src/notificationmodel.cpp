@@ -17,7 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "notificationmodel.hpp"
+#include "notificationmodel.h"
+
+NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent) {
+
+}
 
 int NotificationModel::rowCount(const QModelIndex &parent) const {
     return 0;

@@ -1,6 +1,6 @@
 #include <QApplication>
 #include <QListView>
-#include "notificationmodel.hpp"
+#include "notificationmodel.h"
 
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
