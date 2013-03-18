@@ -48,9 +48,19 @@ QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
 }
 
 void NotificationModel::testInsert() {
-    printf("Insert.\n");
+    QModelIndex insertionPoint = QAbstractItemModel::createIndex(0, 0);
+    beginInsertRows(insertionPoint, 0, 0);
+    notifications.push_back(new Notification(55, URGENCY_LOW, "New item appeared"));
+    endInsertRows();
 }
 
 void NotificationModel::testDelete() {
-    printf("Delete.\n");
+    if(notifications.empty())
+        return;
+    int loc = notifications.size()-1;
+    QModelIndex deletePoint = QAbstractItemModel::createIndex(loc, 0);
+    beginRemoveRows(deletePoint, loc, loc);
+    delete notifications[loc];
+    notifications.pop_back();
+    endRemoveRows();
 }
