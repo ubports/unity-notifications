@@ -1,6 +1,8 @@
+qt5_wrap_ui(GUI_HEADERS mainWindow.ui)
+
 add_executable(viewer
 viewer.cpp
-testWindow.ui
+${GUI_HEADERS}
 )
 
 qt5_use_modules(viewer Widgets)
