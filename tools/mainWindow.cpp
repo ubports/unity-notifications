@@ -32,8 +32,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 */
 
     this->listView->setModel(m);
+    connect(this->notificationSendButton, SIGNAL(clicked()), this, SLOT(sendNotification()));
 }
 
 MainWindow::~MainWindow() {
 
+}
+
+void MainWindow::sendNotification() {
+    printf("Foo.\n");
 }
