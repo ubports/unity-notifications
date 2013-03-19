@@ -19,19 +19,13 @@
 
 #include "notificationmodel.h"
 #include "mainWindow.h"
+#include<QTimer>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setupUi(this);
-    NotificationModel *m = new NotificationModel();
-/*
-    QTimer::singleShot(3000, m, SLOT(testInsert()));
-    QTimer::singleShot(6000, m, SLOT(testDelete()));
-    notifications.push_back(new Notification(1, URGENCY_LOW, "first"));
-    notifications.push_back(new Notification(2, URGENCY_LOW, "second"));
-    notifications.push_back(new Notification(3, URGENCY_LOW, "third"));
-*/
-
-    this->listView->setModel(m);
+    m = new NotificationModel();
+    notificationCount = 0;
+    listView->setModel(m);
     connect(this->notificationSendButton, SIGNAL(clicked()), this, SLOT(sendNotification()));
 }
 
@@ -40,5 +34,8 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::sendNotification() {
-    m->testInsert();
+    QString text("notification number ");
+    text += QString::number(notificationCount, 10);
+    notificationCount++;
+    m->testInsert(text);
 }

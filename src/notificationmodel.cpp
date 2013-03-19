@@ -22,10 +22,6 @@
 #include<QTimer>
 
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent) {
-    notifications.push_back(new Notification(1, URGENCY_LOW, "first"));
-    notifications.push_back(new Notification(2, URGENCY_LOW, "second"));
-    notifications.push_back(new Notification(3, URGENCY_LOW, "third"));
-    QTimer::singleShot(3000, this, SLOT(testInsert()));
 }
 
 NotificationModel::~NotificationModel() {
@@ -46,14 +42,15 @@ QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
 
     if (role != Qt::DisplayRole)
         return QVariant();
-    return QVariant(tr(notifications[parent.row()]->getText()));
+    return QVariant(notifications[parent.row()]->getText());
 }
 
-void NotificationModel::testInsert() {
+void NotificationModel::testInsert(QString text) {
     QModelIndex insertionPoint = QAbstractItemModel::createIndex(0, 0);
     beginInsertRows(insertionPoint, 0, 0);
-    notifications.push_front(new Notification(55, URGENCY_LOW, "New item appeared"));
+    notifications.push_front(new Notification(55, URGENCY_LOW, text));
     endInsertRows();
+    QTimer::singleShot(5000, this, SLOT(testDelete()));
 }
 
 void NotificationModel::testDelete() {

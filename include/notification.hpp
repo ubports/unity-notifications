@@ -22,6 +22,7 @@
 #define NOTIFICATION_HPP_
 
 #include "notify-backend.hpp"
+#include <QString>
 
 struct NotificationPrivate;
 
@@ -31,12 +32,12 @@ private:
     NotificationPrivate *p;
 
 public:
-    Notification(NotificationID id, const Urgency ur, const char *text);
+    Notification(NotificationID id, const Urgency ur, QString text);
     ~Notification();
 
     NotificationID getID() const;
     Urgency getUrgency() const;
-    const char* getText() const;
+    QString getText() const;
 
     bool operator<(const Notification &n) const; // Order by "interestingness".
 };

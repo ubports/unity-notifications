@@ -1,4 +1,5 @@
 add_executable(notificationtest notificationtest.cpp)
 target_link_libraries(notificationtest notifybackend)
+qt5_use_modules(notificationtest Core)
 
 add_test(notification notificationtest)

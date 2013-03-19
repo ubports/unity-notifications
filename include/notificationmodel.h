@@ -36,7 +36,7 @@ public:
     virtual QVariant data(const QModelIndex &parent, int role) const;
 
 public slots:
-    void testInsert();
+    void testInsert(QString text);
     void testDelete();
 
 private:

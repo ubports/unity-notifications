@@ -32,6 +32,7 @@ public:
 
 private:
     NotificationModel *m;
+    int notificationCount;
 
 private slots:
     void sendNotification();
