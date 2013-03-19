@@ -19,8 +19,13 @@
 
 #include "notificationmodel.h"
 #include "notification.hpp"
+#include<QTimer>
 
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent) {
+    notifications.push_back(new Notification(1, URGENCY_LOW, "first"));
+    notifications.push_back(new Notification(2, URGENCY_LOW, "second"));
+    notifications.push_back(new Notification(3, URGENCY_LOW, "third"));
+    QTimer::singleShot(3000, this, SLOT(testInsert()));
 }
 
 NotificationModel::~NotificationModel() {

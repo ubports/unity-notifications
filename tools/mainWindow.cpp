@@ -40,5 +40,5 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::sendNotification() {
-    printf("Foo.\n");
+    m->testInsert();
 }
