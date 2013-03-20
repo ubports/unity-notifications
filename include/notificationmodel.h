@@ -36,12 +36,15 @@ public:
     virtual int rowCount(const QModelIndex &parent) const;
     virtual QVariant data(const QModelIndex &parent, int role) const;
 
-public slots:
-    void testInsert(Notification *n);
-    void testDelete();
+    void insertNotification(Notification *n);
+    void deleteFirst();
+
+private slots:
+    void timeout();
 
 private:
     NotificationModelPrivate *p;
+    int nextTimeout() const;
 };
 
 #endif

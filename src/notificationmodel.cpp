@@ -24,10 +24,12 @@
 
 struct NotificationModelPrivate {
     QList<Notification*> notifications;
+    QTimer timer;
 };
 
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent) {
     p = new NotificationModelPrivate;
+    connect(&(p->timer), SIGNAL(timeout()), this, SLOT(timeout()));
 }
 
 NotificationModel::~NotificationModel() {
@@ -52,21 +54,37 @@ QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
     return QVariant(p->notifications[parent.row()]->getText());
 }
 
-void NotificationModel::testInsert(Notification *n) {
-    QModelIndex insertionPoint = QAbstractItemModel::createIndex(0, 0);
-    beginInsertRows(insertionPoint, 0, 0);
-    p->notifications.push_front(n);
+void NotificationModel::insertNotification(Notification *n) {
+    int loc = p->notifications.size();
+    QModelIndex insertionPoint = QAbstractItemModel::createIndex(loc, 0);
+    beginInsertRows(insertionPoint, loc, loc);
+    p->notifications.push_back(n);
     endInsertRows();
-    QTimer::singleShot(5000, this, SLOT(testDelete()));
+    p->timer.stop();
+    p->timer.setInterval(nextTimeout());
+    p->timer.start();
 }
 
-void NotificationModel::testDelete() {
+void NotificationModel::deleteFirst() {
     if(p->notifications.empty())
         return;
-    int loc = p->notifications.size()-1;
+    int loc = 0;
     QModelIndex deletePoint = QAbstractItemModel::createIndex(loc, 0);
     beginRemoveRows(deletePoint, loc, loc);
     delete p->notifications[loc];
-    p->notifications.pop_back();
+    p->notifications.pop_front();
     endRemoveRows();
+}
+
+void NotificationModel::timeout() {
+    p->timer.stop();
+    deleteFirst();
+    if(p->notifications.size() > 0) {
+        p->timer.setInterval(nextTimeout());
+        p->timer.start();
+    }
+}
+
+int NotificationModel::nextTimeout() const {
+    return 5000;
 }

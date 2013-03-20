@@ -20,7 +20,6 @@
 #include "notificationmodel.h"
 #include "mainWindow.h"
 #include "notification.hpp"
-#include<QTimer>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setupUi(this);
@@ -38,5 +37,5 @@ void MainWindow::sendNotification() {
     QString text("notification number ");
     text += QString::number(notificationCount, 10);
     Notification *n = new Notification(notificationCount++, URGENCY_LOW, text);
-    m->testInsert(n); // Wrap in a try/catch eventually.
+    m->insertNotification(n); // Wrap in a try/catch eventually.
 }
