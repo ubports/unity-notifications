@@ -57,8 +57,10 @@ private:
 
     int nextTimeout() const;
 
+    int insertPoint(const QSharedPointer<Notification> n) const;
     void insertAsync(QSharedPointer<Notification> n);
     void insertSync(QSharedPointer<Notification> n);
+    void insertInteractive(QSharedPointer<Notification> n);
     void insertToVisible(QSharedPointer<Notification> n, int location=-1);
 };
 

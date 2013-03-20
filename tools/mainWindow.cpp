@@ -26,9 +26,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m = new NotificationModel();
     notificationCount = 0;
     syncCount = 0;
+    interactiveCount = 0;
     listView->setModel(m);
     connect(this->notificationSendButton, SIGNAL(clicked()), this, SLOT(sendNotification()));
     connect(this->synchronousSendButton, SIGNAL(clicked()), this, SLOT(sendSynchronousNotification()));
+    connect(this->interactiveSendButton, SIGNAL(clicked()), this, SLOT(sendInteractiveNotification()));
     connect(m, SIGNAL(queueSizeChanged(int)), this, SLOT(queueSizeChanged(int)));
 
 }
@@ -54,6 +56,14 @@ void MainWindow::sendSynchronousNotification() {
     QString text("sync number ");
     text += QString::number(syncCount, 10);
     QSharedPointer<Notification> n(new Notification(syncCount++, URGENCY_LOW, text, SYNCHRONOUS));
+
+    m->insertNotification(n); // Wrap in a try/catch eventually.
+}
+
+void MainWindow::sendInteractiveNotification() {
+    QString text("interactive number ");
+    text += QString::number(interactiveCount, 10);
+    QSharedPointer<Notification> n(new Notification(interactiveCount++, URGENCY_LOW, text, INTERACTIVE));
 
     m->insertNotification(n); // Wrap in a try/catch eventually.
 }

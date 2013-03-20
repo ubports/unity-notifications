@@ -27,6 +27,7 @@ struct NotificationModelPrivate {
     QList<QSharedPointer<Notification> > displayedNotifications;
     QTimer timer;
     QVector<QSharedPointer<Notification> > asyncQueue;
+    QVector<QSharedPointer<Notification> > interactiveQueue;
 };
 
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent), p(new NotificationModelPrivate) {
@@ -55,6 +56,7 @@ void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
     switch(n->getType()) {
     case ASYNCHRONOUS : insertAsync(n); break;
     case SYNCHRONOUS : insertSync(n); break;
+    case INTERACTIVE : insertInteractive(n); break;
     default:
         printf("Insert not implemented for this type.\n");
     }
@@ -74,17 +76,23 @@ void NotificationModel::timeout() {
     bool restartTimer = false;
     p->timer.stop();
     deleteFirst();
-
-    if(p->displayedNotifications.empty()) {
-        if(!p->asyncQueue.empty()) {
-            QSharedPointer<Notification> n = p->asyncQueue[0];
-            p->asyncQueue.pop_front();
-            insertToVisible(n);
-            restartTimer = true;
-            emit queueSizeChanged(queued());
-        }
-    } else {
+    if(p->displayedNotifications.size() != 0) {
         restartTimer = true;
+    }
+
+    if(!showingNotificationOfType(INTERACTIVE) && !p->interactiveQueue.empty()) {
+        QSharedPointer<Notification> n = p->interactiveQueue[0];
+        p->interactiveQueue.pop_front();
+        insertToVisible(n, insertPoint(n));
+        restartTimer = true;
+        emit queueSizeChanged(queued());
+    }
+    if(!showingNotificationOfType(ASYNCHRONOUS) && !p->asyncQueue.empty()) {
+        QSharedPointer<Notification> n = p->asyncQueue[0];
+        p->asyncQueue.pop_front();
+        insertToVisible(n, insertPoint(n));
+        restartTimer = true;
+        emit queueSizeChanged(queued());
     }
     if(restartTimer) {
         p->timer.setInterval(nextTimeout());
@@ -98,7 +106,7 @@ int NotificationModel::nextTimeout() const {
 
 void NotificationModel::insertAsync(QSharedPointer<Notification> n) {
     Q_ASSERT(n->getType() == ASYNCHRONOUS);
-    if(p->displayedNotifications.size() == 0) {
+    if(showingNotificationOfType(ASYNCHRONOUS) == 0) {
         insertToVisible(n);
     } else {
         p->asyncQueue.push_back(n);
@@ -106,11 +114,35 @@ void NotificationModel::insertAsync(QSharedPointer<Notification> n) {
     }
 }
 
+void NotificationModel::insertInteractive(QSharedPointer<Notification> n) {
+    Q_ASSERT(n->getType() == INTERACTIVE);
+    if(showingNotificationOfType(INTERACTIVE)) {
+        p->interactiveQueue.push_back(n);
+        emit queueSizeChanged(queued());
+    } else {
+        int loc = insertPoint(n);
+        insertToVisible(n, loc);
+    }
+
+}
+
+
 void NotificationModel::insertSync(QSharedPointer<Notification> n) {
+    Q_ASSERT(n->getType() == SYNCHRONOUS);
     if(showingNotificationOfType(SYNCHRONOUS)) {
         deleteFirst(); // Synchronous is always first.
     }
     insertToVisible(n, 0);
+}
+
+int NotificationModel::insertPoint(const QSharedPointer<Notification> n) const {
+    int i=0;
+    for(; i<p->displayedNotifications.size(); i++) {
+        if(p->displayedNotifications[i]->getType() > n->getType()) {
+            break;
+        }
+    }
+    return i;
 }
 
 void NotificationModel::insertToVisible(QSharedPointer<Notification> n, int location) {
@@ -130,7 +162,7 @@ void NotificationModel::insertToVisible(QSharedPointer<Notification> n, int loca
 }
 
 int NotificationModel::queued() const {
-    return p->asyncQueue.size();
+    return p->asyncQueue.size() + p->interactiveQueue.size();
 }
 
 bool NotificationModel::showingNotificationOfType(const NotificationType type) const {

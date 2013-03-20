@@ -34,6 +34,7 @@ private:
     NotificationModel *m;
     int notificationCount;
     int syncCount;
+    int interactiveCount;
 
 public slots:
     void queueSizeChanged(int newsize);
@@ -41,5 +42,6 @@ public slots:
 private slots:
     void sendNotification();
     void sendSynchronousNotification();
+    void sendInteractiveNotification();
 
 };
