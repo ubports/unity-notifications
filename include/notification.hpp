@@ -32,12 +32,13 @@ private:
     NotificationPrivate *p;
 
 public:
-    Notification(NotificationID id, const Urgency ur, QString text);
+    Notification(NotificationID id, const Urgency ur, QString text, NotificationType type=ASYNCHRONOUS);
     ~Notification();
 
     NotificationID getID() const;
     Urgency getUrgency() const;
     QString getText() const;
+    NotificationType getType() const;
 
     bool operator<(const Notification &n) const; // Order by "interestingness".
 };

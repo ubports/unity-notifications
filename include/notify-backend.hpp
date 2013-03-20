@@ -32,6 +32,13 @@ enum Urgency {
     URGENCY_CRITICAL
 };
 
+enum NotificationType {
+    SYNCHRONOUS,
+    SNAP,
+    INTERACTIVE,
+    ASYNCHRONOUS
+};
+
 const unsigned int MAX_NOTIFICATIONS = 50;
 
 class Renderer;

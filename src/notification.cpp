@@ -27,13 +27,15 @@ struct NotificationPrivate {
     NotificationID id;
     Urgency urg;
     QString text;
+    NotificationType type;
 };
 
-Notification::Notification(NotificationID id, const Urgency ur, QString text) {
+Notification::Notification(NotificationID id, const Urgency ur, QString text, NotificationType type) {
     p = new NotificationPrivate();
     p->id = id;
     p->urg = ur;
     p->text = text;
+    p->type = type;
 }
 
 Notification::~Notification() {
@@ -52,7 +54,15 @@ NotificationID Notification::getID() const {
     return p->id;
 }
 
+NotificationType Notification::getType() const {
+    return p->type;
+}
+
 bool Notification::operator<(const Notification &n) const {
+    if(p->type < n.p->type)
+        return true;
+    if(p->type > n.p->type)
+        return false;
     return p->urg > n.p->urg;
 }
 
