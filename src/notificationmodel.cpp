@@ -21,10 +21,11 @@
 #include "notification.hpp"
 #include<QTimer>
 #include<QList>
-
+#include<QVector>
 struct NotificationModelPrivate {
-    QList<Notification*> notifications;
+    QList<Notification*> displayedNotifications;
     QTimer timer;
+    QVector<Notification*> asyncQueue;
 };
 
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent) {
@@ -33,15 +34,15 @@ NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(paren
 }
 
 NotificationModel::~NotificationModel() {
-    for(int i=0; i<p->notifications.size(); i++)
-        delete p->notifications[i];
-    p->notifications.clear();
+    for(int i=0; i<p->displayedNotifications.size(); i++)
+        delete p->displayedNotifications[i];
+    p->displayedNotifications.clear();
     delete p;
 }
 
 int NotificationModel::rowCount(const QModelIndex &parent) const {
-    //printf("Count %d\n", notifications.size());
-    return p->notifications.size();
+    //printf("Count %d\n", displayedNotifications.size());
+    return p->displayedNotifications.size();
 }
 
 QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
@@ -51,35 +52,47 @@ QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
 
     if (role != Qt::DisplayRole)
         return QVariant();
-    return QVariant(p->notifications[parent.row()]->getText());
+    return QVariant(p->displayedNotifications[parent.row()]->getText());
 }
 
 void NotificationModel::insertNotification(Notification *n) {
-    int loc = p->notifications.size();
-    QModelIndex insertionPoint = QAbstractItemModel::createIndex(loc, 0);
-    beginInsertRows(insertionPoint, loc, loc);
-    p->notifications.push_back(n);
-    endInsertRows();
-    p->timer.stop();
-    p->timer.setInterval(nextTimeout());
-    p->timer.start();
+    if(n->getType() == ASYNCHRONOUS) {
+        insertAsync(n);
+    } else {
+        printf("Not implemented yet.\n");
+        delete n;
+    }
+    emit queueSizeChanged(queued());
 }
 
 void NotificationModel::deleteFirst() {
-    if(p->notifications.empty())
+    if(p->displayedNotifications.empty())
         return;
     int loc = 0;
     QModelIndex deletePoint = QAbstractItemModel::createIndex(loc, 0);
     beginRemoveRows(deletePoint, loc, loc);
-    delete p->notifications[loc];
-    p->notifications.pop_front();
+    delete p->displayedNotifications[loc];
+    p->displayedNotifications.pop_front();
     endRemoveRows();
 }
 
 void NotificationModel::timeout() {
+    bool restartTimer = false;
     p->timer.stop();
     deleteFirst();
-    if(p->notifications.size() > 0) {
+
+    if(p->displayedNotifications.empty()) {
+        if(!p->asyncQueue.empty()) {
+            Notification *n = p->asyncQueue[0];
+            p->asyncQueue.pop_front();
+            insertToVisible(n);
+            restartTimer = true;
+            emit queueSizeChanged(queued());
+        }
+    } else {
+        restartTimer = true;
+    }
+    if(restartTimer) {
         p->timer.setInterval(nextTimeout());
         p->timer.start();
     }
@@ -87,4 +100,28 @@ void NotificationModel::timeout() {
 
 int NotificationModel::nextTimeout() const {
     return 5000;
+}
+
+void NotificationModel::insertAsync(Notification *n) {
+    Q_ASSERT(n->getType() == ASYNCHRONOUS);
+    if(p->displayedNotifications.size() == 0) {
+        insertToVisible(n);
+    } else {
+        p->asyncQueue.push_back(n);
+    }
+}
+
+void NotificationModel::insertToVisible(Notification *n) {
+    int loc = p->displayedNotifications.size();
+    QModelIndex insertionPoint = QAbstractItemModel::createIndex(loc, 0);
+    beginInsertRows(insertionPoint, loc, loc);
+    p->displayedNotifications.push_back(n);
+    endInsertRows();
+    p->timer.stop();
+    p->timer.setInterval(nextTimeout());
+    p->timer.start();
+}
+
+int NotificationModel::queued() const {
+    return p->asyncQueue.size();
 }

@@ -34,6 +34,9 @@ private:
     NotificationModel *m;
     int notificationCount;
 
+public slots:
+    void queueSizeChanged(int newsize);
+
 private slots:
     void sendNotification();
 

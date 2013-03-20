@@ -39,12 +39,22 @@ public:
     void insertNotification(Notification *n);
     void deleteFirst();
 
+    int queued() const;
+
 private slots:
     void timeout();
 
+signals:
+
+    void queueSizeChanged(int newSize);
+
 private:
     NotificationModelPrivate *p;
+
     int nextTimeout() const;
+
+    void insertAsync(Notification *n);
+    void insertToVisible(Notification *n);
 };
 
 #endif
