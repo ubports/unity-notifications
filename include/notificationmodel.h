@@ -21,6 +21,8 @@
 #define NOTIFICATIONMODEL_H
 
 #include<QAbstractListModel>
+#include<QSharedPointer>
+#include<QScopedPointer>
 #include "notify-backend.hpp"
 
 class Notification;
@@ -37,7 +39,7 @@ public:
     virtual int rowCount(const QModelIndex &parent) const;
     virtual QVariant data(const QModelIndex &parent, int role) const;
 
-    void insertNotification(Notification *n);
+    void insertNotification(QSharedPointer<Notification> n);
     void deleteFirst();
 
     int queued() const;
@@ -51,13 +53,13 @@ signals:
     void queueSizeChanged(int newSize);
 
 private:
-    NotificationModelPrivate *p;
+    QScopedPointer<NotificationModelPrivate> p;
 
     int nextTimeout() const;
 
-    void insertAsync(Notification *n);
-    void insertSync(Notification *n);
-    void insertToVisible(Notification *n, int location=-1);
+    void insertAsync(QSharedPointer<Notification> n);
+    void insertSync(QSharedPointer<Notification> n);
+    void insertToVisible(QSharedPointer<Notification> n, int location=-1);
 };
 
 #endif

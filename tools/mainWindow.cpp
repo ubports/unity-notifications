@@ -40,7 +40,7 @@ MainWindow::~MainWindow() {
 void MainWindow::sendNotification() {
     QString text("notification number ");
     text += QString::number(notificationCount, 10);
-    Notification *n = new Notification(notificationCount++, URGENCY_LOW, text);
+    QSharedPointer<Notification> n(new Notification(notificationCount++, URGENCY_LOW, text));
     m->insertNotification(n); // Wrap in a try/catch eventually.
 }
 
@@ -53,6 +53,7 @@ void MainWindow::queueSizeChanged(int newsize) {
 void MainWindow::sendSynchronousNotification() {
     QString text("sync number ");
     text += QString::number(syncCount, 10);
-    Notification *n = new Notification(syncCount++, URGENCY_LOW, text, SYNCHRONOUS);
+    QSharedPointer<Notification> n(new Notification(syncCount++, URGENCY_LOW, text, SYNCHRONOUS));
+
     m->insertNotification(n); // Wrap in a try/catch eventually.
 }

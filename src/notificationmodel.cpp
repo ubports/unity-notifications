@@ -24,21 +24,16 @@
 #include<QVector>
 
 struct NotificationModelPrivate {
-    QList<Notification*> displayedNotifications;
+    QList<QSharedPointer<Notification> > displayedNotifications;
     QTimer timer;
-    QVector<Notification*> asyncQueue;
+    QVector<QSharedPointer<Notification> > asyncQueue;
 };
 
-NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent) {
-    p = new NotificationModelPrivate;
+NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent), p(new NotificationModelPrivate) {
     connect(&(p->timer), SIGNAL(timeout()), this, SLOT(timeout()));
 }
 
 NotificationModel::~NotificationModel() {
-    for(int i=0; i<p->displayedNotifications.size(); i++)
-        delete p->displayedNotifications[i];
-    p->displayedNotifications.clear();
-    delete p;
 }
 
 int NotificationModel::rowCount(const QModelIndex &parent) const {
@@ -56,13 +51,12 @@ QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
     return QVariant(p->displayedNotifications[parent.row()]->getText());
 }
 
-void NotificationModel::insertNotification(Notification *n) {
+void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
     switch(n->getType()) {
     case ASYNCHRONOUS : insertAsync(n); break;
     case SYNCHRONOUS : insertSync(n); break;
     default:
         printf("Insert not implemented for this type.\n");
-        delete n;
     }
 }
 
@@ -72,7 +66,6 @@ void NotificationModel::deleteFirst() {
     int loc = 0;
     QModelIndex deletePoint = QAbstractItemModel::createIndex(loc, 0);
     beginRemoveRows(deletePoint, loc, loc);
-    delete p->displayedNotifications[loc];
     p->displayedNotifications.pop_front();
     endRemoveRows();
 }
@@ -84,7 +77,7 @@ void NotificationModel::timeout() {
 
     if(p->displayedNotifications.empty()) {
         if(!p->asyncQueue.empty()) {
-            Notification *n = p->asyncQueue[0];
+            QSharedPointer<Notification> n = p->asyncQueue[0];
             p->asyncQueue.pop_front();
             insertToVisible(n);
             restartTimer = true;
@@ -103,7 +96,7 @@ int NotificationModel::nextTimeout() const {
     return 5000;
 }
 
-void NotificationModel::insertAsync(Notification *n) {
+void NotificationModel::insertAsync(QSharedPointer<Notification> n) {
     Q_ASSERT(n->getType() == ASYNCHRONOUS);
     if(p->displayedNotifications.size() == 0) {
         insertToVisible(n);
@@ -113,15 +106,14 @@ void NotificationModel::insertAsync(Notification *n) {
     }
 }
 
-void NotificationModel::insertSync(Notification *n) {
-    printf("Fooo\n");
+void NotificationModel::insertSync(QSharedPointer<Notification> n) {
     if(showingNotificationOfType(SYNCHRONOUS)) {
         deleteFirst(); // Synchronous is always first.
     }
     insertToVisible(n, 0);
 }
 
-void NotificationModel::insertToVisible(Notification *n, int location) {
+void NotificationModel::insertToVisible(QSharedPointer<Notification> n, int location) {
     if(location < 0)
         location = p->displayedNotifications.size();
     if(location > p->displayedNotifications.size()) {
