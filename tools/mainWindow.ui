@@ -27,7 +27,7 @@
      <item row="2" column="0">
       <widget class="QPushButton" name="notificationSendButton">
        <property name="text">
-        <string>Send notification</string>
+        <string>Send regular notification</string>
        </property>
       </widget>
      </item>
@@ -40,6 +40,13 @@
      </item>
      <item row="0" column="0">
       <widget class="QListView" name="listView"/>
+     </item>
+     <item row="3" column="0">
+      <widget class="QPushButton" name="synchronousSendButton">
+       <property name="text">
+        <string>Send synchronous notification</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>

@@ -22,6 +22,7 @@
 #include<QTimer>
 #include<QList>
 #include<QVector>
+
 struct NotificationModelPrivate {
     QList<Notification*> displayedNotifications;
     QTimer timer;
@@ -56,13 +57,13 @@ QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
 }
 
 void NotificationModel::insertNotification(Notification *n) {
-    if(n->getType() == ASYNCHRONOUS) {
-        insertAsync(n);
-    } else {
-        printf("Not implemented yet.\n");
+    switch(n->getType()) {
+    case ASYNCHRONOUS : insertAsync(n); break;
+    case SYNCHRONOUS : insertSync(n); break;
+    default:
+        printf("Insert not implemented for this type.\n");
         delete n;
     }
-    emit queueSizeChanged(queued());
 }
 
 void NotificationModel::deleteFirst() {
@@ -108,14 +109,28 @@ void NotificationModel::insertAsync(Notification *n) {
         insertToVisible(n);
     } else {
         p->asyncQueue.push_back(n);
+        emit queueSizeChanged(queued());
     }
 }
 
-void NotificationModel::insertToVisible(Notification *n) {
-    int loc = p->displayedNotifications.size();
-    QModelIndex insertionPoint = QAbstractItemModel::createIndex(loc, 0);
-    beginInsertRows(insertionPoint, loc, loc);
-    p->displayedNotifications.push_back(n);
+void NotificationModel::insertSync(Notification *n) {
+    printf("Fooo\n");
+    if(showingNotificationOfType(SYNCHRONOUS)) {
+        deleteFirst(); // Synchronous is always first.
+    }
+    insertToVisible(n, 0);
+}
+
+void NotificationModel::insertToVisible(Notification *n, int location) {
+    if(location < 0)
+        location = p->displayedNotifications.size();
+    if(location > p->displayedNotifications.size()) {
+        printf("Bad insert.\n");
+        return;
+    }
+    QModelIndex insertionPoint = QAbstractItemModel::createIndex(location, 0);
+    beginInsertRows(insertionPoint, location, location);
+    p->displayedNotifications.insert(location, n);
     endInsertRows();
     p->timer.stop();
     p->timer.setInterval(nextTimeout());
@@ -124,4 +139,13 @@ void NotificationModel::insertToVisible(Notification *n) {
 
 int NotificationModel::queued() const {
     return p->asyncQueue.size();
+}
+
+bool NotificationModel::showingNotificationOfType(const NotificationType type) const {
+    for(int i=0; i<p->displayedNotifications.size(); i++) {
+        if(p->displayedNotifications[i]->getType() == type) {
+            return true;
+        }
+    }
+    return false;
 }

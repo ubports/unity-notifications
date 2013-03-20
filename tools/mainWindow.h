@@ -33,11 +33,13 @@ public:
 private:
     NotificationModel *m;
     int notificationCount;
+    int syncCount;
 
 public slots:
     void queueSizeChanged(int newsize);
 
 private slots:
     void sendNotification();
+    void sendSynchronousNotification();
 
 };

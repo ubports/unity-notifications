@@ -21,6 +21,7 @@
 #define NOTIFICATIONMODEL_H
 
 #include<QAbstractListModel>
+#include "notify-backend.hpp"
 
 class Notification;
 
@@ -40,6 +41,7 @@ public:
     void deleteFirst();
 
     int queued() const;
+    bool showingNotificationOfType(const NotificationType type) const;
 
 private slots:
     void timeout();
@@ -54,7 +56,8 @@ private:
     int nextTimeout() const;
 
     void insertAsync(Notification *n);
-    void insertToVisible(Notification *n);
+    void insertSync(Notification *n);
+    void insertToVisible(Notification *n, int location=-1);
 };
 
 #endif
