@@ -21,9 +21,10 @@
 #define NOTIFICATIONMODEL_H
 
 #include<QAbstractListModel>
-#include<QList>
 
 class Notification;
+
+struct NotificationModelPrivate;
 
 class NotificationModel : public QAbstractListModel {
     Q_OBJECT
@@ -36,11 +37,11 @@ public:
     virtual QVariant data(const QModelIndex &parent, int role) const;
 
 public slots:
-    void testInsert(QString text);
+    void testInsert(Notification *n);
     void testDelete();
 
 private:
-    QList<Notification*> notifications;
+    NotificationModelPrivate *p;
 };
 
 #endif

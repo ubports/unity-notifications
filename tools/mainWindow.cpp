@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+#include "notify-backend.hpp"
 #include "notificationmodel.h"
 #include "mainWindow.h"
+#include "notification.hpp"
 #include<QTimer>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
@@ -36,6 +37,6 @@ MainWindow::~MainWindow() {
 void MainWindow::sendNotification() {
     QString text("notification number ");
     text += QString::number(notificationCount, 10);
-    notificationCount++;
-    m->testInsert(text);
+    Notification *n = new Notification(notificationCount++, URGENCY_LOW, text);
+    m->testInsert(n); // Wrap in a try/catch eventually.
 }

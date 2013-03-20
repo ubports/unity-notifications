@@ -20,19 +20,26 @@
 #include "notificationmodel.h"
 #include "notification.hpp"
 #include<QTimer>
+#include<QList>
+
+struct NotificationModelPrivate {
+    QList<Notification*> notifications;
+};
 
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent) {
+    p = new NotificationModelPrivate;
 }
 
 NotificationModel::~NotificationModel() {
-    for(int i=0; i<notifications.size(); i++)
-        delete notifications[i];
-    notifications.clear();
+    for(int i=0; i<p->notifications.size(); i++)
+        delete p->notifications[i];
+    p->notifications.clear();
+    delete p;
 }
 
 int NotificationModel::rowCount(const QModelIndex &parent) const {
     //printf("Count %d\n", notifications.size());
-    return notifications.size();
+    return p->notifications.size();
 }
 
 QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
@@ -42,24 +49,24 @@ QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
 
     if (role != Qt::DisplayRole)
         return QVariant();
-    return QVariant(notifications[parent.row()]->getText());
+    return QVariant(p->notifications[parent.row()]->getText());
 }
 
-void NotificationModel::testInsert(QString text) {
+void NotificationModel::testInsert(Notification *n) {
     QModelIndex insertionPoint = QAbstractItemModel::createIndex(0, 0);
     beginInsertRows(insertionPoint, 0, 0);
-    notifications.push_front(new Notification(55, URGENCY_LOW, text));
+    p->notifications.push_front(n);
     endInsertRows();
     QTimer::singleShot(5000, this, SLOT(testDelete()));
 }
 
 void NotificationModel::testDelete() {
-    if(notifications.empty())
+    if(p->notifications.empty())
         return;
-    int loc = notifications.size()-1;
+    int loc = p->notifications.size()-1;
     QModelIndex deletePoint = QAbstractItemModel::createIndex(loc, 0);
     beginRemoveRows(deletePoint, loc, loc);
-    delete notifications[loc];
-    notifications.pop_back();
+    delete p->notifications[loc];
+    p->notifications.pop_back();
     endRemoveRows();
 }
