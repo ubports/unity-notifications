@@ -104,21 +104,21 @@ void NotificationModel::timeout() {
     if(!showingNotificationOfType(INTERACTIVE) && !p->interactiveQueue.empty()) {
         QSharedPointer<Notification> n = p->interactiveQueue[0];
         p->interactiveQueue.pop_front();
-        insertToVisible(n, insertPoint(n));
+        insertToVisible(n, insertionPoint(n));
         restartTimer = true;
         emit queueSizeChanged(queued());
     }
     if(!showingNotificationOfType(ASYNCHRONOUS) && !p->asyncQueue.empty()) {
         QSharedPointer<Notification> n = p->asyncQueue[0];
         p->asyncQueue.pop_front();
-        insertToVisible(n, insertPoint(n));
+        insertToVisible(n, insertionPoint(n));
         restartTimer = true;
         emit queueSizeChanged(queued());
     }
     if(countShowing(SNAP) < maxSnapsShown && !p->snapQueue.empty()) {
         QSharedPointer<Notification> n = p->snapQueue[0];
         p->snapQueue.pop_front();
-        insertToVisible(n, insertPoint(n));
+        insertToVisible(n, insertionPoint(n));
         restartTimer = true;
         emit queueSizeChanged(queued());
     }
@@ -178,7 +178,7 @@ void NotificationModel::insertInteractive(QSharedPointer<Notification> n) {
         qStableSort(p->interactiveQueue.begin(), p->interactiveQueue.end());
         emit queueSizeChanged(queued());
     } else {
-        int loc = insertPoint(n);
+        int loc = insertionPoint(n);
         insertToVisible(n, loc);
     }
 
@@ -202,12 +202,12 @@ void NotificationModel::insertSnap(QSharedPointer<Notification> n) {
         qStableSort(p->snapQueue.begin(), p->snapQueue.end());
         emit queueSizeChanged(queued());
     } else {
-        int loc = insertPoint(n);
+        int loc = insertionPoint(n);
         insertToVisible(n, loc);
     }
 }
 
-int NotificationModel::insertPoint(const QSharedPointer<Notification> n) const {
+int NotificationModel::insertionPoint(const QSharedPointer<Notification> n) const {
     int i=0;
     for(; i<p->displayedNotifications.size(); i++) {
         if(p->displayedNotifications[i]->getType() > n->getType()) {

@@ -65,7 +65,7 @@ private:
     void incrementDisplayTimes(const int displayedTime) const;
     void pruneExpired();
 
-    int insertPoint(const QSharedPointer<Notification> n) const;
+    int insertionPoint(const QSharedPointer<Notification> n) const;
     void insertAsync(QSharedPointer<Notification> n);
     void insertSync(QSharedPointer<Notification> n);
     void insertInteractive(QSharedPointer<Notification> n);
