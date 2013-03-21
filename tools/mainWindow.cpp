@@ -30,10 +30,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     snapCount = 0;
     listView->setModel(m);
 
-    connect(this->notificationSendButton, SIGNAL(clicked()), this, SLOT(sendNotification()));
     connect(this->synchronousSendButton, SIGNAL(clicked()), this, SLOT(sendSynchronousNotification()));
-    connect(this->interactiveSendButton, SIGNAL(clicked()), this, SLOT(sendInteractiveNotification()));
+
+    connect(this->notificationSendButton, SIGNAL(clicked()), this, SLOT(sendLowNotification()));
+    connect(this->notificationNormalButton, SIGNAL(clicked()), this, SLOT(sendNormalNotification()));
+    connect(this->notificationCriticalButton, SIGNAL(clicked()), this, SLOT(sendCriticalNotification()));
+
+    connect(this->interactiveSendButton, SIGNAL(clicked()), this, SLOT(sendLowInteractiveNotification()));
+    connect(this->interactiveNormalButton, SIGNAL(clicked()), this, SLOT(sendNormalInteractiveNotification()));
+    connect(this->interactiveCriticalButton, SIGNAL(clicked()), this, SLOT(sendCriticalInteractiveNotification()));
+
     connect(this->snapSendButton, SIGNAL(clicked()), this, SLOT(sendSnapNotification()));
+    connect(this->snapNormalButton, SIGNAL(clicked()), this, SLOT(sendNormalSnapNotification()));
+    connect(this->snapCriticalButton, SIGNAL(clicked()), this, SLOT(sendCriticalSnapNotification()));
 
     connect(m, SIGNAL(queueSizeChanged(int)), this, SLOT(queueSizeChanged(int)));
 
@@ -43,11 +52,22 @@ MainWindow::~MainWindow() {
 
 }
 
-void MainWindow::sendNotification() {
-    QString text("notification number ");
+void MainWindow::sendLowNotification() {
+    QString text("low async number ");
     text += QString::number(notificationCount, 10);
-    QSharedPointer<Notification> n(new Notification(notificationOffset + notificationCount++, URGENCY_LOW, text));
-    m->insertNotification(n); // Wrap in a try/catch eventually.
+    sendNotification(notificationOffset + notificationCount++, ASYNCHRONOUS, URGENCY_LOW, text);
+}
+
+void MainWindow::sendNormalNotification() {
+    QString text("normal async number ");
+    text += QString::number(notificationCount, 10);
+    sendNotification(notificationOffset + notificationCount++, ASYNCHRONOUS, URGENCY_NORMAL, text);
+}
+
+void MainWindow::sendCriticalNotification() {
+    QString text("critical async number ");
+    text += QString::number(notificationCount, 10);
+    sendNotification(notificationOffset + notificationCount++, ASYNCHRONOUS, URGENCY_CRITICAL, text);
 }
 
 void MainWindow::queueSizeChanged(int newsize) {
@@ -64,18 +84,43 @@ void MainWindow::sendSynchronousNotification() {
     m->insertNotification(n); // Wrap in a try/catch eventually.
 }
 
-void MainWindow::sendInteractiveNotification() {
-    QString text("interactive number ");
+void MainWindow::sendLowInteractiveNotification() {
+    QString text("low interactive number ");
     text += QString::number(interactiveCount, 10);
-    QSharedPointer<Notification> n(new Notification(interactiveOffset + interactiveCount++, URGENCY_LOW, text, INTERACTIVE));
+    sendNotification(interactiveOffset + interactiveCount++, INTERACTIVE, URGENCY_LOW, text);
+}
 
-    m->insertNotification(n); // Wrap in a try/catch eventually.
+void MainWindow::sendNormalInteractiveNotification() {
+    QString text("normal interactive number ");
+    text += QString::number(interactiveCount, 10);
+    sendNotification(interactiveOffset + interactiveCount++, INTERACTIVE, URGENCY_NORMAL, text);
+}
+
+void MainWindow::sendCriticalInteractiveNotification() {
+    QString text("critical interactive number ");
+    text += QString::number(interactiveCount, 10);
+    sendNotification(interactiveOffset + interactiveCount++, INTERACTIVE, URGENCY_CRITICAL, text);
 }
 
 void MainWindow::sendSnapNotification() {
-    QString text("snap number ");
+    QString text("low snap number ");
     text += QString::number(snapCount, 10);
-    QSharedPointer<Notification> n(new Notification(snapOffset + snapCount++, URGENCY_LOW, text, SNAP));
+    sendNotification(snapOffset + snapCount++, SNAP, URGENCY_LOW, text);
+}
 
+void MainWindow::sendNormalSnapNotification() {
+    QString text("normal snap number ");
+    text += QString::number(snapCount, 10);
+    sendNotification(snapOffset + snapCount++, SNAP, URGENCY_NORMAL, text);
+}
+
+void MainWindow::sendCriticalSnapNotification() {
+    QString text("critical snap number ");
+    text += QString::number(snapCount, 10);
+    sendNotification(snapOffset + snapCount++, SNAP, URGENCY_CRITICAL, text);
+}
+
+void MainWindow::sendNotification(int id, NotificationType type, Urgency urg, QString text) const {
+    QSharedPointer<Notification> n(new Notification(id, urg, text, type));
     m->insertNotification(n); // Wrap in a try/catch eventually.
 }

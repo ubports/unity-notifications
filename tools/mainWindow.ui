@@ -19,46 +19,88 @@
      <rect>
       <x>220</x>
       <y>130</y>
-      <width>451</width>
-      <height>331</height>
+      <width>461</width>
+      <height>321</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="0">
-      <widget class="QPushButton" name="notificationSendButton">
-       <property name="text">
-        <string>Send regular notification</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="queueLabel">
-       <property name="text">
-        <string>Notifications in queue: 0</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QListView" name="listView"/>
-     </item>
-     <item row="3" column="0">
+     <item row="2" column="0" colspan="3">
       <widget class="QPushButton" name="synchronousSendButton">
        <property name="text">
         <string>Send synchronous notification</string>
        </property>
       </widget>
      </item>
+     <item row="3" column="0">
+      <widget class="QPushButton" name="notificationSendButton">
+       <property name="text">
+        <string>Regular low</string>
+       </property>
+      </widget>
+     </item>
      <item row="4" column="0">
       <widget class="QPushButton" name="interactiveSendButton">
        <property name="text">
-        <string>Send interactive notification</string>
+        <string>Interactive low</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="3">
+      <widget class="QLabel" name="queueLabel">
+       <property name="text">
+        <string>Notifications in queue: 0</string>
        </property>
       </widget>
      </item>
      <item row="5" column="0">
       <widget class="QPushButton" name="snapSendButton">
        <property name="text">
-        <string>Send snap decision notification</string>
+        <string>Snap low</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QPushButton" name="notificationCriticalButton">
+       <property name="text">
+        <string>Regular critical</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QPushButton" name="notificationNormalButton">
+       <property name="text">
+        <string>Regular normal</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0" colspan="3">
+      <widget class="QListView" name="listView"/>
+     </item>
+     <item row="4" column="1">
+      <widget class="QPushButton" name="interactiveNormalButton">
+       <property name="text">
+        <string>Interactive normal</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QPushButton" name="snapNormalButton">
+       <property name="text">
+        <string>Snap normal</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="2">
+      <widget class="QPushButton" name="interactiveCriticalButton">
+       <property name="text">
+        <string>Interactive critical</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="2">
+      <widget class="QPushButton" name="snapCriticalButton">
+       <property name="text">
+        <string>Snap critical</string>
        </property>
       </widget>
      </item>

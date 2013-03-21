@@ -20,6 +20,7 @@
 #include <QMainWindow>
 #include <QListView>
 #include "ui_mainWindow.h"
+#include "notify-backend.hpp"
 
 class NotificationModel;
 
@@ -43,13 +44,23 @@ private:
     static const int interactiveOffset = 20000;
     static const int snapOffset = 40000;
 
+    void sendNotification(int id, NotificationType type, Urgency urg, QString text) const;
+
 public slots:
     void queueSizeChanged(int newsize);
 
 private slots:
-    void sendNotification();
-    void sendSynchronousNotification();
-    void sendInteractiveNotification();
-    void sendSnapNotification();
+    void sendLowNotification();
+    void sendNormalNotification();
+    void sendCriticalNotification();
 
+    void sendSynchronousNotification();
+
+    void sendLowInteractiveNotification();
+    void sendNormalInteractiveNotification();
+    void sendCriticalInteractiveNotification();
+
+    void sendSnapNotification();
+    void sendNormalSnapNotification();
+    void sendCriticalSnapNotification();
 };
