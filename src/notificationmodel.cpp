@@ -33,6 +33,10 @@ struct NotificationModelPrivate {
     QMap<NotificationID, int> displayTimes;
 };
 
+bool notificationCompare(const QSharedPointer<Notification> &first, const QSharedPointer<Notification> &second) {
+    return *first < *second;
+}
+
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent), p(new NotificationModelPrivate) {
     connect(&(p->timer), SIGNAL(timeout()), this, SLOT(timeout()));
     p->timer.setSingleShot(true);
@@ -172,7 +176,7 @@ void NotificationModel::insertAsync(QSharedPointer<Notification> n) {
         } else {
             p->asyncQueue.push_back(n);
         }
-        qStableSort(p->asyncQueue.begin(), p->asyncQueue.end());
+        qStableSort(p->asyncQueue.begin(), p->asyncQueue.end(), notificationCompare);
         emit queueSizeChanged(queued());
     } else {
         insertToVisible(n);
@@ -191,7 +195,7 @@ void NotificationModel::insertInteractive(QSharedPointer<Notification> n) {
         } else {
             p->interactiveQueue.push_back(n);
         }
-        qStableSort(p->interactiveQueue.begin(), p->interactiveQueue.end());
+        qStableSort(p->interactiveQueue.begin(), p->interactiveQueue.end(), notificationCompare);
         emit queueSizeChanged(queued());
     } else {
         int loc = insertionPoint(n);
