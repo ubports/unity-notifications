@@ -18,7 +18,7 @@
  */
 
 #include "notificationmodel.h"
-#include "notification.hpp"
+#include "notification.h"
 #include<QTimer>
 #include<QList>
 #include<QVector>

@@ -17,9 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "notificationbackend.hpp"
-#include "notification.hpp"
-#include "renderer.hpp" // Remove once we have signals.
+#include "notificationbackend.h"
+#include "notification.h"
+#include "renderer.h" // Remove once we have signals.
 #include <vector>
 #include <stdexcept>
 #include <algorithm>

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "renderer.hpp"
+#include "renderer.h"
 
 struct RendererPrivate {
     int numChanges;

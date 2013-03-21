@@ -20,7 +20,7 @@
 #ifndef NOTIFICATIONBACKEND_HPP_
 #define NOTIFICATIONBACKEND_HPP_
 
-#include "notify-backend.hpp"
+#include "notify-backend.h"
 
 struct NotificationBackendPrivate;
 

@@ -1,6 +1,6 @@
-#include "notification.hpp"
-#include "notificationbackend.hpp"
-#include "renderer.hpp"
+#include "notification.h"
+#include "notificationbackend.h"
+#include "renderer.h"
 
 #include <cassert>
 #include <cstdio>

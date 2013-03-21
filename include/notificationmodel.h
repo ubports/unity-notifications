@@ -23,7 +23,7 @@
 #include<QAbstractListModel>
 #include<QSharedPointer>
 #include<QScopedPointer>
-#include "notify-backend.hpp"
+#include "notify-backend.h"
 
 class Notification;
 

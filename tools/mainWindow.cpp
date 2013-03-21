@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "notify-backend.hpp"
+#include "notify-backend.h"
 #include "notificationmodel.h"
 #include "mainWindow.h"
-#include "notification.hpp"
+#include "notification.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setupUi(this);

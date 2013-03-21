@@ -20,7 +20,7 @@
 #include <QMainWindow>
 #include <QListView>
 #include "ui_mainWindow.h"
-#include "notify-backend.hpp"
+#include "notify-backend.h"
 
 class NotificationModel;
 

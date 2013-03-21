@@ -18,7 +18,7 @@
  */
 
 
-#include "notification.hpp"
+#include "notification.h"
 #include <string>
 
 using namespace std;

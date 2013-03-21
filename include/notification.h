@@ -17,28 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RENDERER_HPP_
-#define RENDERER_HPP_
 
-#include"notify-backend.hpp"
+#ifndef NOTIFICATION_HPP_
+#define NOTIFICATION_HPP_
 
-struct RendererPrivate;
+#include "notify-backend.h"
+#include <QString>
 
-/*
- * This class is a mock. It only pretends to render notifications.
- */
+struct NotificationPrivate;
 
-class Renderer {
+class Notification {
 private:
 
-    RendererPrivate *p;
+    NotificationPrivate *p;
 
 public:
-    Renderer();
-    ~Renderer();
+    Notification(NotificationID id, const Urgency ur, QString text, NotificationType type=ASYNCHRONOUS);
+    ~Notification();
 
-    void changed(); // Will be a slot in a brave Qt world.
-    int numChanges() const;
+    NotificationID getID() const;
+    Urgency getUrgency() const;
+    QString getText() const;
+    NotificationType getType() const;
+    int getDisplayTime() const;
+
+    bool operator<(const Notification &n) const; // Order by "interestingness".
 };
 
-#endif /* RENDERER_HPP_ */
+#endif /* NOTIFICATION_HPP_ */
