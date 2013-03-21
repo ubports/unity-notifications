@@ -218,8 +218,22 @@ void NotificationModel::insertSnap(QSharedPointer<Notification> n) {
     Q_ASSERT(n->getType() == SNAP);
     int showing = countShowing(n->getType());
     if(showing >= maxSnapsShown) {
-        p->snapQueue.push_back(n);
-        qStableSort(p->snapQueue.begin(), p->snapQueue.end());
+        int loc = findFirst(SNAP);
+        bool replaced = false;
+        for(int i=0; i<showing; i++) {
+            if(p->displayedNotifications[loc+i]->getUrgency() < n->getUrgency()) {
+                QSharedPointer<Notification> lastShowing = p->displayedNotifications[loc+showing-1];
+                deleteFromVisible(loc+showing-1);
+                insertToVisible(n, loc+i);
+                p->snapQueue.push_front(lastShowing);
+                replaced = true;
+                break;
+            }
+        }
+        if(!replaced) {
+            p->snapQueue.push_back(n);
+        }
+        qStableSort(p->snapQueue.begin(), p->snapQueue.end(), notificationCompare);
         emit queueSizeChanged(queued());
     } else {
         int loc = insertionPoint(n);
