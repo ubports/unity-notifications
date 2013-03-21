@@ -243,12 +243,23 @@ void NotificationModel::insertSnap(QSharedPointer<Notification> n) {
 
 int NotificationModel::insertionPoint(const QSharedPointer<Notification> n) const {
     int i=0;
-    for(; i<p->displayedNotifications.size(); i++) {
-        if(p->displayedNotifications[i]->getType() > n->getType()) {
-            break;
+    if(n->getType() == SNAP) {
+        int loc = findFirst(SNAP);
+        int numSnaps = countShowing(SNAP);
+        for(int i=0; i<numSnaps; i++) {
+            if(p->displayedNotifications[loc+i]->getUrgency() < n->getUrgency()) {
+                return loc+i;
+            }
         }
+        return loc+numSnaps;
+    } else {
+        for(; i<p->displayedNotifications.size(); i++) {
+            if(p->displayedNotifications[i]->getType() > n->getType()) {
+                break;
+            }
+        }
+        return i;
     }
-    return i;
 }
 
 void NotificationModel::insertToVisible(QSharedPointer<Notification> n, int location) {
