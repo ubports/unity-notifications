@@ -55,6 +55,13 @@
        </property>
       </widget>
      </item>
+     <item row="5" column="0">
+      <widget class="QPushButton" name="snapSendButton">
+       <property name="text">
+        <string>Send snap decision notification</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
@@ -68,7 +75,6 @@
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>

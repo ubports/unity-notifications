@@ -35,6 +35,13 @@ private:
     int notificationCount;
     int syncCount;
     int interactiveCount;
+    int snapCount;
+
+    // Offsets to make notification ids unique.
+    static const int notificationOffset = 0;
+    static const int syncOffset = 10000;
+    static const int interactiveOffset = 20000;
+    static const int snapOffset = 40000;
 
 public slots:
     void queueSizeChanged(int newsize);
@@ -43,5 +50,6 @@ private slots:
     void sendNotification();
     void sendSynchronousNotification();
     void sendInteractiveNotification();
+    void sendSnapNotification();
 
 };

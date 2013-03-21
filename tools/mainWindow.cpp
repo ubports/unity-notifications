@@ -27,10 +27,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     notificationCount = 0;
     syncCount = 0;
     interactiveCount = 0;
+    snapCount = 0;
     listView->setModel(m);
+
     connect(this->notificationSendButton, SIGNAL(clicked()), this, SLOT(sendNotification()));
     connect(this->synchronousSendButton, SIGNAL(clicked()), this, SLOT(sendSynchronousNotification()));
     connect(this->interactiveSendButton, SIGNAL(clicked()), this, SLOT(sendInteractiveNotification()));
+    connect(this->snapSendButton, SIGNAL(clicked()), this, SLOT(sendSnapNotification()));
+
     connect(m, SIGNAL(queueSizeChanged(int)), this, SLOT(queueSizeChanged(int)));
 
 }
@@ -42,7 +46,7 @@ MainWindow::~MainWindow() {
 void MainWindow::sendNotification() {
     QString text("notification number ");
     text += QString::number(notificationCount, 10);
-    QSharedPointer<Notification> n(new Notification(notificationCount++, URGENCY_LOW, text));
+    QSharedPointer<Notification> n(new Notification(notificationOffset + notificationCount++, URGENCY_LOW, text));
     m->insertNotification(n); // Wrap in a try/catch eventually.
 }
 
@@ -55,7 +59,7 @@ void MainWindow::queueSizeChanged(int newsize) {
 void MainWindow::sendSynchronousNotification() {
     QString text("sync number ");
     text += QString::number(syncCount, 10);
-    QSharedPointer<Notification> n(new Notification(syncCount++, URGENCY_LOW, text, SYNCHRONOUS));
+    QSharedPointer<Notification> n(new Notification(syncOffset + syncCount++, URGENCY_LOW, text, SYNCHRONOUS));
 
     m->insertNotification(n); // Wrap in a try/catch eventually.
 }
@@ -63,7 +67,15 @@ void MainWindow::sendSynchronousNotification() {
 void MainWindow::sendInteractiveNotification() {
     QString text("interactive number ");
     text += QString::number(interactiveCount, 10);
-    QSharedPointer<Notification> n(new Notification(interactiveCount++, URGENCY_LOW, text, INTERACTIVE));
+    QSharedPointer<Notification> n(new Notification(interactiveOffset + interactiveCount++, URGENCY_LOW, text, INTERACTIVE));
+
+    m->insertNotification(n); // Wrap in a try/catch eventually.
+}
+
+void MainWindow::sendSnapNotification() {
+    QString text("snap number ");
+    text += QString::number(snapCount, 10);
+    QSharedPointer<Notification> n(new Notification(snapOffset + snapCount++, URGENCY_LOW, text, SNAP));
 
     m->insertNotification(n); // Wrap in a try/catch eventually.
 }
