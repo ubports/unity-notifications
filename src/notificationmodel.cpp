@@ -182,7 +182,15 @@ void NotificationModel::insertAsync(QSharedPointer<Notification> n) {
 void NotificationModel::insertInteractive(QSharedPointer<Notification> n) {
     Q_ASSERT(n->getType() == INTERACTIVE);
     if(showingNotificationOfType(INTERACTIVE)) {
-        p->interactiveQueue.push_back(n);
+        int loc = findFirst(INTERACTIVE);
+        QSharedPointer<Notification> showing = p->displayedNotifications[loc];
+        if(n->getUrgency() > showing->getUrgency()) {
+            deleteFromVisible(loc);
+            insertToVisible(n, loc);
+            p->interactiveQueue.push_front(showing);
+        } else {
+            p->interactiveQueue.push_back(n);
+        }
         qStableSort(p->interactiveQueue.begin(), p->interactiveQueue.end());
         emit queueSizeChanged(queued());
     } else {
