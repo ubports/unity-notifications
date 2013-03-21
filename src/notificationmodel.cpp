@@ -59,6 +59,10 @@ QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
 void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
     if(numNotifications() >= maxNotifications)
         return; // Just ignore. Maybe we should throw()?
+    int remaining = p->timer.remainingTime();
+    int elapsed = p->timer.interval() - remaining;
+    p->timer.stop();
+    incrementDisplayTimes(elapsed);
     switch(n->getType()) {
     case ASYNCHRONOUS : insertAsync(n); break;
     case SYNCHRONOUS : insertSync(n); break;
@@ -68,6 +72,10 @@ void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
         printf("Unknown notification type, I should probably throw an exception here.\n");
         break;
     }
+    int timeout = nextTimeout();
+    Q_ASSERT(timeout > 0);
+    p->timer.setInterval(timeout);
+    p->timer.start();
 }
 
 void NotificationModel::deleteFirst() {
@@ -86,11 +94,10 @@ void NotificationModel::deleteFromVisible(int loc) {
 }
 
 void NotificationModel::timeout() {
-    printf("TIMEOUT.\n");
     bool restartTimer = false;
     incrementDisplayTimes(p->timer.interval());
     pruneExpired();
-    if(p->displayedNotifications.size() != 0) {
+    if(!p->displayedNotifications.empty()) {
         restartTimer = true;
     }
 
@@ -116,16 +123,17 @@ void NotificationModel::timeout() {
         emit queueSizeChanged(queued());
     }
     if(restartTimer) {
-        p->timer.setInterval(nextTimeout());
+        int timeout = nextTimeout();
+        Q_ASSERT(timeout > 0);
+        p->timer.setInterval(timeout);
         p->timer.start();
     }
 }
 
 void NotificationModel::pruneExpired() {
-    for(int i=p->displayedNotifications.size()-1; i>0; i--) {
+    for(int i=p->displayedNotifications.size()-1; i>=0; i--) {
         QSharedPointer<Notification> n = p->displayedNotifications[i];
         int shownTime = p->displayTimes[n->getID()];
-        printf("SHOWN %d DISPLAY %d\n", shownTime, n->getDisplayTime());
         if(shownTime >= n->getDisplayTime()) {
             deleteFromVisible(i);
         }
@@ -144,13 +152,11 @@ int NotificationModel::nextTimeout() const {
         int totalTime = n->getDisplayTime();
         int shownTime = p->displayTimes[n->getID()];
         int remainingTime = totalTime - shownTime;
-        printf("Total %d shown %d remaining %d\n", totalTime, shownTime, remainingTime);
         if(remainingTime < 0)
             remainingTime = 0;
         if(remainingTime < mintime)
             mintime = remainingTime;
     }
-    printf("Timeout: %d\n", mintime);
     return mintime;
 }
 
@@ -220,9 +226,6 @@ void NotificationModel::insertToVisible(QSharedPointer<Notification> n, int loca
     p->displayedNotifications.insert(location, n);
     endInsertRows();
     p->displayTimes[n->getID()] = 0;
-    p->timer.stop();
-    p->timer.setInterval(nextTimeout());
-    p->timer.start();
 }
 
 int NotificationModel::queued() const {
