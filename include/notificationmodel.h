@@ -33,6 +33,9 @@ class NotificationModel : public QAbstractListModel {
     Q_OBJECT
 
 public:
+    static const int maxNotifications = 50;
+    static const int maxSnapsShown = 5;
+
     NotificationModel(QObject *parent=nullptr);
     virtual ~NotificationModel();
 
@@ -43,7 +46,10 @@ public:
     void deleteFirst();
 
     int queued() const;
+    int numNotifications() const;
     bool showingNotificationOfType(const NotificationType type) const;
+    int countShowing(const NotificationType type) const;
+
 
 private slots:
     void timeout();
@@ -61,6 +67,7 @@ private:
     void insertAsync(QSharedPointer<Notification> n);
     void insertSync(QSharedPointer<Notification> n);
     void insertInteractive(QSharedPointer<Notification> n);
+    void insertSnap(QSharedPointer<Notification> n);
     void insertToVisible(QSharedPointer<Notification> n, int location=-1);
 };
 

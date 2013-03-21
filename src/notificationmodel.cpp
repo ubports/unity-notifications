@@ -28,6 +28,7 @@ struct NotificationModelPrivate {
     QTimer timer;
     QVector<QSharedPointer<Notification> > asyncQueue;
     QVector<QSharedPointer<Notification> > interactiveQueue;
+    QVector<QSharedPointer<Notification> > snapQueue;
 };
 
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent), p(new NotificationModelPrivate) {
@@ -53,12 +54,16 @@ QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
 }
 
 void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
+    if(numNotifications() >= maxNotifications)
+        return; // Just ignore. Maybe we should throw()?
     switch(n->getType()) {
     case ASYNCHRONOUS : insertAsync(n); break;
     case SYNCHRONOUS : insertSync(n); break;
     case INTERACTIVE : insertInteractive(n); break;
+    case SNAP : insertSnap(n); break;
     default:
-        printf("Insert not implemented for this type.\n");
+        printf("Unknown notification type, I should probably throw an exception here.\n");
+        break;
     }
 }
 
@@ -90,6 +95,13 @@ void NotificationModel::timeout() {
     if(!showingNotificationOfType(ASYNCHRONOUS) && !p->asyncQueue.empty()) {
         QSharedPointer<Notification> n = p->asyncQueue[0];
         p->asyncQueue.pop_front();
+        insertToVisible(n, insertPoint(n));
+        restartTimer = true;
+        emit queueSizeChanged(queued());
+    }
+    if(countShowing(SNAP) < maxSnapsShown && !p->snapQueue.empty()) {
+        QSharedPointer<Notification> n = p->snapQueue[0];
+        p->snapQueue.pop_front();
         insertToVisible(n, insertPoint(n));
         restartTimer = true;
         emit queueSizeChanged(queued());
@@ -135,6 +147,19 @@ void NotificationModel::insertSync(QSharedPointer<Notification> n) {
     insertToVisible(n, 0);
 }
 
+
+void NotificationModel::insertSnap(QSharedPointer<Notification> n) {
+    Q_ASSERT(n->getType() == SNAP);
+    int showing = countShowing(n->getType());
+    if(showing >= maxSnapsShown) {
+        p->snapQueue.push_back(n);
+        emit queueSizeChanged(queued());
+    } else {
+        int loc = insertPoint(n);
+        insertToVisible(n, loc);
+    }
+}
+
 int NotificationModel::insertPoint(const QSharedPointer<Notification> n) const {
     int i=0;
     for(; i<p->displayedNotifications.size(); i++) {
@@ -162,14 +187,23 @@ void NotificationModel::insertToVisible(QSharedPointer<Notification> n, int loca
 }
 
 int NotificationModel::queued() const {
-    return p->asyncQueue.size() + p->interactiveQueue.size();
+    return p->asyncQueue.size() + p->interactiveQueue.size() + p->snapQueue.size();
 }
 
 bool NotificationModel::showingNotificationOfType(const NotificationType type) const {
+    return countShowing(type) > 0;
+}
+
+int NotificationModel::countShowing(const NotificationType type) const {
+    int count = 0;
     for(int i=0; i<p->displayedNotifications.size(); i++) {
         if(p->displayedNotifications[i]->getType() == type) {
-            return true;
+            count++;
         }
     }
-    return false;
+    return count;
+}
+
+int NotificationModel::numNotifications() const {
+    return queued() + p->displayedNotifications.size();
 }
