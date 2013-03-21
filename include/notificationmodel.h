@@ -62,6 +62,8 @@ private:
     QScopedPointer<NotificationModelPrivate> p;
 
     int nextTimeout() const;
+    void incrementDisplayTimes(const int displayedTime) const;
+    void pruneExpired();
 
     int insertPoint(const QSharedPointer<Notification> n) const;
     void insertAsync(QSharedPointer<Notification> n);
@@ -69,6 +71,7 @@ private:
     void insertInteractive(QSharedPointer<Notification> n);
     void insertSnap(QSharedPointer<Notification> n);
     void insertToVisible(QSharedPointer<Notification> n, int location=-1);
+    void deleteFromVisible(int loc);
 };
 
 #endif
