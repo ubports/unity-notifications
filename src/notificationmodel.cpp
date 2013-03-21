@@ -162,11 +162,12 @@ int NotificationModel::nextTimeout() const {
 
 void NotificationModel::insertAsync(QSharedPointer<Notification> n) {
     Q_ASSERT(n->getType() == ASYNCHRONOUS);
-    if(showingNotificationOfType(ASYNCHRONOUS) == 0) {
-        insertToVisible(n);
-    } else {
+    if(showingNotificationOfType(ASYNCHRONOUS)) {
         p->asyncQueue.push_back(n);
+        qStableSort(p->asyncQueue.begin(), p->asyncQueue.end());
         emit queueSizeChanged(queued());
+    } else {
+        insertToVisible(n);
     }
 }
 
@@ -174,6 +175,7 @@ void NotificationModel::insertInteractive(QSharedPointer<Notification> n) {
     Q_ASSERT(n->getType() == INTERACTIVE);
     if(showingNotificationOfType(INTERACTIVE)) {
         p->interactiveQueue.push_back(n);
+        qStableSort(p->interactiveQueue.begin(), p->interactiveQueue.end());
         emit queueSizeChanged(queued());
     } else {
         int loc = insertPoint(n);
@@ -197,6 +199,7 @@ void NotificationModel::insertSnap(QSharedPointer<Notification> n) {
     int showing = countShowing(n->getType());
     if(showing >= maxSnapsShown) {
         p->snapQueue.push_back(n);
+        qStableSort(p->snapQueue.begin(), p->snapQueue.end());
         emit queueSizeChanged(queued());
     } else {
         int loc = insertPoint(n);
