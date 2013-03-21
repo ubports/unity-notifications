@@ -49,7 +49,7 @@ public:
     int numNotifications() const;
     bool showingNotificationOfType(const NotificationType type) const;
     int countShowing(const NotificationType type) const;
-
+    int findFirst(const NotificationType type) const;
 
 private slots:
     void timeout();

@@ -163,7 +163,15 @@ int NotificationModel::nextTimeout() const {
 void NotificationModel::insertAsync(QSharedPointer<Notification> n) {
     Q_ASSERT(n->getType() == ASYNCHRONOUS);
     if(showingNotificationOfType(ASYNCHRONOUS)) {
-        p->asyncQueue.push_back(n);
+        int loc = findFirst(ASYNCHRONOUS);
+        QSharedPointer<Notification> showing = p->displayedNotifications[loc];
+        if(n->getUrgency() > showing->getUrgency()) {
+            deleteFromVisible(loc);
+            insertToVisible(n, loc);
+            p->asyncQueue.push_front(showing);
+        } else {
+            p->asyncQueue.push_back(n);
+        }
         qStableSort(p->asyncQueue.begin(), p->asyncQueue.end());
         emit queueSizeChanged(queued());
     } else {
@@ -257,4 +265,12 @@ void NotificationModel::incrementDisplayTimes(const int displayedTime) const {
     for(int i=0; i<p->displayedNotifications.size(); i++) {
         p->displayTimes[p->displayedNotifications[i]->getID()] += displayedTime;
     }
+}
+
+int NotificationModel::findFirst(const NotificationType type) const {
+    for(int i=0; i<p->displayedNotifications.size(); i++) {
+        if(p->displayedNotifications[i]->getType() == type)
+            return i;
+    }
+    return -1;
 }
