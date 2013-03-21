@@ -39,6 +39,7 @@ public:
     Urgency getUrgency() const;
     QString getText() const;
     NotificationType getType() const;
+    int getDisplayTime() const;
 
     bool operator<(const Notification &n) const; // Order by "interestingness".
 };

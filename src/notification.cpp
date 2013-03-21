@@ -58,6 +58,10 @@ NotificationType Notification::getType() const {
     return p->type;
 }
 
+int Notification::getDisplayTime() const {
+    return 5000;
+}
+
 bool Notification::operator<(const Notification &n) const {
     if(p->type < n.p->type)
         return true;

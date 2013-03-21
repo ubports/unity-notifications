@@ -33,6 +33,7 @@ struct NotificationModelPrivate {
 
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent), p(new NotificationModelPrivate) {
     connect(&(p->timer), SIGNAL(timeout()), this, SLOT(timeout()));
+    p->timer.setSingleShot(true);
 }
 
 NotificationModel::~NotificationModel() {
@@ -79,7 +80,6 @@ void NotificationModel::deleteFirst() {
 
 void NotificationModel::timeout() {
     bool restartTimer = false;
-    p->timer.stop();
     deleteFirst();
     if(p->displayedNotifications.size() != 0) {
         restartTimer = true;
@@ -113,7 +113,18 @@ void NotificationModel::timeout() {
 }
 
 int NotificationModel::nextTimeout() const {
-    return 5000;
+    int mintime = INT_MAX;
+    if(p->displayedNotifications.empty()) {
+        // What to do? It really does not make sense
+        // to add a timer in this case.
+        return 10000;
+    }
+    for(int i=0; i<p->displayedNotifications.size(); i++) {
+        int curtime = p->displayedNotifications[i]->getDisplayTime();
+        if(curtime < mintime) // Fixme: subtract time already displayed.
+            mintime = curtime;
+    }
+    return mintime;
 }
 
 void NotificationModel::insertAsync(QSharedPointer<Notification> n) {
