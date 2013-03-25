@@ -30,8 +30,18 @@ struct NotificationPrivate {
     NotificationType type;
 };
 
-Notification::Notification(NotificationID id, const Urgency ur, QString text, NotificationType type) {
-    p = new NotificationPrivate();
+/*
+ * This constructor really should not exist, but
+ * QML requires it.
+ */
+
+Notification::Notification() : p(new NotificationPrivate()) {
+    p->id = 99999;
+    p->urg = URGENCY_LOW;
+    p->text = "default text";
+}
+
+Notification::Notification(NotificationID id, const Urgency ur, QString text, NotificationType type) : p(new NotificationPrivate()) {
     p->id = id;
     p->urg = ur;
     p->text = text;
@@ -39,7 +49,6 @@ Notification::Notification(NotificationID id, const Urgency ur, QString text, No
 }
 
 Notification::~Notification() {
-    delete p;
 }
 
 Urgency Notification::getUrgency() const {
@@ -52,7 +61,7 @@ QString Notification::getText() const {
 
 void Notification::setText(const QString text) {
     p->text = text;
-    emit(textChanged(text));
+    emit textChanged(text);
 }
 
 NotificationID Notification::getID() const {

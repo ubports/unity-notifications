@@ -24,6 +24,7 @@
 #include "notify-backend.h"
 #include <QString>
 #include <QObject>
+#include <QScopedPointer>
 
 struct NotificationPrivate;
 
@@ -33,13 +34,14 @@ class Notification : public QObject {
 
 private:
 
-    NotificationPrivate *p;
+    QScopedPointer<NotificationPrivate> p;
 
 signals:
 
     void textChanged(QString text);
 
 public:
+    Notification();
     Notification(NotificationID id, const Urgency ur, QString text, NotificationType type=ASYNCHRONOUS);
     ~Notification();
 
