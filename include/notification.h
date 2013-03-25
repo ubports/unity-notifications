@@ -23,21 +23,31 @@
 
 #include "notify-backend.h"
 #include <QString>
+#include <QObject>
 
 struct NotificationPrivate;
 
-class Notification {
+class Notification : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QString text READ getText WRITE setText NOTIFY textChanged)
+
 private:
 
     NotificationPrivate *p;
+
+signals:
+
+    void textChanged(QString text);
 
 public:
     Notification(NotificationID id, const Urgency ur, QString text, NotificationType type=ASYNCHRONOUS);
     ~Notification();
 
+    QString getText() const;
+    void setText(const QString text);
+
     NotificationID getID() const;
     Urgency getUrgency() const;
-    QString getText() const;
     NotificationType getType() const;
     int getDisplayTime() const;
 

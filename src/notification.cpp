@@ -50,6 +50,11 @@ QString Notification::getText() const {
     return p->text;
 }
 
+void Notification::setText(const QString text) {
+    p->text = text;
+    emit(textChanged(text));
+}
+
 NotificationID Notification::getID() const {
     return p->id;
 }
