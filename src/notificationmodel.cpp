@@ -104,7 +104,28 @@ void NotificationModel::timeout() {
     if(!p->displayedNotifications.empty()) {
         restartTimer = true;
     }
+    // Snap decisions override everything.
+    if(showingNotificationOfType(SNAP) || !p->snapQueue.empty()) {
+        if(countShowing(SNAP) < maxSnapsShown && !p->snapQueue.empty()) {
+            QSharedPointer<Notification> n = p->snapQueue[0];
+            p->snapQueue.pop_front();
+            insertToVisible(n, insertionPoint(n));
+            restartTimer = true;
+            emit queueSizeChanged(queued());
+        }
+    } else {
+        restartTimer = nonSnapTimeout();
+    }
+    if(restartTimer) {
+        int timeout = nextTimeout();
+        Q_ASSERT(timeout > 0);
+        p->timer.setInterval(timeout);
+        p->timer.start();
+    }
+}
 
+bool NotificationModel::nonSnapTimeout() {
+    bool restartTimer;
     if(!showingNotificationOfType(INTERACTIVE) && !p->interactiveQueue.empty()) {
         QSharedPointer<Notification> n = p->interactiveQueue[0];
         p->interactiveQueue.pop_front();
@@ -119,27 +140,26 @@ void NotificationModel::timeout() {
         restartTimer = true;
         emit queueSizeChanged(queued());
     }
-    if(countShowing(SNAP) < maxSnapsShown && !p->snapQueue.empty()) {
-        QSharedPointer<Notification> n = p->snapQueue[0];
-        p->snapQueue.pop_front();
-        insertToVisible(n, insertionPoint(n));
-        restartTimer = true;
-        emit queueSizeChanged(queued());
-    }
-    if(restartTimer) {
-        int timeout = nextTimeout();
-        Q_ASSERT(timeout > 0);
-        p->timer.setInterval(timeout);
-        p->timer.start();
-    }
+    return restartTimer;
 }
-
 void NotificationModel::pruneExpired() {
     for(int i=p->displayedNotifications.size()-1; i>=0; i--) {
         QSharedPointer<Notification> n = p->displayedNotifications[i];
         int shownTime = p->displayTimes[n->getID()];
         if(shownTime >= n->getDisplayTime()) {
             deleteFromVisible(i);
+        }
+    }
+}
+
+void NotificationModel::removeNonSnap() {
+    for(int i=p->displayedNotifications.size()-1; i>=0; i--) {
+        QSharedPointer<Notification> n = p->displayedNotifications[i];
+        switch(n->getType()) {
+        case SNAP : break;
+        case SYNCHRONOUS : deleteFromVisible(i); break;
+        case ASYNCHRONOUS : deleteFromVisible(i); p->asyncQueue.push_front(n); queueSizeChanged(queued()); break;
+        case INTERACTIVE : deleteFromVisible(i); p->interactiveQueue.push_front(n); queueSizeChanged(queued()); break;
         }
     }
 }
@@ -166,7 +186,12 @@ int NotificationModel::nextTimeout() const {
 
 void NotificationModel::insertAsync(QSharedPointer<Notification> n) {
     Q_ASSERT(n->getType() == ASYNCHRONOUS);
-    if(showingNotificationOfType(ASYNCHRONOUS)) {
+
+    if(showingNotificationOfType(SNAP)) {
+        p->asyncQueue.push_back(n);
+        qStableSort(p->asyncQueue.begin(), p->asyncQueue.end(), notificationCompare);
+        emit queueSizeChanged(queued());
+    } else if(showingNotificationOfType(ASYNCHRONOUS)) {
         int loc = findFirst(ASYNCHRONOUS);
         QSharedPointer<Notification> showing = p->displayedNotifications[loc];
         if(n->getUrgency() > showing->getUrgency()) {
@@ -185,7 +210,12 @@ void NotificationModel::insertAsync(QSharedPointer<Notification> n) {
 
 void NotificationModel::insertInteractive(QSharedPointer<Notification> n) {
     Q_ASSERT(n->getType() == INTERACTIVE);
-    if(showingNotificationOfType(INTERACTIVE)) {
+
+    if(showingNotificationOfType(SNAP)) {
+        p->interactiveQueue.push_back(n);
+        qStableSort(p->interactiveQueue.begin(), p->interactiveQueue.end(), notificationCompare);
+        emit queueSizeChanged(queued());
+    } else if(showingNotificationOfType(INTERACTIVE)) {
         int loc = findFirst(INTERACTIVE);
         QSharedPointer<Notification> showing = p->displayedNotifications[loc];
         if(n->getUrgency() > showing->getUrgency()) {
@@ -216,6 +246,7 @@ void NotificationModel::insertSync(QSharedPointer<Notification> n) {
 
 void NotificationModel::insertSnap(QSharedPointer<Notification> n) {
     Q_ASSERT(n->getType() == SNAP);
+    removeNonSnap();
     int showing = countShowing(n->getType());
     if(showing >= maxSnapsShown) {
         int loc = findFirst(SNAP);

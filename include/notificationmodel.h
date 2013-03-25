@@ -61,9 +61,11 @@ signals:
 private:
     QScopedPointer<NotificationModelPrivate> p;
 
+    bool nonSnapTimeout();
     int nextTimeout() const;
     void incrementDisplayTimes(const int displayedTime) const;
     void pruneExpired();
+    void removeNonSnap();
 
     int insertionPoint(const QSharedPointer<Notification> n) const;
     void insertAsync(QSharedPointer<Notification> n);
