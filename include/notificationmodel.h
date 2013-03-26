@@ -43,13 +43,10 @@ public:
     virtual QVariant data(const QModelIndex &parent, int role) const;
 
     void insertNotification(QSharedPointer<Notification> n);
-    void deleteFirst();
 
-    int queued() const;
-    int numNotifications() const;
-    bool showingNotificationOfType(const NotificationType type) const;
-    int countShowing(const NotificationType type) const;
-    int findFirst(const NotificationType type) const;
+    Q_INVOKABLE int queued() const;
+    Q_INVOKABLE int numNotifications() const;
+    Q_INVOKABLE void removeNotification(const int id);
 
 private slots:
     void timeout();
@@ -74,6 +71,10 @@ private:
     void insertSnap(QSharedPointer<Notification> n);
     void insertToVisible(QSharedPointer<Notification> n, int location=-1);
     void deleteFromVisible(int loc);
+    void deleteFirst();
+    int findFirst(const NotificationType type) const;
+    bool showingNotificationOfType(const NotificationType type) const;
+    int countShowing(const NotificationType type) const;
 };
 
 #endif

@@ -82,6 +82,40 @@ void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
     p->timer.start();
 }
 
+void NotificationModel::removeNotification(const int id) {
+    for(int i=0; i<p->asyncQueue.size(); i++) {
+        if(p->asyncQueue[i]->getID() == id) {
+            p->asyncQueue.erase(p->asyncQueue.begin() + i);
+            emit queueSizeChanged(queued());
+            return;
+        }
+    }
+
+    for(int i=0; i<p->snapQueue.size(); i++) {
+        if(p->snapQueue[i]->getID() == id) {
+            p->snapQueue.erase(p->snapQueue.begin() + i);
+            emit queueSizeChanged(queued());
+            return;
+        }
+    }
+
+    for(int i=0; i<p->interactiveQueue.size(); i++) {
+        if(p->interactiveQueue[i]->getID() == id) {
+            p->interactiveQueue.erase(p->interactiveQueue.begin() + i);
+            emit queueSizeChanged(queued());
+            return;
+        }
+    }
+
+    for(int i=0; i<p->displayedNotifications.size(); i++) {
+        if(p->displayedNotifications[i]->getID() == id) {
+            deleteFromVisible(i);
+            return;
+        }
+    }
+    // The ID was not found in any queue. Should it be an error case or not?
+}
+
 void NotificationModel::deleteFirst() {
     if(p->displayedNotifications.empty())
         return;
