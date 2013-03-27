@@ -18,19 +18,15 @@
  */
 
 #include "notificationserver.h"
+#include <QApplication>
+#include <QDBusConnection>
 
-
-NotificationServer::NotificationServer(QObject *parent) : QDBusAbstractAdaptor(parent) {
-
-}
-
-NotificationServer::~NotificationServer() {
-
-}
-
-QStringList NotificationServer::GetCapabilities() const {
-    QStringList capabilities;
-    capabilities.push_back("cap1");
-    capabilities.push_back("cap2");
-    return capabilities;
+int main(int argc, char **argv) {
+    QApplication app(argc, argv);
+    if(!QDBusConnection::sessionBus().registerObject(DBUS_PATH, new NotificationServer())) {
+        printf("Could not register to DBus session.\n");
+        return 1;
+    }
+    app.exec();
+    return 0;
 }
