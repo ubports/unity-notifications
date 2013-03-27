@@ -5,6 +5,8 @@ notificationbackend.cpp
 renderer.cpp
 notificationmodel.cpp
 ../include/notificationmodel.h
+notificationserver.cpp
+../include/notificationserver.h
 )
 
-qt5_use_modules(notifybackend Core)
+qt5_use_modules(notifybackend Core DBus)
