@@ -30,7 +30,14 @@ NotificationServer::~NotificationServer() {
 
 QStringList NotificationServer::GetCapabilities() const {
     QStringList capabilities;
-    capabilities.push_back("cap1");
-    capabilities.push_back("cap2");
+    capabilities.push_back("actions");
+    capabilities.push_back("body");
+    capabilities.push_back("body-markup");
+    capabilities.push_back("icon-static");
+    capabilities.push_back("image/svg+xml");
+    capabilities.push_back("x-canonical-private-synchronous");
+    capabilities.push_back("x-canonical-append");
+    capabilities.push_back("x-canonical-private-icon-only");
+    capabilities.push_back("x-canonical-truncation");
     return capabilities;
 }
