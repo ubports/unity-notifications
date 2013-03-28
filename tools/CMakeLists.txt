@@ -18,3 +18,7 @@ target_link_libraries(qmltest notifybackend)
 add_executable(dbusserver dbusserver.cpp)
 qt5_use_modules(dbusserver Widgets DBus)
 target_link_libraries(dbusserver notifybackend)
+
+add_executable(dbusclient dbusclient.cpp)
+qt5_use_modules(dbusclient Widgets DBus)
+target_link_libraries(dbusclient notifybackend)
