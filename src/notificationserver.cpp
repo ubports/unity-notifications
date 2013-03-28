@@ -21,15 +21,16 @@
 
 
 NotificationServer::NotificationServer(QObject *parent) : QDBusAbstractAdaptor(parent) {
-
+    setAutoRelaySignals(true);
 }
 
 NotificationServer::~NotificationServer() {
 
 }
 
-QStringList NotificationServer::GetCapabilities() const {
+int NotificationServer::GetCapabilities() const {
     QStringList capabilities;
+    printf("Got GetCapabilities call!\n");
     capabilities.push_back("actions");
     capabilities.push_back("body");
     capabilities.push_back("body-markup");
@@ -39,5 +40,5 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back("x-canonical-append");
     capabilities.push_back("x-canonical-private-icon-only");
     capabilities.push_back("x-canonical-truncation");
-    return capabilities;
+    return capabilities.size();
 }

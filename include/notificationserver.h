@@ -42,19 +42,23 @@
 #include <QStringList>
 
 #define DBUS_SERVICE_NAME "com.canonical.notificationproto" // org.freedesktop.Notifications
-#define DBUS_INTERFACE "com.canonical.notificationproto" // "org.freedesktop.Notifications"
+#define DBUS_INTERFACE "com.canonical.notificationproto" // "org.freedesktop.Notifications
 #define DBUS_PATH "/com/canonical/notificationproto" // "/org/freedesktop.Notifications"
 
 class NotificationServer : public QDBusAbstractAdaptor {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", DBUS_INTERFACE)
-
+    Q_CLASSINFO("D-Bus Introspection", ""
+            "  <interface name=\"com.canonical.notificationproto\">\n"
+            "    <method name=\"GetCapabilities\"/>\n"
+            "  </interface>\n"
+            )
 public:
     NotificationServer(QObject *parent=nullptr);
     ~NotificationServer();
 
 public slots:
-    QStringList GetCapabilities() const;
+    int GetCapabilities() const;
 };
 
 #endif
