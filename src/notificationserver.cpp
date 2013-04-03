@@ -41,3 +41,18 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back("x-canonical-truncation");
     return capabilities;
 }
+
+int NotificationServer::Notify (QString app_name, int replaces_id, QString app_icon, QString summary, QString body,
+        QStringList actions, QMap<QString, QString>hints, int expire_timeout) {
+    return 0;
+}
+
+void NotificationServer::CloseNotification (int id) {
+
+}
+
+void NotificationServer::GetServerInformation (QString &name, QString &vendor, QString &version) const {
+    name = "Unity notification server";
+    vendor = "Canonical";
+    version = "something";
+}

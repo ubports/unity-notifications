@@ -24,18 +24,37 @@
 #include <QDBusReply>
 #include <QDBusInterface>
 
-int main(int argc, char **argv) {
-    QApplication app(argc, argv);
-    QDBusInterface service(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE);
+void getCaps(QDBusInterface &service) {
     QDBusReply<QStringList> reply = service.call("GetCapabilities");
     if(!reply.isValid()) {
-        printf("Got no reply from notification service.\n");
-        return 1;
+        printf("Got no reply for capability query.\n");
+        return;
     }
     QStringList caps = reply.value();
     printf("The server has the following capabilities:\n");
     for(int i=0; i<caps.size(); i++) {
         printf(" %s\n", caps[i].toUtf8().constData());
     }
+}
+
+void getInfo(QDBusInterface &service) {
+    QString name, vendor, version;
+    QDBusReply<void> reply = service.call("GetServerInformation", name, vendor, version);
+    if(!reply.isValid()) {
+        printf("Got no reply for server info query.\n");
+        return;
+    }
+    printf("Server info:\n");
+    printf(" name:    %s\n", name.toUtf8().constData());
+    printf(" vendor:  %s\n", vendor.toUtf8().constData());
+    printf(" version: %s\n", version.toUtf8().constData());
+}
+
+int main(int argc, char **argv) {
+    QApplication app(argc, argv);
+    QDBusInterface service(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE);
+
+    getCaps(service);
+    getInfo(service);
     return 0;
 }

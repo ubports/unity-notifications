@@ -48,17 +48,23 @@
 class NotificationServer : public QDBusAbstractAdaptor {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", DBUS_INTERFACE)
+/*
     Q_CLASSINFO("D-Bus Introspection", ""
             "  <interface name=\"com.canonical.notificationproto\">\n"
             "    <method name=\"GetCapabilities\"/>\n"
             "  </interface>\n"
             )
+            */
 public:
     NotificationServer(QObject *parent=nullptr);
     ~NotificationServer();
 
 public slots:
     QStringList GetCapabilities() const;
+    int Notify (QString app_name, int replaces_id, QString app_icon, QString summary, QString body,
+            QStringList actions, QMap<QString, QString>hints, int expire_timeout);
+    void CloseNotification (int id);
+    void GetServerInformation (QString &name, QString &vendor, QString &version) const;
 };
 
 #endif
