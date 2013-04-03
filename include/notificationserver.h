@@ -65,6 +65,12 @@ public slots:
             QStringList actions, QMap<QString, QString>hints, int expire_timeout);
     void CloseNotification (int id);
     void GetServerInformation (QString &name, QString &vendor, QString &version) const;
+
+signals:
+
+    void NotificationClosed(int id, int reason);
+    void ActionInvoked(int id, QString action_key);
+
 };
 
 #endif
