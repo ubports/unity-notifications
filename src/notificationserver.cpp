@@ -18,10 +18,10 @@
  */
 
 #include "notificationserver.h"
-
+#include <QDBusMetaType>
 
 NotificationServer::NotificationServer(QObject *parent) : QDBusAbstractAdaptor(parent) {
-    setAutoRelaySignals(true);
+    qDBusRegisterMetaType<Hints>();
 }
 
 NotificationServer::~NotificationServer() {
@@ -42,8 +42,9 @@ QStringList NotificationServer::GetCapabilities() const {
     return capabilities;
 }
 
-int NotificationServer::Notify (QString app_name, int replaces_id, QString app_icon, QString summary, QString body,
-        QStringList actions, QMap<QString, QString>hints, int expire_timeout) {
+int NotificationServer::Notify (QString app_name, int replaces_id, QString app_icon,
+        QString summary, QString body,
+        QStringList actions, Hints hints, int expire_timeout) {
     return 0;
 }
 
