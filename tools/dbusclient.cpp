@@ -27,11 +27,15 @@
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
     QDBusInterface service(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE);
-    QDBusReply<int> reply = service.call("GetCapabilities");
+    QDBusReply<QStringList> reply = service.call("GetCapabilities");
     if(!reply.isValid()) {
         printf("Got no reply from notification service.\n");
         return 1;
     }
-    printf("Server has %d caps.\n", reply.value());
+    QStringList caps = reply.value();
+    printf("The server has the following capabilities:\n");
+    for(int i=0; i<caps.size(); i++) {
+        printf(" %s\n", caps[i].toUtf8().constData());
+    }
     return 0;
 }

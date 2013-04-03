@@ -28,7 +28,7 @@ NotificationServer::~NotificationServer() {
 
 }
 
-int NotificationServer::GetCapabilities() const {
+QStringList NotificationServer::GetCapabilities() const {
     QStringList capabilities;
     capabilities.push_back("actions");
     capabilities.push_back("body");
@@ -39,5 +39,5 @@ int NotificationServer::GetCapabilities() const {
     capabilities.push_back("x-canonical-append");
     capabilities.push_back("x-canonical-private-icon-only");
     capabilities.push_back("x-canonical-truncation");
-    return capabilities.size();
+    return capabilities;
 }

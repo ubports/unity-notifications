@@ -58,7 +58,7 @@ public:
     ~NotificationServer();
 
 public slots:
-    int GetCapabilities() const;
+    QStringList GetCapabilities() const;
 };
 
 #endif
