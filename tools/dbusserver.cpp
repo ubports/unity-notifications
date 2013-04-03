@@ -23,12 +23,13 @@
 
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
+    new NotificationServer(&app);
 
     if(!QDBusConnection::sessionBus().registerService(DBUS_SERVICE_NAME)) {
         printf("Service name already taken.\n");
         return 1;
     }
-    if(!QDBusConnection::sessionBus().registerObject(DBUS_PATH, new NotificationServer(&app))) {
+    if(!QDBusConnection::sessionBus().registerObject(DBUS_PATH, &app)) {
         printf("Could not register to DBus session.\n");
         return 1;
     }

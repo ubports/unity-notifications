@@ -30,7 +30,6 @@ NotificationServer::~NotificationServer() {
 
 int NotificationServer::GetCapabilities() const {
     QStringList capabilities;
-    printf("Got GetCapabilities call!\n");
     capabilities.push_back("actions");
     capabilities.push_back("body");
     capabilities.push_back("body-markup");
