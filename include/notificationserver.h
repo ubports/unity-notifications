@@ -69,8 +69,8 @@ public slots:
 
 signals:
 
-    void NotificationClosed(int id, int reason);
-    void ActionInvoked(int id, QString action_key);
+    void NotificationClosed(unsigned int id, unsigned int reason);
+    void ActionInvoked(unsigned int id, QString action_key);
 
 };
 

@@ -39,7 +39,7 @@ void getCaps(QDBusInterface &service) {
 
 void getInfo(QDBusInterface &service) {
     QString name, vendor, version;
-    QDBusReply<void> reply = service.call("GetServerInformation", name, vendor, version);
+    QDBusReply<void> reply = service.call("GetServerInformation");
     if(!reply.isValid()) {
         printf("Got no reply for server info query.\n");
         return;
@@ -57,10 +57,11 @@ int main(int argc, char **argv) {
 
     if(!QDBusConnection::sessionBus().connect(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE,
             "NotificationClosed", cl, "NotificationClosed")) {
-        printf("Could not connect to NotificationClosed signal.\n");
+        printf("Could not connect to NotificationClosed signal.\n\n");
     }
 
     getCaps(service);
-    //getInfo(service);
+    printf("\n");
+    getInfo(service);
     return 0;
 }
