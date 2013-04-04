@@ -59,6 +59,10 @@ int main(int argc, char **argv) {
             "NotificationClosed", cl, "NotificationClosed")) {
         printf("Could not connect to NotificationClosed signal.\n\n");
     }
+    if(!QDBusConnection::sessionBus().connect(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE,
+            "ActionInvoked", cl, "ActionInvoked")) {
+        printf("Could not connect to ActionInvoked signal.\n\n");
+    }
 
     getCaps(service);
     printf("\n");
