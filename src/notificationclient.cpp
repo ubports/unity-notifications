@@ -26,3 +26,11 @@ NotificationClient::NotificationClient() {
 NotificationClient::~NotificationClient() {
 
 }
+
+void NotificationClient::NotificationClosed(unsigned int id, unsigned int reason) {
+    printf("Got NotificationClosed signal for notification %d.\n", id);
+}
+
+void NotificationClient::ActionInvoked(unsigned int id, QString key) {
+    printf("Got ActionInvoked signal for notification %d.\n", id);
+}

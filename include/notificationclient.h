@@ -31,6 +31,9 @@ public:
     NotificationClient();
     ~NotificationClient();
 
+public slots:
+    void NotificationClosed(unsigned int id, unsigned int reason);
+    void ActionInvoked(unsigned int id, QString key);
 };
 
 #endif
