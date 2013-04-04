@@ -23,6 +23,30 @@
 #include <QDBusConnection>
 #include <QDBusReply>
 #include <QDBusInterface>
+#include <QDBusMetaType>
+
+struct InfoStruct {
+    QString name;
+    QString vendor;
+    QString version;
+};
+Q_DECLARE_METATYPE(InfoStruct)
+
+QDBusArgument &operator<<(QDBusArgument &argument, const InfoStruct &mystruct)
+{
+    argument.beginStructure();
+    argument << mystruct.name << mystruct.vendor << mystruct.version;
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, InfoStruct &mystruct)
+{
+    argument.beginStructure();
+    argument >> mystruct.name >> mystruct.vendor >> mystruct.version;
+    argument.endStructure();
+    return argument;
+}
 
 void getCaps(QDBusInterface &service) {
     QDBusReply<QStringList> reply = service.call("GetCapabilities");
@@ -39,19 +63,21 @@ void getCaps(QDBusInterface &service) {
 
 void getInfo(QDBusInterface &service) {
     QString name, vendor, version;
-    QDBusReply<void> reply = service.call("GetServerInformation");
+    QDBusReply<InfoStruct> reply = service.call("GetServerInformation");
     if(!reply.isValid()) {
         printf("Got no reply for server info query.\n");
         return;
     }
+    InfoStruct i = reply.value();
     printf("Server info:\n");
-    printf(" name:    %s\n", name.toUtf8().constData());
-    printf(" vendor:  %s\n", vendor.toUtf8().constData());
-    printf(" version: %s\n", version.toUtf8().constData());
+    printf(" name:    %s\n", i.name.toUtf8().constData());
+    printf(" vendor:  %s\n", i.vendor.toUtf8().constData());
+    printf(" version: %s\n", i.version.toUtf8().constData());
 }
 
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
+    qDBusRegisterMetaType<InfoStruct>();
     NotificationClient *cl = new NotificationClient(&app);
     QDBusInterface service(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE);
 
