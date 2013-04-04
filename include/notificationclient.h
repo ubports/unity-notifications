@@ -28,7 +28,7 @@ class NotificationClient : public QObject {
     Q_OBJECT
 
 public:
-    NotificationClient();
+    NotificationClient(QObject *parent=0);
     ~NotificationClient();
 
 public slots:

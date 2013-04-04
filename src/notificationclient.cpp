@@ -19,7 +19,7 @@
 
 #include "notificationclient.h"
 
-NotificationClient::NotificationClient() {
+NotificationClient::NotificationClient(QObject *parent) : QObject(parent) {
 
 }
 

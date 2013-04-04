@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "notificationserver.h"
+#include "notificationclient.h"
 
 #include <QApplication>
 #include <QDBusConnection>
@@ -52,9 +52,15 @@ void getInfo(QDBusInterface &service) {
 
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
+    NotificationClient *cl = new NotificationClient(&app);
     QDBusInterface service(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE);
 
+    if(!QDBusConnection::sessionBus().connect(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE,
+            "NotificationClosed", cl, "NotificationClosed")) {
+        printf("Could not connect to NotificationClosed signal.\n");
+    }
+
     getCaps(service);
-    getInfo(service);
+    //getInfo(service);
     return 0;
 }
