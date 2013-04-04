@@ -42,10 +42,6 @@
 #include <QStringList>
 #include <QDBusVariant>
 
-#define DBUS_SERVICE_NAME "com.canonical.notificationproto" // org.freedesktop.Notifications
-#define DBUS_INTERFACE "com.canonical.notificationproto" // "org.freedesktop.Notifications
-#define DBUS_PATH "/com/canonical/notificationproto" // "/org/freedesktop.Notifications"
-
 typedef QMap<QString, QDBusVariant> Hints;
 
 Q_DECLARE_METATYPE(Hints)
@@ -66,7 +62,7 @@ public:
 
 public slots:
     QStringList GetCapabilities() const;
-    int Notify (QString app_name, int replaces_id, QString app_icon, QString summary, QString body,
+    unsigned int Notify (QString app_name, int replaces_id, QString app_icon, QString summary, QString body,
             QStringList actions, Hints hints, int expire_timeout);
     void CloseNotification (int id);
     void GetServerInformation (QString &name, QString &vendor, QString &version) const;

@@ -17,37 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// All core definitions of Notify-Backend.
+#ifndef NOTIFICATIONCLIENT_H_
+#define NOTIFICATIONCLIENT_H_
 
-#ifndef NOTIFY_BACKEND_
-#define NOTIFY_BACKEND_
+#include"notify-backend.h"
 
-#include<cstdlib>
+#include <QDBusAbstractAdaptor>
 
-typedef int NotificationID;
+class NotificationClient : public QObject {
+    Q_OBJECT
 
-enum Urgency {
-    URGENCY_LOW,
-    URGENCY_NORMAL,
-    URGENCY_CRITICAL
+public:
+    NotificationClient();
+    ~NotificationClient();
+
 };
-
-enum NotificationType {
-    SYNCHRONOUS,
-    SNAP,
-    INTERACTIVE,
-    ASYNCHRONOUS
-};
-
-const unsigned int MAX_NOTIFICATIONS = 50;
-
-class Renderer;
-class NotificationBackend;
-class Notification;
-
-#define DBUS_SERVICE_NAME "com.canonical.notificationproto" // org.freedesktop.Notifications
-#define DBUS_INTERFACE "com.canonical.notificationproto" // "org.freedesktop.Notifications
-#define DBUS_PATH "/com/canonical/notificationproto" // "/org/freedesktop.Notifications"
-
 
 #endif
