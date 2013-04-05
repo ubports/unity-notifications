@@ -21,8 +21,7 @@
 #define NOTIFICATIONCLIENT_H_
 
 #include"notify-backend.h"
-
-#include <QDBusAbstractAdaptor>
+#include<QObject>
 
 class NotificationClient : public QObject {
     Q_OBJECT

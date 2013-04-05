@@ -82,11 +82,11 @@ int main(int argc, char **argv) {
     QDBusInterface service(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE);
 
     if(!QDBusConnection::sessionBus().connect(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE,
-            "NotificationClosed", cl, "NotificationClosed")) {
+            "NotificationClosed", cl, SLOT(NotificationClosed(unsigned int, unsigned int)))) {
         printf("Could not connect to NotificationClosed signal.\n\n");
     }
     if(!QDBusConnection::sessionBus().connect(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE,
-            "ActionInvoked", cl, "ActionInvoked")) {
+            "ActionInvoked", cl, SLOT(ActionInvoked(unsigned int, QString)))) {
         printf("Could not connect to ActionInvoked signal.\n\n");
     }
 
