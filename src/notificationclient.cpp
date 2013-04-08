@@ -23,8 +23,7 @@
 #include <QDBusReply>
 
 NotificationClient::NotificationClient(QObject *parent) : QObject(parent),
-    service(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE),
-    win(nullptr) {
+    service(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE) {
 
 }
 
@@ -55,8 +54,14 @@ void NotificationClient::NotificationClosed(unsigned int id, unsigned int reason
     QString msg("Got NotificationClosed signal for notification ");
     msg += QString::number(id, 10);
     msg += ".\n";
+    emit eventHappened(msg);
 }
 
 void NotificationClient::ActionInvoked(unsigned int id, QString key) {
-    printf("Got ActionInvoked signal for notification %d.\n", id);
+    QString msg("Got ActionInvoked signal for notification ");
+    msg += QString::number(id, 10);
+    msg += " event \"";
+    msg += key;
+    msg += "\".\n";
+    emit eventHappened(msg);
 }

@@ -29,8 +29,12 @@ class ServerMainWindow : public QMainWindow, private Ui_ServerMainWindow {
     Q_OBJECT
 
 public:
-    ServerMainWindow(QWidget *parent=nullptr);
+    ServerMainWindow(NotificationModel &m, QWidget *parent=nullptr);
     ~ServerMainWindow();
 
+public slots:
+    void queueSizeChanged(int newSize);
+
 private:
+    NotificationModel &model;
 };

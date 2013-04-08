@@ -17,12 +17,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include"notificationmodel.h"
 #include"serverMainWindow.h"
 
-ServerMainWindow::ServerMainWindow(QWidget *parent) : QMainWindow(parent) {
+ServerMainWindow::ServerMainWindow(NotificationModel &m, QWidget *parent) :
+    QMainWindow(parent), model(m) {
     setupUi(this);
+    listView->setModel(&model);
+    connect(&model, SIGNAL(queueSizeChanged(int)), this, SLOT(queueSizeChanged(int)));
 }
 
 ServerMainWindow::~ServerMainWindow() {
+
+}
+
+void ServerMainWindow::queueSizeChanged(int newSize) {
+    QString text("Notifications in queue: ");
+    text += QString::number(newSize, 10);
+    queueLabel->setText(text);
 
 }

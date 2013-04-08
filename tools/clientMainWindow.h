@@ -34,6 +34,7 @@ public:
     ClientMainWindow(NotificationClient &cl, QWidget *parent=nullptr);
     ~ClientMainWindow();
 
+public slots:
     void appendText(QString text);
 
 private:

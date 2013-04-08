@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "notificationmodel.h"
 #include "notificationserver.h"
 #include "notification.h"
 #include <QDBusMetaType>
@@ -51,6 +52,7 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     Urgency urg = URGENCY_LOW;
     NotificationType ntype = ASYNCHRONOUS;
     QSharedPointer<Notification> n(new Notification(idCounter, urg, body, ntype));
+    model.insertNotification(n);
     return idCounter++;
 }
 

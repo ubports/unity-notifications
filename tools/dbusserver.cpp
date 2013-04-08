@@ -26,7 +26,7 @@
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
     NotificationModel model;
-    ServerMainWindow *w = new ServerMainWindow();
+    ServerMainWindow *w = new ServerMainWindow(model);
     new NotificationServer(model, &app);
 
     if(!QDBusConnection::sessionBus().registerService(DBUS_SERVICE_NAME)) {
