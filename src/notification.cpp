@@ -18,6 +18,7 @@
  */
 
 
+#include "notificationserver.h"
 #include "notification.h"
 #include <string>
 
@@ -28,6 +29,7 @@ struct NotificationPrivate {
     Urgency urg;
     QString text;
     NotificationType type;
+    NotificationServer *server;
 };
 
 /*
@@ -35,20 +37,25 @@ struct NotificationPrivate {
  * QML requires it.
  */
 
-Notification::Notification() : p(new NotificationPrivate()) {
-    p->id = 99999;
+Notification::Notification(QObject *parent) : QObject(parent), p(new NotificationPrivate()) {
+    p->id = (NotificationID) -1;
     p->urg = URGENCY_LOW;
     p->text = "default text";
+    p->server = nullptr;
 }
 
-Notification::Notification(NotificationID id, const Urgency ur, QString text, NotificationType type) : p(new NotificationPrivate()) {
+Notification::Notification(NotificationID id, const Urgency ur, QString text, NotificationType type, NotificationServer *srv, QObject *parent) :
+                QObject(parent), p(new NotificationPrivate()) {
     p->id = id;
     p->urg = ur;
     p->text = text;
     p->type = type;
+    p->server = srv;
 }
 
 Notification::~Notification() {
+    if(p->server)
+        p->server->CloseNotification(p->id, 0);
 }
 
 Urgency Notification::getUrgency() const {

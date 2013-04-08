@@ -51,12 +51,12 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
         QStringList actions, /*Hints hints,*/ int expire_timeout) {
     Urgency urg = URGENCY_LOW;
     NotificationType ntype = ASYNCHRONOUS;
-    QSharedPointer<Notification> n(new Notification(idCounter, urg, body, ntype));
+    QSharedPointer<Notification> n(new Notification(idCounter, urg, body, ntype, this));
     model.insertNotification(n);
     return idCounter++;
 }
 
-void NotificationServer::CloseNotification(unsigned int id, unsigned int reason) {
+void NotificationServer::CloseNotification(NotificationID id, unsigned int reason) {
     emit NotificationClosed(id, reason);
 }
 

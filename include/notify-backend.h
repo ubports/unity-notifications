@@ -24,7 +24,7 @@
 
 #include<cstdlib>
 
-typedef int NotificationID;
+typedef unsigned int NotificationID;
 
 enum Urgency {
     URGENCY_LOW,

@@ -27,6 +27,7 @@
 #include <QScopedPointer>
 
 struct NotificationPrivate;
+class NotificationServer;
 
 class Notification : public QObject {
     Q_OBJECT
@@ -41,9 +42,9 @@ signals:
     void textChanged(QString text);
 
 public:
-    Notification();
-    Notification(NotificationID id, const Urgency ur, QString text, NotificationType type=ASYNCHRONOUS);
-    ~Notification();
+    Notification(QObject *parent=0);
+    Notification(NotificationID id, const Urgency ur, QString text, NotificationType type=ASYNCHRONOUS, NotificationServer *srv=nullptr, QObject *parent=0);
+    virtual ~Notification();
 
     QString getText() const;
     void setText(const QString text);

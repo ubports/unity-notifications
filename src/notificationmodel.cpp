@@ -86,7 +86,7 @@ void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
     p->timer.start();
 }
 
-void NotificationModel::removeNotification(const int id) {
+void NotificationModel::removeNotification(const NotificationID id) {
     for(int i=0; i<p->asyncQueue.size(); i++) {
         if(p->asyncQueue[i]->getID() == id) {
             p->asyncQueue.erase(p->asyncQueue.begin() + i);
