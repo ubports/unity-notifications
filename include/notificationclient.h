@@ -24,6 +24,8 @@
 #include<QObject>
 #include<QDBusInterface>
 
+class ClientMainWindow;
+
 class NotificationClient : public QObject {
     Q_OBJECT
 
@@ -31,6 +33,7 @@ public:
     NotificationClient(QObject *parent=0);
     ~NotificationClient();
     unsigned int sendNotification(NotificationType ntype, Urgency urg, QString text);
+    void setMainWindow(ClientMainWindow *w) {win = w;}
 
 public slots:
     void NotificationClosed(unsigned int id, unsigned int reason);
@@ -38,6 +41,7 @@ public slots:
 
 private:
     QDBusInterface service;
+    ClientMainWindow *win; // Hack, since both of these classes must call each other.
 
 };
 

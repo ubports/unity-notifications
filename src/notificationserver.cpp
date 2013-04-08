@@ -18,10 +18,12 @@
  */
 
 #include "notificationserver.h"
+#include "notification.h"
 #include <QDBusMetaType>
+#include <QSharedPointer>
 
-NotificationServer::NotificationServer(QObject *parent) :
-    QDBusAbstractAdaptor(parent), idCounter(1) {
+NotificationServer::NotificationServer(NotificationModel &m, QObject *parent) :
+    QDBusAbstractAdaptor(parent), model(m), idCounter(1) {
     qDBusRegisterMetaType<Hints>();
 }
 
@@ -46,11 +48,14 @@ QStringList NotificationServer::GetCapabilities() const {
 unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces_id, QString app_icon,
         QString summary, QString body,
         QStringList actions, /*Hints hints,*/ int expire_timeout) {
+    Urgency urg = URGENCY_LOW;
+    NotificationType ntype = ASYNCHRONOUS;
+    QSharedPointer<Notification> n(new Notification(idCounter, urg, body, ntype));
     return idCounter++;
 }
 
-void NotificationServer::CloseNotification (int id) {
-
+void NotificationServer::CloseNotification(unsigned int id, unsigned int reason) {
+    emit NotificationClosed(id, reason);
 }
 
 void NotificationServer::GetServerInformation (QString &name, QString &vendor, QString &version) const {

@@ -20,7 +20,7 @@
 #include"clientMainWindow.h"
 #include "notificationclient.h"
 
-ClientMainWindow::ClientMainWindow(QWidget *parent, NotificationClient &cl) :
+ClientMainWindow::ClientMainWindow(NotificationClient &cl, QWidget *parent) :
     QMainWindow(parent), client(cl) {
     setupUi(this);
 
@@ -48,8 +48,13 @@ void ClientMainWindow::sendLowNotification() {
     QString msg = "Sent Notification which got reply id ";
     msg += QString::number(res, 10);
     msg += ".\n";
-    this->plainTextEdit->appendPlainText(msg);
+    appendText(msg);
 }
+
+void ClientMainWindow::appendText(QString text) {
+    this->plainTextEdit->appendPlainText(text);
+}
+
 
 void ClientMainWindow::sendNormalNotification() {
 

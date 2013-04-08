@@ -80,7 +80,8 @@ int main(int argc, char **argv) {
     QApplication app(argc, argv);
     qDBusRegisterMetaType<InfoStruct>();
     NotificationClient *cl = new NotificationClient(&app);
-    ClientMainWindow *win = new ClientMainWindow(nullptr, *cl);
+    ClientMainWindow *win = new ClientMainWindow(*cl);
+    cl->setMainWindow(win);
     QDBusInterface service(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE);
 
     if(!QDBusConnection::sessionBus().connect(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE,

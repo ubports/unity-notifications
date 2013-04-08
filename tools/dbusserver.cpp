@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "notificationmodel.h"
 #include "notificationserver.h"
 #include "serverMainWindow.h"
 #include <QApplication>
@@ -24,8 +25,9 @@
 
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
+    NotificationModel model;
     ServerMainWindow *w = new ServerMainWindow();
-    new NotificationServer(&app);
+    new NotificationServer(model, &app);
 
     if(!QDBusConnection::sessionBus().registerService(DBUS_SERVICE_NAME)) {
         printf("Service name already taken.\n");

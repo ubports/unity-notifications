@@ -46,6 +46,8 @@ typedef QMap<QString, QDBusVariant> Hints;
 
 Q_DECLARE_METATYPE(Hints)
 
+class NotificationModel;
+
 class NotificationServer : public QDBusAbstractAdaptor {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", DBUS_INTERFACE)
@@ -57,14 +59,14 @@ class NotificationServer : public QDBusAbstractAdaptor {
             )
             */
 public:
-    NotificationServer(QObject *parent=nullptr);
+    NotificationServer(NotificationModel &m, QObject *parent=nullptr);
     ~NotificationServer();
 
 public slots:
     QStringList GetCapabilities() const;
     unsigned int Notify (QString app_name, unsigned int replaces_id, QString app_icon, QString summary, QString body,
             QStringList actions, /*Hints hints,*/ int expire_timeout);
-    void CloseNotification (int id);
+    void CloseNotification(unsigned int id, unsigned int reason);
     void GetServerInformation (QString &name, QString &vendor, QString &version) const;
 
 signals:
@@ -73,6 +75,7 @@ signals:
     void ActionInvoked(unsigned int id, QString action_key);
 
 private:
+    NotificationModel &model;
     int idCounter;
 
 };

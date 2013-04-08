@@ -31,8 +31,10 @@ class ClientMainWindow : public QMainWindow, private Ui_ClientMainWindow {
     Q_OBJECT
 
 public:
-    ClientMainWindow(QWidget *parent, NotificationClient &cl);
+    ClientMainWindow(NotificationClient &cl, QWidget *parent=nullptr);
     ~ClientMainWindow();
+
+    void appendText(QString text);
 
 private:
     NotificationClient &client;
