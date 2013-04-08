@@ -22,6 +22,7 @@
 
 #include"notify-backend.h"
 #include<QObject>
+#include<QDBusInterface>
 
 class NotificationClient : public QObject {
     Q_OBJECT
@@ -29,10 +30,15 @@ class NotificationClient : public QObject {
 public:
     NotificationClient(QObject *parent=0);
     ~NotificationClient();
+    unsigned int sendNotification(NotificationType ntype, Urgency urg, QString text);
 
 public slots:
     void NotificationClosed(unsigned int id, unsigned int reason);
     void ActionInvoked(unsigned int id, QString key);
+
+private:
+    QDBusInterface service;
+
 };
 
 #endif

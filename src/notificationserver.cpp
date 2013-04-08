@@ -20,7 +20,8 @@
 #include "notificationserver.h"
 #include <QDBusMetaType>
 
-NotificationServer::NotificationServer(QObject *parent) : QDBusAbstractAdaptor(parent) {
+NotificationServer::NotificationServer(QObject *parent) :
+    QDBusAbstractAdaptor(parent), idCounter(1) {
     qDBusRegisterMetaType<Hints>();
 }
 
@@ -45,7 +46,8 @@ QStringList NotificationServer::GetCapabilities() const {
 unsigned int NotificationServer::Notify (QString app_name, int replaces_id, QString app_icon,
         QString summary, QString body,
         QStringList actions, Hints hints, int expire_timeout) {
-    return 0;
+    printf("Got notify call.");
+    return idCounter++;
 }
 
 void NotificationServer::CloseNotification (int id) {

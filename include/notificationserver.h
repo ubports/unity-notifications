@@ -72,6 +72,9 @@ signals:
     void NotificationClosed(unsigned int id, unsigned int reason);
     void ActionInvoked(unsigned int id, QString action_key);
 
+private:
+    int idCounter;
+
 };
 
 #endif

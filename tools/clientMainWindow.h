@@ -25,16 +25,32 @@
 #include "ui_clientMainWindow.h"
 #include "notify-backend.h"
 
-class NotificationModel;
+class NotificationClient;
 
 class ClientMainWindow : public QMainWindow, private Ui_ClientMainWindow {
     Q_OBJECT
 
 public:
-    ClientMainWindow(QWidget *parent=nullptr);
+    ClientMainWindow(QWidget *parent, NotificationClient &cl);
     ~ClientMainWindow();
 
 private:
+    NotificationClient &client;
+
+private slots:
+    void sendLowNotification();
+    void sendNormalNotification();
+    void sendCriticalNotification();
+
+    void sendSynchronousNotification();
+
+    void sendLowInteractiveNotification();
+    void sendNormalInteractiveNotification();
+    void sendCriticalInteractiveNotification();
+
+    void sendSnapNotification();
+    void sendNormalSnapNotification();
+    void sendCriticalSnapNotification();
 };
 
 #endif

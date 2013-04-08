@@ -18,13 +18,37 @@
  */
 
 #include "notificationclient.h"
+#include "notificationserver.h"
+#include <QStringList>
+#include <QDBusReply>
 
-NotificationClient::NotificationClient(QObject *parent) : QObject(parent) {
+NotificationClient::NotificationClient(QObject *parent) : QObject(parent),
+    service(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE){
 
 }
 
 NotificationClient::~NotificationClient() {
 
+}
+
+unsigned int NotificationClient::sendNotification(NotificationType ntype, Urgency urg, QString text) {
+    QString app_name("client test");
+    unsigned int replaces_id = 0;
+    QString app_icon;
+    QString summary("summary");
+    QStringList actions;
+    Hints hints;
+    QVariant tmp = 5;
+    int timeout = 5000;
+    QDBusReply<unsigned int> result = service.call("Notify", app_name, replaces_id, app_icon, summary, text, actions, tmp, timeout);
+    if(!result.isValid()) {
+        return 0;
+    }
+    return result.value();
+/*
+    QString app_name, int replaces_id, QString app_icon,
+            QString summary, QString body,
+            QStringList actions, Hints hints, int expire_timeout*/
 }
 
 void NotificationClient::NotificationClosed(unsigned int id, unsigned int reason) {
