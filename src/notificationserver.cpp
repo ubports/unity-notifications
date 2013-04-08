@@ -49,11 +49,15 @@ QStringList NotificationServer::GetCapabilities() const {
 unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces_id, QString app_icon,
         QString summary, QString body,
         QStringList actions, /*Hints hints,*/ int expire_timeout) {
+    int currentId = idCounter;
     Urgency urg = URGENCY_LOW;
     NotificationType ntype = ASYNCHRONOUS;
-    QSharedPointer<Notification> n(new Notification(idCounter, urg, body, ntype, this));
+    QSharedPointer<Notification> n(new Notification(currentId, urg, body, ntype, this));
     model.insertNotification(n);
-    return idCounter++;
+    idCounter++;
+    if(idCounter == 0) // Spec forbids zero as return value.
+        idCounter = 1;
+    return currentId;
 }
 
 void NotificationServer::CloseNotification(NotificationID id, unsigned int reason) {
