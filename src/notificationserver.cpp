@@ -39,6 +39,7 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back("body-markup");
     capabilities.push_back("icon-static");
     capabilities.push_back("image/svg+xml");
+    capabilities.push_back("urgency");
     capabilities.push_back("x-canonical-private-synchronous");
     capabilities.push_back("x-canonical-append");
     capabilities.push_back("x-canonical-private-icon-only");
