@@ -17,6 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
 #include <QMainWindow>
 #include <QListView>
 #include "ui_mainWindow.h"
@@ -64,3 +67,5 @@ private slots:
     void sendNormalSnapNotification();
     void sendCriticalSnapNotification();
 };
+
+#endif

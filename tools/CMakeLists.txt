@@ -1,4 +1,4 @@
-qt5_wrap_ui(GUI_HEADERS mainWindow.ui)
+qt5_wrap_ui(GUI_HEADERS mainWindow.ui serverMainWindow.ui)
 
 add_executable(viewer
 viewer.cpp
@@ -15,7 +15,7 @@ add_executable(qmltest qmltest.cpp)
 qt5_use_modules(qmltest Qml Quick)
 target_link_libraries(qmltest notifybackend)
 
-add_executable(dbusserver dbusserver.cpp)
+add_executable(dbusserver dbusserver.cpp serverMainWindow.cpp)
 qt5_use_modules(dbusserver Widgets DBus)
 target_link_libraries(dbusserver notifybackend)
 

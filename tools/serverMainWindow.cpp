@@ -17,25 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "notificationserver.h"
-#include "serverMainWindow.h"
-#include <QApplication>
-#include <QDBusConnection>
+#include"serverMainWindow.h"
 
-int main(int argc, char **argv) {
-    QApplication app(argc, argv);
-    ServerMainWindow *w = new ServerMainWindow();
-    new NotificationServer(&app);
+ServerMainWindow::ServerMainWindow(QWidget *parent) : QMainWindow(parent) {
+    setupUi(this);
+}
 
-    if(!QDBusConnection::sessionBus().registerService(DBUS_SERVICE_NAME)) {
-        printf("Service name already taken.\n");
-        return 1;
-    }
-    if(!QDBusConnection::sessionBus().registerObject(DBUS_PATH, &app)) {
-        printf("Could not register to DBus session.\n");
-        return 1;
-    }
-    w->show();
-    app.exec();
-    return 0;
+ServerMainWindow::~ServerMainWindow() {
+
 }
