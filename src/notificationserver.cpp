@@ -43,10 +43,9 @@ QStringList NotificationServer::GetCapabilities() const {
     return capabilities;
 }
 
-unsigned int NotificationServer::Notify (QString app_name, int replaces_id, QString app_icon,
+unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces_id, QString app_icon,
         QString summary, QString body,
-        QStringList actions, Hints hints, int expire_timeout) {
-    printf("Got notify call.");
+        QStringList actions, /*Hints hints,*/ int expire_timeout) {
     return idCounter++;
 }
 

@@ -44,7 +44,11 @@ ClientMainWindow::~ClientMainWindow() {
 }
 
 void ClientMainWindow::sendLowNotification() {
-    client.sendNotification(ASYNCHRONOUS, URGENCY_LOW, "Low urgency asynchronous");
+    unsigned int res = client.sendNotification(ASYNCHRONOUS, URGENCY_LOW, "Low urgency asynchronous");
+    QString msg = "Sent Notification which got reply id ";
+    msg += QString::number(res, 10);
+    msg += ".\n";
+    this->plainTextEdit->appendPlainText(msg);
 }
 
 void ClientMainWindow::sendNormalNotification() {
