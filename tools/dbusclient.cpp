@@ -18,6 +18,7 @@
  */
 
 #include "notificationclient.h"
+#include "clientMainWindow.h"
 
 #include <QApplication>
 #include <QDBusConnection>
@@ -77,6 +78,7 @@ void getInfo(QDBusInterface &service) {
 
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
+    ClientMainWindow *win = new ClientMainWindow();
     qDBusRegisterMetaType<InfoStruct>();
     NotificationClient *cl = new NotificationClient(&app);
     QDBusInterface service(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE);
@@ -93,5 +95,6 @@ int main(int argc, char **argv) {
     getCaps(service);
     printf("\n");
     getInfo(service);
-    return 0;
+    win->show();
+    return app.exec();
 }

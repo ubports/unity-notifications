@@ -1,4 +1,4 @@
-qt5_wrap_ui(GUI_HEADERS mainWindow.ui serverMainWindow.ui)
+qt5_wrap_ui(GUI_HEADERS mainWindow.ui serverMainWindow.ui clientMainWindow.ui)
 
 add_executable(viewer
 viewer.cpp
@@ -19,6 +19,6 @@ add_executable(dbusserver dbusserver.cpp serverMainWindow.cpp)
 qt5_use_modules(dbusserver Widgets DBus)
 target_link_libraries(dbusserver notifybackend)
 
-add_executable(dbusclient dbusclient.cpp)
+add_executable(dbusclient dbusclient.cpp clientMainWindow.cpp)
 qt5_use_modules(dbusclient Widgets DBus)
 target_link_libraries(dbusclient notifybackend)
