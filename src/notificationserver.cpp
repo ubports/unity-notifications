@@ -51,7 +51,16 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
         QString summary, QString body,
         QStringList actions, Hints hints, int expire_timeout) {
     int currentId = idCounter;
+
     Urgency urg = URGENCY_LOW;
+    if(hints.find("urgency") != hints.end()) {
+        QVariant u = hints["urgency"].variant();
+        if(!u.canConvert(QVariant::Int)) {
+            printf("Invalid urgency value.\n");
+        } else {
+            urg = (Urgency) u.toInt();
+        }
+    }
     NotificationType ntype = ASYNCHRONOUS;
     QSharedPointer<Notification> n(new Notification(currentId, urg, body, ntype, this));
     model.insertNotification(n);
