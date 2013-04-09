@@ -43,8 +43,8 @@ ClientMainWindow::~ClientMainWindow() {
 
 }
 
-void ClientMainWindow::sendLowNotification() {
-    unsigned int res = client.sendNotification(ASYNCHRONOUS, URGENCY_LOW, "Low urgency asynchronous");
+void ClientMainWindow::sendNotification(NotificationType type, Urgency urg, QString text) {
+    unsigned int res = client.sendNotification(type, urg, text);
     QString msg = "Sent Notification which got reply id ";
     msg += QString::number(res, 10);
     msg += ".\n";
@@ -55,38 +55,43 @@ void ClientMainWindow::appendText(QString text) {
     this->plainTextEdit->appendPlainText(text);
 }
 
+void ClientMainWindow::sendLowNotification() {
+    sendNotification(ASYNCHRONOUS, URGENCY_LOW, "Low urgency asynchronous");
+}
 
 void ClientMainWindow::sendNormalNotification() {
-
+    sendNotification(ASYNCHRONOUS, URGENCY_NORMAL, "Normal urgency asynchronous");
 }
 
 void ClientMainWindow::sendCriticalNotification() {
-
+    sendNotification(ASYNCHRONOUS, URGENCY_CRITICAL, "Critical urgency asynchronous");
 }
 
 void ClientMainWindow::sendSynchronousNotification() {
-
+    sendNotification(SYNCHRONOUS, URGENCY_NORMAL, "Normal urgency synchronous");
 }
 
 void ClientMainWindow::sendLowInteractiveNotification() {
-
+    sendNotification(INTERACTIVE, URGENCY_LOW, "Low urgency interactive");
 }
 
 void ClientMainWindow::sendNormalInteractiveNotification() {
-
+    sendNotification(INTERACTIVE, URGENCY_NORMAL, "Normal urgency interactive");
 }
 
 void ClientMainWindow::sendCriticalInteractiveNotification() {
+    sendNotification(INTERACTIVE, URGENCY_CRITICAL, "Critical urgency interactive");
 }
 
 void ClientMainWindow::sendSnapNotification() {
-
+    sendNotification(SNAP, URGENCY_LOW, "Low urgency snap");
 }
 
 void ClientMainWindow::sendNormalSnapNotification() {
-
+    sendNotification(SNAP, URGENCY_NORMAL, "Normal urgency snap");
 }
 
 void ClientMainWindow::sendCriticalSnapNotification() {
+    sendNotification(SNAP, URGENCY_CRITICAL, "Critical urgency snap");
 
 }

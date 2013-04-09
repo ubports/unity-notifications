@@ -39,6 +39,7 @@ public slots:
 
 private:
     NotificationClient &client;
+    void sendNotification(NotificationType type, Urgency urg, QString text);
 
 private slots:
     void sendLowNotification();
