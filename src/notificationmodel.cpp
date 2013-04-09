@@ -57,11 +57,11 @@ QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
 
     if (role != Qt::DisplayRole)
         return QVariant();
-    return QVariant(p->displayedNotifications[parent.row()]->getText());
+    return QVariant(p->displayedNotifications[parent.row()]->getBody());
 }
 
 Q_INVOKABLE QString NotificationModel::tempHackGetData() const {
-    return p->displayedNotifications[0]->getText();
+    return p->displayedNotifications[0]->getBody();
 }
 
 void NotificationModel::insertNotification(QSharedPointer<Notification> n) {

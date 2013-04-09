@@ -31,7 +31,7 @@ class NotificationServer;
 
 class Notification : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString text READ getText WRITE setText NOTIFY textChanged)
+    Q_PROPERTY(QString body READ getBody WRITE setBody NOTIFY bodyChanged)
 
 private:
 
@@ -39,7 +39,7 @@ private:
 
 signals:
 
-    void textChanged(QString text);
+    void bodyChanged(QString text);
 
 public:
     Notification(QObject *parent=0);
@@ -47,8 +47,8 @@ public:
     Notification(NotificationID id, const Urgency ur, NotificationType type=ASYNCHRONOUS, NotificationServer *srv=nullptr, QObject *parent=0);
     virtual ~Notification();
 
-    QString getText() const;
-    void setText(const QString text);
+    QString getBody() const;
+    void setBody(const QString text);
 
     NotificationID getID() const;
     Urgency getUrgency() const;

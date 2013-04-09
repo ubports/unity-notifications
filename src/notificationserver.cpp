@@ -83,7 +83,7 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
         return 0;
     }
     QSharedPointer<Notification> notification(n);
-    n->setText(body);
+    n->setBody(body);
     model.insertNotification(notification);
     idCounter++;
     if(idCounter == 0) // Spec forbids zero as return value.

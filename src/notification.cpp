@@ -67,13 +67,13 @@ Urgency Notification::getUrgency() const {
     return p->urg;
 }
 
-QString Notification::getText() const {
+QString Notification::getBody() const {
     return p->text;
 }
 
-void Notification::setText(const QString text) {
+void Notification::setBody(const QString text) {
     p->text = text;
-    emit textChanged(text);
+    emit bodyChanged(text);
 }
 
 NotificationID Notification::getID() const {
