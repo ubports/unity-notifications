@@ -47,6 +47,7 @@ typedef QMap<QString, QDBusVariant> Hints;
 Q_DECLARE_METATYPE(Hints)
 
 class NotificationModel;
+class Notification;
 
 class NotificationServer : public QDBusAbstractAdaptor {
     Q_OBJECT
@@ -75,6 +76,7 @@ signals:
     void ActionInvoked(unsigned int id, QString action_key);
 
 private:
+    Notification* buildNotification(NotificationID id, const Hints &hints);
     NotificationModel &model;
     int idCounter;
 

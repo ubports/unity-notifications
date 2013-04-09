@@ -44,6 +44,7 @@ signals:
 public:
     Notification(QObject *parent=0);
     Notification(NotificationID id, const Urgency ur, QString text, NotificationType type=ASYNCHRONOUS, NotificationServer *srv=nullptr, QObject *parent=0);
+    Notification(NotificationID id, const Urgency ur, NotificationType type=ASYNCHRONOUS, NotificationServer *srv=nullptr, QObject *parent=0);
     virtual ~Notification();
 
     QString getText() const;

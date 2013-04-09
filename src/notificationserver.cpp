@@ -47,14 +47,10 @@ QStringList NotificationServer::GetCapabilities() const {
     return capabilities;
 }
 
-unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces_id, QString app_icon,
-        QString summary, QString body,
-        QStringList actions, Hints hints, int expire_timeout) {
-    int currentId = idCounter;
-
+Notification* NotificationServer::buildNotification(NotificationID id, const Hints &hints) {
     Urgency urg = URGENCY_LOW;
-    if(hints.find("urgency") != hints.end()) {
-        QVariant u = hints["urgency"].variant();
+    if(hints.find(URGENCY_HINT) != hints.end()) {
+        QVariant u = hints[URGENCY_HINT].variant();
         if(!u.canConvert(QVariant::Int)) {
             printf("Invalid urgency value.\n");
         } else {
@@ -62,8 +58,33 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
         }
     }
     NotificationType ntype = ASYNCHRONOUS;
-    QSharedPointer<Notification> n(new Notification(currentId, urg, body, ntype, this));
-    model.insertNotification(n);
+    if(hints.find(SYNCH_HINT) != hints.end()) {
+        ntype = SYNCHRONOUS;
+    } else if (hints.find(SNAP_HINT) != hints.end()) {
+        ntype = SNAP;
+    } else if(hints.find(INTERACTIVE_HINT) != hints.end()) {
+        ntype = INTERACTIVE;
+    }
+    return new Notification(id, urg, ntype, this);
+
+}
+
+unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces_id, QString app_icon,
+        QString summary, QString body,
+        QStringList actions, Hints hints, int expire_timeout) {
+    if(replaces_id != 0) {
+        // Update existing notification.
+        // Not implemented yet.
+        return replaces_id;
+    }
+    int currentId = idCounter;
+    Notification *n = buildNotification(currentId, hints);
+    if(!n) {
+        return 0;
+    }
+    QSharedPointer<Notification> notification(n);
+    n->setText(body);
+    model.insertNotification(notification);
     idCounter++;
     if(idCounter == 0) // Spec forbids zero as return value.
         idCounter = 1;

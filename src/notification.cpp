@@ -53,6 +53,11 @@ Notification::Notification(NotificationID id, const Urgency ur, QString text, No
     p->server = srv;
 }
 
+Notification::Notification(NotificationID id, const Urgency ur, NotificationType type, NotificationServer *srv, QObject *parent) :
+    Notification(id, ur, "", type, srv, parent){
+
+}
+
 Notification::~Notification() {
     if(p->server)
         p->server->CloseNotification(p->id, 0);

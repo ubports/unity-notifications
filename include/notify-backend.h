@@ -49,5 +49,9 @@ class Notification;
 #define DBUS_INTERFACE "com.canonical.notificationproto" // "org.freedesktop.Notifications
 #define DBUS_PATH "/com/canonical/notificationproto" // "/org/freedesktop.Notifications"
 
+#define URGENCY_HINT "urgency"
+#define SYNCH_HINT "x-canonical-private-synchronous"
+#define SNAP_HINT "x-canonical-snap-decisions"
+#define INTERACTIVE_HINT "x-canonical-switch-to-application"
 
 #endif

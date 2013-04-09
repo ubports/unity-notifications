@@ -40,7 +40,7 @@ unsigned int NotificationClient::sendNotification(NotificationType ntype, Urgenc
     QMap<QString, QVariant> hints;
     hints["urgency"] = (char)urg;
     if(ntype == SYNCHRONOUS) {
-        hints["x-canonical-private-synchronous"] = "yes";
+        hints[SYNCH_HINT] = "yes";
     }
     if(ntype == SNAP) {
         QStringList snaps;
@@ -48,10 +48,10 @@ unsigned int NotificationClient::sendNotification(NotificationType ntype, Urgenc
         snaps.push_back("two");
         snaps.push_back("three");
         snaps.push_back("four");
-        hints["x-canonical-snap-decisions"] = snaps;
+        hints[SNAP_HINT] = snaps;
     }
     if(ntype == INTERACTIVE) {
-        hints["x-canonical-switch-to-application"] = "targetapp";
+        hints[INTERACTIVE_HINT] = "targetapp";
     }
     int timeout = 5000;
     QDBusReply<unsigned int> result = service.call("Notify",
