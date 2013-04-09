@@ -49,7 +49,7 @@ QStringList NotificationServer::GetCapabilities() const {
 
 unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces_id, QString app_icon,
         QString summary, QString body,
-        QStringList actions, /*Hints hints,*/ int expire_timeout) {
+        QStringList actions, Hints hints, int expire_timeout) {
     int currentId = idCounter;
     Urgency urg = URGENCY_LOW;
     NotificationType ntype = ASYNCHRONOUS;

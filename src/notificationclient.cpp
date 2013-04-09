@@ -37,9 +37,10 @@ unsigned int NotificationClient::sendNotification(NotificationType ntype, Urgenc
     QString app_icon;
     QString summary("summary");
     QStringList actions;
-    Hints hints;
+    QMap<QString, QVariant> hints;
     int timeout = 5000;
-    QDBusReply<unsigned int> result = service.call("Notify", app_name, replaces_id, app_icon, summary, text, actions, /*hints,*/ timeout);
+    QDBusReply<unsigned int> result = service.call("Notify",
+            app_name, replaces_id, app_icon, summary, text, actions, hints, timeout);
     if(!result.isValid()) {
         return (unsigned int) -1;
     }
