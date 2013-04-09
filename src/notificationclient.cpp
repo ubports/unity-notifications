@@ -38,6 +38,21 @@ unsigned int NotificationClient::sendNotification(NotificationType ntype, Urgenc
     QString summary("summary");
     QStringList actions;
     QMap<QString, QVariant> hints;
+    hints["urgency"] = (char)urg;
+    if(ntype == SYNCHRONOUS) {
+        hints["x-canonical-private-synchronous"] = "yes";
+    }
+    if(ntype == SNAP) {
+        QStringList snaps;
+        snaps.push_back("one");
+        snaps.push_back("two");
+        snaps.push_back("three");
+        snaps.push_back("four");
+        hints["x-canonical-snap-decisions"] = snaps;
+    }
+    if(ntype == INTERACTIVE) {
+        hints["x-canonical-switch-to-application"] = "targetapp";
+    }
     int timeout = 5000;
     QDBusReply<unsigned int> result = service.call("Notify",
             app_name, replaces_id, app_icon, summary, text, actions, hints, timeout);
@@ -45,10 +60,6 @@ unsigned int NotificationClient::sendNotification(NotificationType ntype, Urgenc
         return (unsigned int) -1;
     }
     return result.value();
-/*
-    QString app_name, int replaces_id, QString app_icon,
-            QString summary, QString body,
-            QStringList actions, Hints hints, int expire_timeout*/
 }
 
 void NotificationClient::NotificationClosed(unsigned int id, unsigned int reason) {
