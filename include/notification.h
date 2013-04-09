@@ -33,6 +33,7 @@ class Notification : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString body READ getBody WRITE setBody NOTIFY bodyChanged)
     Q_PROPERTY(NotificationID id READ getID)
+    Q_PROPERTY(QString icon READ getIcon WRITE setIcon NOTIFY iconChanged)
 
 private:
 
@@ -41,6 +42,7 @@ private:
 signals:
 
     void bodyChanged(QString text);
+    void iconChanged(QString icon);
 
 public:
     Notification(QObject *parent=0);
@@ -56,6 +58,8 @@ public:
     NotificationType getType() const;
     int getDisplayTime() const;
 
+    QString getIcon() const;
+    void setIcon(QString icon);
     bool operator<(const Notification &n) const; // Order by "interestingness".
 };
 
