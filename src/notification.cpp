@@ -27,7 +27,8 @@ using namespace std;
 struct NotificationPrivate {
     NotificationID id;
     Urgency urg;
-    QString text;
+    QString summary;
+    QString body;
     NotificationType type;
     NotificationServer *server;
     QString icon;
@@ -41,7 +42,7 @@ struct NotificationPrivate {
 Notification::Notification(QObject *parent) : QObject(parent), p(new NotificationPrivate()) {
     p->id = (NotificationID) -1;
     p->urg = URGENCY_LOW;
-    p->text = "default text";
+    p->body = "default text";
     p->server = nullptr;
 }
 
@@ -49,7 +50,7 @@ Notification::Notification(NotificationID id, const Urgency ur, QString text, No
                 QObject(parent), p(new NotificationPrivate()) {
     p->id = id;
     p->urg = ur;
-    p->text = text;
+    p->body = text;
     p->type = type;
     p->server = srv;
 }
@@ -69,11 +70,11 @@ Urgency Notification::getUrgency() const {
 }
 
 QString Notification::getBody() const {
-    return p->text;
+    return p->body;
 }
 
 void Notification::setBody(const QString text) {
-    p->text = text;
+    p->body = text;
     emit bodyChanged(text);
 }
 
@@ -105,4 +106,13 @@ QString Notification::getIcon() const {
 void Notification::setIcon(QString icon) {
     p->icon = icon;
     emit iconChanged(p->icon);
+}
+
+QString Notification::getSummary() const {
+    return p->summary;
+}
+
+void Notification::setSummary(QString summary) {
+    p->summary = summary;
+    emit summaryChanged(p->summary);
 }

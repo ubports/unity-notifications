@@ -31,6 +31,7 @@ class NotificationServer;
 
 class Notification : public QObject {
     Q_OBJECT
+    Q_PROPERTY(QString summary READ getSummary WRITE setSummary NOTIFY summaryChanged)
     Q_PROPERTY(QString body READ getBody WRITE setBody NOTIFY bodyChanged)
     Q_PROPERTY(NotificationID id READ getID)
     Q_PROPERTY(QString icon READ getIcon WRITE setIcon NOTIFY iconChanged)
@@ -43,6 +44,7 @@ signals:
 
     void bodyChanged(QString text);
     void iconChanged(QString icon);
+    void summaryChanged(QString summary);
 
 public:
     Notification(QObject *parent=0);
@@ -50,8 +52,6 @@ public:
     Notification(NotificationID id, const Urgency ur, NotificationType type=ASYNCHRONOUS, NotificationServer *srv=nullptr, QObject *parent=0);
     virtual ~Notification();
 
-    QString getBody() const;
-    void setBody(const QString text);
 
     NotificationID getID() const;
     Urgency getUrgency() const;
@@ -60,6 +60,11 @@ public:
 
     QString getIcon() const;
     void setIcon(QString icon);
+    QString getBody() const;
+    void setBody(const QString text);
+    QString getSummary() const;
+    void setSummary(QString summary);
+
     bool operator<(const Notification &n) const; // Order by "interestingness".
 };
 
