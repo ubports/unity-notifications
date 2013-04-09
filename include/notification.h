@@ -32,6 +32,7 @@ class NotificationServer;
 class Notification : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString body READ getBody WRITE setBody NOTIFY bodyChanged)
+    Q_PROPERTY(NotificationID id READ getID)
 
 private:
 
