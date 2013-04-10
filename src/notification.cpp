@@ -31,7 +31,7 @@ struct NotificationPrivate {
     QString body;
     NotificationType type;
     NotificationServer *server;
-    QString icon;
+    QImage icon;
 };
 
 /*
@@ -95,11 +95,11 @@ bool Notification::operator<(const Notification &n) const {
 }
 
 
-QString Notification::getIcon() const {
+QImage Notification::getIcon() const {
     return p->icon;
 }
 
-void Notification::setIcon(QString icon) {
+void Notification::setIcon(QImage icon) {
     p->icon = icon;
     emit iconChanged(p->icon);
 }

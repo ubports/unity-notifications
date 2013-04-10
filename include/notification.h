@@ -25,6 +25,7 @@
 #include <QString>
 #include <QObject>
 #include <QScopedPointer>
+#include <QImage>
 
 struct NotificationPrivate;
 class NotificationServer;
@@ -34,7 +35,7 @@ class Notification : public QObject {
     Q_PROPERTY(QString summary READ getSummary WRITE setSummary NOTIFY summaryChanged)
     Q_PROPERTY(QString body READ getBody WRITE setBody NOTIFY bodyChanged)
     Q_PROPERTY(NotificationID id READ getID)
-    Q_PROPERTY(QString icon READ getIcon WRITE setIcon NOTIFY iconChanged)
+    Q_PROPERTY(QImage icon READ getIcon WRITE setIcon NOTIFY iconChanged)
     Q_PROPERTY(Urgency urgency READ getUrgency WRITE setUrgency NOTIFY urgencyChanged)
     Q_PROPERTY(NotificationType type READ getType WRITE setType NOTIFY typeChanged)
 
@@ -45,7 +46,7 @@ private:
 signals:
 
     void bodyChanged(QString text);
-    void iconChanged(QString icon);
+    void iconChanged(QImage icon);
     void summaryChanged(QString summary);
     void urgencyChanged(Urgency urg);
     void typeChanged(NotificationType type);
@@ -60,8 +61,8 @@ public:
     NotificationID getID() const;
     int getDisplayTime() const;
 
-    QString getIcon() const;
-    void setIcon(QString icon);
+    QImage getIcon() const;
+    void setIcon(QImage icon);
     QString getBody() const;
     void setBody(const QString text);
     QString getSummary() const;

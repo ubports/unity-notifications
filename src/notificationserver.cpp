@@ -72,6 +72,7 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
 unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces_id, QString app_icon,
         QString summary, QString body,
         QStringList actions, Hints hints, int expire_timeout) {
+    QImage icon(app_icon);
     if(replaces_id != 0) {
         // Update existing notification.
         // Not implemented yet.
@@ -84,7 +85,7 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     }
     QSharedPointer<Notification> notification(n);
     n->setBody(body);
-    n->setIcon(app_icon);
+    n->setIcon(icon);
     n->setSummary(summary);
     model.insertNotification(notification);
     idCounter++;
