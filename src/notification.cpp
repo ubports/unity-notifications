@@ -120,3 +120,8 @@ void Notification::setUrgency(Urgency urg) {
     p->urg = urg;
     emit urgencyChanged(p->urg);
 }
+
+void Notification::setType(NotificationType type) {
+    p->type = type;
+    emit typeChanged(p->type);
+}
