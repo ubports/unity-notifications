@@ -34,7 +34,7 @@ NotificationClient::~NotificationClient() {
 unsigned int NotificationClient::sendNotification(NotificationType ntype, Urgency urg, QString text) {
     QString app_name("client test");
     unsigned int replaces_id = 0;
-    QString app_icon;
+    QString app_icon("/usr/share/icons/unity-icon-theme/search/16/search_field.png");
     QString summary("summary");
     QStringList actions;
     QMap<QString, QVariant> hints;
