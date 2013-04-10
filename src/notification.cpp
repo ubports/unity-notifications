@@ -65,10 +65,6 @@ Notification::~Notification() {
         p->server->CloseNotification(p->id, 0);
 }
 
-Urgency Notification::getUrgency() const {
-    return p->urg;
-}
-
 QString Notification::getBody() const {
     return p->body;
 }
@@ -115,4 +111,12 @@ QString Notification::getSummary() const {
 void Notification::setSummary(QString summary) {
     p->summary = summary;
     emit summaryChanged(p->summary);
+}
+
+Urgency Notification::getUrgency() const {
+    return p->urg;
+}
+void Notification::setUrgency(Urgency urg) {
+    p->urg = urg;
+    emit urgencyChanged(p->urg);
 }
