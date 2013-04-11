@@ -103,7 +103,7 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
             return FAILURE;
         }
         if(numActions > maxActions) {
-            printf("Too many strings for Snap Decisions. Has %d, requires %d.\n", numActions, maxActions);
+            printf("Too many strings for Snap Decisions. Has %d, maximum %d.\n", numActions, maxActions);
         }
         n->setActions(actionList);
     } else {
