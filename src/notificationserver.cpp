@@ -72,6 +72,9 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
 unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces_id, QString app_icon,
         QString summary, QString body,
         QStringList actions, Hints hints, int expire_timeout) {
+    const int FAILURE = 0; // Is this correct?
+    const int minActions = 4;
+    const int maxActions = 12;
     QImage icon(app_icon);
     if(replaces_id != 0) {
         // Update existing notification.
@@ -81,12 +84,31 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     int currentId = idCounter;
     Notification *n = buildNotification(currentId, hints);
     if(!n) {
-        return 0;
+        return FAILURE;
     }
     QSharedPointer<Notification> notification(n);
     n->setBody(body);
     n->setIcon(icon);
     n->setSummary(summary);
+    if(n->getType() == SNAP) {
+        QVariant snapActions = hints[SNAP_HINT].variant();
+        if(!snapActions.canConvert<QStringList>()) {
+            printf("Malformed snap decisions list.\n");
+            return FAILURE;
+        }
+        QStringList actionList = snapActions.toStringList();
+        int numActions = actionList.size();
+        if(numActions < minActions) {
+            printf("Too few strings for Snap Decisions. Has %d, requires %d.\n", numActions, minActions);
+            return FAILURE;
+        }
+        if(numActions > maxActions) {
+            printf("Too many strings for Snap Decisions. Has %d, requires %d.\n", numActions, maxActions);
+        }
+        n->setActions(actionList);
+    } else {
+        n->setActions(actions);
+    }
     model.insertNotification(notification);
     idCounter++;
     if(idCounter == 0) // Spec forbids zero as return value.

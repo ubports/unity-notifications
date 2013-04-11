@@ -32,6 +32,7 @@ struct NotificationPrivate {
     NotificationType type;
     NotificationServer *server;
     QImage icon;
+    QStringList actions;
 };
 
 /*
@@ -124,4 +125,13 @@ void Notification::setUrgency(Urgency urg) {
 void Notification::setType(NotificationType type) {
     p->type = type;
     emit typeChanged(p->type);
+}
+
+QStringList Notification::getActions() const {
+    return p->actions;
+}
+
+void Notification::setActions(QStringList actions) {
+    p->actions = actions;
+    emit actionsChanged(p->actions);
 }

@@ -26,6 +26,7 @@
 #include <QObject>
 #include <QScopedPointer>
 #include <QImage>
+#include <QStringList>
 
 struct NotificationPrivate;
 class NotificationServer;
@@ -38,6 +39,7 @@ class Notification : public QObject {
     Q_PROPERTY(QImage icon READ getIcon WRITE setIcon NOTIFY iconChanged)
     Q_PROPERTY(Urgency urgency READ getUrgency WRITE setUrgency NOTIFY urgencyChanged)
     Q_PROPERTY(NotificationType type READ getType WRITE setType NOTIFY typeChanged)
+    Q_PROPERTY(QStringList actions READ getActions WRITE setActions NOTIFY actionsChanged)
 
 private:
 
@@ -50,6 +52,7 @@ signals:
     void summaryChanged(QString summary);
     void urgencyChanged(Urgency urg);
     void typeChanged(NotificationType type);
+    void actionsChanged(QStringList actions);
 
 public:
     Notification(QObject *parent=0);
@@ -71,6 +74,8 @@ public:
     void setUrgency(Urgency urg);
     NotificationType getType() const;
     void setType(NotificationType type);
+    QStringList getActions() const;
+    void setActions(QStringList actions);
 
     bool operator<(const Notification &n) const; // Order by "interestingness".
 };
