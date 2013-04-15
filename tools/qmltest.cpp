@@ -21,6 +21,8 @@ int main(int argc, char *argv[]) {
     //msg->setIcon(QImage icon);
     msg->setSummary("Foo bar");
     msg->setBody("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.");
+    msg->setIcon("graphics/avatar1.jpg");
+    msg->setSecondaryIcon("graphics/icon_phone.png");
     //msg->setUrgency(URGENCY_CRITICAL);
     //msg->setType(NotificationType type);
     //msg->setActions(QStringList actions);
@@ -28,6 +30,8 @@ int main(int argc, char *argv[]) {
     //msg2->setIcon(QImage icon);
     msg2->setSummary("Bla fasel");
     msg2->setBody("At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.");
+    msg2->setIcon("graphics/avatar3.jpg");
+    msg2->setSecondaryIcon("graphics/icon_phone.png");
     //msg2->setUrgency(URGENCY_NORMAL);
     //msg2->setType(NotificationType type);
     //msg2->setActions(QStringList actions);
@@ -35,6 +39,8 @@ int main(int argc, char *argv[]) {
     //msg3->setIcon(QImage icon);
     msg3->setSummary("Hacky jacky");
     msg3->setBody("Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.");
+    msg3->setIcon("graphics/avatar2.jpg");
+    msg3->setSecondaryIcon("graphics/facebook.png");
     //msg3->setUrgency(URGENCY_CRITICAL);
     //msg3->setType(NotificationType type);
     //msg3->setActions(QStringList actions);

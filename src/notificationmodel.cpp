@@ -78,8 +78,8 @@ QVariant NotificationModel::data(const QModelIndex &index, int role) const {
         case RoleIcon:
             return QVariant(p->displayedNotifications[index.row()]->getIcon());
 
-        /*case RoleSecondaryIcon:
-            return QVariant(p->displayedNotifications[index.row()]->getSecondaryIcon());*/
+        case RoleSecondaryIcon:
+            return QVariant(p->displayedNotifications[index.row()]->getSecondaryIcon());
 
         case RoleActions:
             return QVariant(p->displayedNotifications[index.row()]->getActions());

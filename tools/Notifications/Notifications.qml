@@ -27,13 +27,10 @@ ListView {
     spacing: units.gu(.5)
     delegate: Notification {
         objectName: "notification" + index
-        //iconSource: model.icon
-        //secondaryIconSource: model.secondaryIcon
-        //summary: model.summary
-        //body: model.body
-        iconSource: "graphics/avatar3.jpg"
-        summary: notificationmodel.data.summary //tempHackGetSummary()
-        body: notificationmodel.data.body //tempHackGetBody()
+        iconSource: model.icon
+        secondaryIconSource: model.secondaryIcon
+        summary: notificationmodel.data.summary
+        body: notificationmodel.data.body
         //actions: model.actions
     }
 }
