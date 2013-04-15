@@ -106,10 +106,6 @@ Q_INVOKABLE QString NotificationModel::tempHackGetBody() const {
     return p->displayedNotifications[0]->getBody();
 }
 
-/*Notification NotificationModel::getData() const {
-    return p->displayedNotifications[0];
-}*/
-
 void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
     if(numNotifications() >= maxNotifications)
         return; // Just ignore. Maybe we should throw()?
