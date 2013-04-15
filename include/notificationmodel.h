@@ -29,6 +29,20 @@ class Notification;
 
 struct NotificationModelPrivate;
 
+enum Roles {
+    RoleType          = Qt::UserRole + 1,
+    RoleUrgency       = Qt::UserRole + 2,
+    RoleId            = Qt::UserRole + 3,
+    RoleSummary       = Qt::UserRole + 4,
+    RoleBody          = Qt::UserRole + 5,
+    RoleValue         = Qt::UserRole + 6,
+    RoleIcon          = Qt::UserRole + 7,
+    RoleSecondaryIcon = Qt::UserRole + 8,
+    RoleActions       = Qt::UserRole + 9,
+    RoleHints         = Qt::UserRole + 10,
+    RoleNotification  = Qt::UserRole + 11
+};
+
 class NotificationModel : public QAbstractListModel {
     Q_OBJECT
     //Q_PROPERTY(QVariant data READ getData)
@@ -42,8 +56,7 @@ public:
 
     virtual int rowCount(const QModelIndex &parent) const;
     virtual QVariant data(const QModelIndex &parent, int role) const;
-    virtual QHash<QByteArray, int> roleNames() const;
-    virtual QHash<QByteArray, int> QAbstractItemModel::roleNames() const;
+    virtual QHash<int, QByteArray> roleNames() const;
 
     void insertNotification(QSharedPointer<Notification> n);
 

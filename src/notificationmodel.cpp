@@ -40,6 +40,7 @@ bool notificationCompare(const QSharedPointer<Notification> &first, const QShare
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent), p(new NotificationModelPrivate) {
     connect(&(p->timer), SIGNAL(timeout()), this, SLOT(timeout()));
     p->timer.setSingleShot(true);
+
 }
 
 NotificationModel::~NotificationModel() {
@@ -55,9 +56,42 @@ QVariant NotificationModel::data(const QModelIndex &index, int role) const {
     if (!index.isValid())
             return QVariant();
 
-    if (role != Qt::DisplayRole)
-        return QVariant();
-    return QVariant(p->displayedNotifications[index.row()]->getBody());
+    switch(role) {
+        case RoleType:
+            return QVariant(p->displayedNotifications[index.row()]->getType());
+
+        case RoleUrgency:
+            return QVariant(p->displayedNotifications[index.row()]->getUrgency());
+
+        case RoleId:
+            return QVariant(p->displayedNotifications[index.row()]->getID());
+
+        case RoleSummary:
+            return QVariant(p->displayedNotifications[index.row()]->getSummary());
+
+        case RoleBody:
+            return QVariant(p->displayedNotifications[index.row()]->getBody());
+
+        /*case RoleValue:
+            return QVariant(p->displayedNotifications[index.row()]->getValue());*/
+
+        case RoleIcon:
+            return QVariant(p->displayedNotifications[index.row()]->getIcon());
+
+        /*case RoleSecondaryIcon:
+            return QVariant(p->displayedNotifications[index.row()]->getSecondaryIcon());*/
+
+        case RoleActions:
+            return QVariant(p->displayedNotifications[index.row()]->getActions());
+
+        /*case RoleHints:
+            return QVariant(p->displayedNotifications[index.row()]->getHints());*/
+
+        /*case RoleNotification:
+            return QVariant(p->displayedNotifications[index.row()]->getNotification());*/
+        default:
+            return QVariant();
+    }
 }
 
 Q_INVOKABLE QString NotificationModel::tempHackGetData() const {
@@ -391,4 +425,22 @@ int NotificationModel::findFirst(const NotificationType type) const {
             return i;
     }
     return -1;
+}
+
+QHash<int, QByteArray> NotificationModel::roleNames() const {
+    QHash<int, QByteArray> roles;
+
+    roles.insert(RoleType, "type");
+    roles.insert(RoleUrgency, "urgency");
+    roles.insert(RoleId, "id");
+    roles.insert(RoleSummary, "summary");
+    roles.insert(RoleBody, "body");
+    roles.insert(RoleValue, "value");
+    roles.insert(RoleIcon, "icon");
+    roles.insert(RoleSecondaryIcon, "secondaryIcon");
+    roles.insert(RoleActions, "actions");
+    roles.insert(RoleHints, "hints");
+    roles.insert(RoleNotification, "notification");
+
+    return roles;
 }
