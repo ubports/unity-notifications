@@ -31,6 +31,7 @@ struct NotificationModelPrivate;
 
 class NotificationModel : public QAbstractListModel {
     Q_OBJECT
+    //Q_PROPERTY(QVariant data READ getData)
 
 public:
     static const int maxNotifications = 50;
@@ -41,6 +42,8 @@ public:
 
     virtual int rowCount(const QModelIndex &parent) const;
     virtual QVariant data(const QModelIndex &parent, int role) const;
+    virtual QHash<QByteArray, int> roleNames() const;
+    virtual QHash<QByteArray, int> QAbstractItemModel::roleNames() const;
 
     void insertNotification(QSharedPointer<Notification> n);
 
@@ -48,6 +51,10 @@ public:
     Q_INVOKABLE int numNotifications() const;
     Q_INVOKABLE void removeNotification(const NotificationID id);
     Q_INVOKABLE QString tempHackGetData() const;
+    Q_INVOKABLE QString tempHackGetSummary() const;
+    Q_INVOKABLE QString tempHackGetBody() const;
+
+    //Notification getData() const;
 
 private slots:
     void timeout();

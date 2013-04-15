@@ -19,10 +19,10 @@
 
 #include "notificationmodel.h"
 #include "notification.h"
-#include<QTimer>
-#include<QList>
-#include<QVector>
-#include<QMap>
+#include <QTimer>
+#include <QList>
+#include <QVector>
+#include <QMap>
 
 struct NotificationModelPrivate {
     QList<QSharedPointer<Notification> > displayedNotifications;
@@ -50,19 +50,31 @@ int NotificationModel::rowCount(const QModelIndex &parent) const {
     return p->displayedNotifications.size();
 }
 
-QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
-    //printf("Data %d.\n", parent.row());
-    if (!parent.isValid())
+QVariant NotificationModel::data(const QModelIndex &index, int role) const {
+    //printf("Data %d.\n", index.row());
+    if (!index.isValid())
             return QVariant();
 
     if (role != Qt::DisplayRole)
         return QVariant();
-    return QVariant(p->displayedNotifications[parent.row()]->getBody());
+    return QVariant(p->displayedNotifications[index.row()]->getBody());
 }
 
 Q_INVOKABLE QString NotificationModel::tempHackGetData() const {
     return p->displayedNotifications[0]->getBody();
 }
+
+Q_INVOKABLE QString NotificationModel::tempHackGetSummary() const {
+    return p->displayedNotifications[0]->getSummary();
+}
+
+Q_INVOKABLE QString NotificationModel::tempHackGetBody() const {
+    return p->displayedNotifications[0]->getBody();
+}
+
+/*Notification NotificationModel::getData() const {
+    return p->displayedNotifications[0];
+}*/
 
 void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
     if(numNotifications() >= maxNotifications)

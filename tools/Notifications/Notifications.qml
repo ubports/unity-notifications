@@ -15,26 +15,25 @@
  */
 
 import QtQuick 2.0
-import "Notifications"
 import Ubuntu.Components 0.1
 
-Rectangle {
-    id: rootRect
-    width: units.gu(40)
-    height: units.gu(71)
-    color: "white"
+ListView {
+    id: notificationRenderer
 
-    Image {
-        anchors.fill: parent
-        fillMode: Image.Tile
-        source: "Notifications/graphics/tile.png"
-    }
+    objectName: "notificationRenderer"
+    anchors.fill: parent
+    interactive: false
 
-    Notifications {
-        id: notifications
-
-        model: notificationmodel
-        anchors.fill: parent
-        anchors.margins: units.gu(1)
+    spacing: units.gu(.5)
+    delegate: Notification {
+        objectName: "notification" + index
+        //iconSource: model.icon
+        //secondaryIconSource: model.secondaryIcon
+        //summary: model.summary
+        //body: model.body
+        iconSource: "graphics/avatar3.jpg"
+        summary: notificationmodel.data.summary //tempHackGetSummary()
+        body: notificationmodel.data.body //tempHackGetBody()
+        //actions: model.actions
     }
 }
