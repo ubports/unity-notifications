@@ -62,9 +62,6 @@ public:
     Q_INVOKABLE int queued() const;
     Q_INVOKABLE int numNotifications() const;
     Q_INVOKABLE void removeNotification(const NotificationID id);
-    Q_INVOKABLE QString tempHackGetData() const;
-    Q_INVOKABLE QString tempHackGetSummary() const;
-    Q_INVOKABLE QString tempHackGetBody() const;
 
 private slots:
     void timeout();

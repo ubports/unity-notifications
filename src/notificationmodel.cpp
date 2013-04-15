@@ -94,18 +94,6 @@ QVariant NotificationModel::data(const QModelIndex &index, int role) const {
     }
 }
 
-Q_INVOKABLE QString NotificationModel::tempHackGetData() const {
-    return p->displayedNotifications[0]->getBody();
-}
-
-Q_INVOKABLE QString NotificationModel::tempHackGetSummary() const {
-    return p->displayedNotifications[0]->getSummary();
-}
-
-Q_INVOKABLE QString NotificationModel::tempHackGetBody() const {
-    return p->displayedNotifications[0]->getBody();
-}
-
 void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
     if(numNotifications() >= maxNotifications)
         return; // Just ignore. Maybe we should throw()?
