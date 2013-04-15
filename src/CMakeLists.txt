@@ -1,4 +1,8 @@
 add_library(notifybackend SHARED
+action.cpp
+../include/action.h
+actionmodel.cpp
+../include/actionmodel.h
 notification.cpp
 ../include/notification.h
 notificationbackend.cpp

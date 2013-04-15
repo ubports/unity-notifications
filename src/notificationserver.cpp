@@ -75,7 +75,6 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     const int FAILURE = 0; // Is this correct?
     const int minActions = 4;
     const int maxActions = 12;
-    //QImage icon(app_icon);
     if(replaces_id != 0) {
         // Update existing notification.
         // Not implemented yet.
@@ -88,7 +87,6 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     }
     QSharedPointer<Notification> notification(n);
     n->setBody(body);
-    //n->setIcon(icon);
     n->setIcon(app_icon);
     n->setSummary(summary);
     if(n->getType() == SNAP) {

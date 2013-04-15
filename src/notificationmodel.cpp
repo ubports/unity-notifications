@@ -89,6 +89,7 @@ QVariant NotificationModel::data(const QModelIndex &index, int role) const {
 
         /*case RoleNotification:
             return QVariant(p->displayedNotifications[index.row()]->getNotification());*/
+
         default:
             return QVariant();
     }

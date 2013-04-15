@@ -20,9 +20,9 @@
 #ifndef NOTIFICATIONMODEL_H
 #define NOTIFICATIONMODEL_H
 
-#include<QAbstractListModel>
-#include<QSharedPointer>
-#include<QScopedPointer>
+#include <QAbstractListModel>
+#include <QSharedPointer>
+#include <QScopedPointer>
 #include "notify-backend.h"
 
 class Notification;
