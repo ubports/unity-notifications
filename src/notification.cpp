@@ -26,10 +26,10 @@ using namespace std;
 
 struct NotificationPrivate {
     NotificationID id;
-    Urgency urg;
+    Notification::Urgency urg;
     QString summary;
     QString body;
-    NotificationType type;
+    Notification::Type type;
     NotificationServer *server;
     QString icon;
     QString secondaryIcon;
@@ -43,12 +43,12 @@ struct NotificationPrivate {
 
 Notification::Notification(QObject *parent) : QObject(parent), p(new NotificationPrivate()) {
     p->id = (NotificationID) -1;
-    p->urg = URGENCY_LOW;
+    p->urg = Notification::Urgency::Low;
     p->body = "default text";
     p->server = nullptr;
 }
 
-Notification::Notification(NotificationID id, const Urgency ur, QString text, NotificationType type, NotificationServer *srv, QObject *parent) :
+Notification::Notification(NotificationID id, const Urgency ur, QString text, Type type, NotificationServer *srv, QObject *parent) :
                 QObject(parent), p(new NotificationPrivate()) {
     p->id = id;
     p->urg = ur;
@@ -57,7 +57,7 @@ Notification::Notification(NotificationID id, const Urgency ur, QString text, No
     p->server = srv;
 }
 
-Notification::Notification(NotificationID id, const Urgency ur, NotificationType type, NotificationServer *srv, QObject *parent) :
+Notification::Notification(NotificationID id, const Urgency ur, Type type, NotificationServer *srv, QObject *parent) :
     Notification(id, ur, "", type, srv, parent){
 
 }
@@ -80,7 +80,7 @@ NotificationID Notification::getID() const {
     return p->id;
 }
 
-NotificationType Notification::getType() const {
+Notification::Type Notification::getType() const {
     return p->type;
 }
 
@@ -123,15 +123,15 @@ void Notification::setSummary(QString summary) {
     emit summaryChanged(p->summary);
 }
 
-Urgency Notification::getUrgency() const {
+Notification::Urgency Notification::getUrgency() const {
     return p->urg;
 }
-void Notification::setUrgency(Urgency urg) {
+void Notification::setUrgency(Notification::Urgency urg) {
     p->urg = urg;
     emit urgencyChanged(p->urg);
 }
 
-void Notification::setType(NotificationType type) {
+void Notification::setType(Type type) {
     p->type = type;
     emit typeChanged(p->type);
 }

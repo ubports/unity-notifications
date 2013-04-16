@@ -24,6 +24,7 @@
 #include <QSharedPointer>
 #include <QScopedPointer>
 #include "notify-backend.h"
+#include "notification.h"
 
 class Notification;
 
@@ -87,9 +88,9 @@ private:
     void insertToVisible(QSharedPointer<Notification> n, int location=-1);
     void deleteFromVisible(int loc);
     void deleteFirst();
-    int findFirst(const NotificationType type) const;
-    bool showingNotificationOfType(const NotificationType type) const;
-    int countShowing(const NotificationType type) const;
+    int findFirst(const Notification::Type type) const;
+    bool showingNotificationOfType(const Notification::Type type) const;
+    int countShowing(const Notification::Type type) const;
 };
 
 #endif

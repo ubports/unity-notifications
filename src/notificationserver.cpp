@@ -48,22 +48,22 @@ QStringList NotificationServer::GetCapabilities() const {
 }
 
 Notification* NotificationServer::buildNotification(NotificationID id, const Hints &hints) {
-    Urgency urg = URGENCY_LOW;
+    Notification::Urgency urg = Notification::Urgency::Low;
     if(hints.find(URGENCY_HINT) != hints.end()) {
         QVariant u = hints[URGENCY_HINT].variant();
         if(!u.canConvert(QVariant::Int)) {
             printf("Invalid urgency value.\n");
         } else {
-            urg = (Urgency) u.toInt();
+            urg = (Notification::Urgency) u.toInt();
         }
     }
-    NotificationType ntype = ASYNCHRONOUS;
+    Notification::Type ntype = Notification::Type::Ephemeral;
     if(hints.find(SYNCH_HINT) != hints.end()) {
-        ntype = SYNCHRONOUS;
+        ntype = Notification::Type::Confirmation;
     } else if (hints.find(SNAP_HINT) != hints.end()) {
-        ntype = SNAP;
+        ntype = Notification::Type::SnapDecision;
     } else if(hints.find(INTERACTIVE_HINT) != hints.end()) {
-        ntype = INTERACTIVE;
+        ntype = Notification::Type::Interactive;
     }
     return new Notification(id, urg, ntype, this);
 
@@ -89,7 +89,7 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     n->setBody(body);
     n->setIcon(app_icon);
     n->setSummary(summary);
-    if(n->getType() == SNAP) {
+    if(n->getType() == Notification::Type::SnapDecision) {
         QVariant snapActions = hints[SNAP_HINT].variant();
         if(!snapActions.canConvert<QStringList>()) {
             printf("Malformed snap decisions list.\n");

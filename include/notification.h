@@ -33,18 +33,26 @@ class NotificationServer;
 
 class Notification : public QObject {
     Q_OBJECT
+    Q_ENUMS(Urgency)
+    Q_ENUMS(Type)
+    Q_ENUMS(Hint)
     Q_PROPERTY(QString summary READ getSummary WRITE setSummary NOTIFY summaryChanged)
     Q_PROPERTY(QString body READ getBody WRITE setBody NOTIFY bodyChanged)
     Q_PROPERTY(NotificationID id READ getID)
     Q_PROPERTY(QString icon READ getIcon WRITE setIcon NOTIFY iconChanged)
     Q_PROPERTY(QString secondaryIcon READ getSecondaryIcon WRITE setSecondaryIcon NOTIFY secondaryIconChanged)
     Q_PROPERTY(Urgency urgency READ getUrgency WRITE setUrgency NOTIFY urgencyChanged)
-    Q_PROPERTY(NotificationType type READ getType WRITE setType NOTIFY typeChanged)
+    Q_PROPERTY(Type type READ getType WRITE setType NOTIFY typeChanged)
     Q_PROPERTY(QStringList actions READ getActions WRITE setActions NOTIFY actionsChanged)
 
 private:
 
     QScopedPointer<NotificationPrivate> p;
+
+public:
+    enum Urgency { Low, Normal, Critical };
+    enum Type { Confirmation, Ephemeral, Interactive, SnapDecision, PlaceHolder };
+    enum Hint { ButtonTint, IconOnly };
 
 signals:
 
@@ -53,13 +61,13 @@ signals:
     void secondaryIconChanged(QString secondaryIcon);
     void summaryChanged(QString summary);
     void urgencyChanged(Urgency urg);
-    void typeChanged(NotificationType type);
+    void typeChanged(Type type);
     void actionsChanged(QStringList actions);
 
 public:
     Notification(QObject *parent=0);
-    Notification(NotificationID id, const Urgency ur, QString text, NotificationType type=ASYNCHRONOUS, NotificationServer *srv=nullptr, QObject *parent=0);
-    Notification(NotificationID id, const Urgency ur, NotificationType type=ASYNCHRONOUS, NotificationServer *srv=nullptr, QObject *parent=0);
+    Notification(NotificationID id, const Urgency ur, QString text, Type type=Confirmation, NotificationServer *srv=nullptr, QObject *parent=0);
+    Notification(NotificationID id, const Urgency ur, Type type=Confirmation, NotificationServer *srv=nullptr, QObject *parent=0);
     virtual ~Notification();
 
 
@@ -76,8 +84,8 @@ public:
     void setSummary(QString summary);
     Urgency getUrgency() const;
     void setUrgency(Urgency urg);
-    NotificationType getType() const;
-    void setType(NotificationType type);
+    Type getType() const;
+    void setType(Type type);
     QStringList getActions() const;
     void setActions(QStringList actions);
 

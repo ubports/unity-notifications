@@ -22,11 +22,11 @@
 #ifndef NOTIFY_BACKEND_
 #define NOTIFY_BACKEND_
 
-#include<cstdlib>
+#include <cstdlib>
 
 typedef unsigned int NotificationID;
 
-enum Urgency {
+/*enum Urgency {
     URGENCY_LOW,
     URGENCY_NORMAL,
     URGENCY_CRITICAL
@@ -37,7 +37,7 @@ enum NotificationType {
     SNAP,
     INTERACTIVE,
     ASYNCHRONOUS
-};
+};*/
 
 const unsigned int MAX_NOTIFICATIONS = 50;
 
