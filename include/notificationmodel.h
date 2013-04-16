@@ -81,8 +81,8 @@ private:
     void removeNonSnap();
 
     int insertionPoint(const QSharedPointer<Notification> n) const;
-    void insertAsync(QSharedPointer<Notification> n);
-    void insertSync(QSharedPointer<Notification> n);
+    void insertEphemeral(QSharedPointer<Notification> n);
+    void insertConfirmation(QSharedPointer<Notification> n);
     void insertInteractive(QSharedPointer<Notification> n);
     void insertSnap(QSharedPointer<Notification> n);
     void insertToVisible(QSharedPointer<Notification> n, int location=-1);

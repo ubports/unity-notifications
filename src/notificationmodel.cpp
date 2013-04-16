@@ -27,7 +27,7 @@
 struct NotificationModelPrivate {
     QList<QSharedPointer<Notification> > displayedNotifications;
     QTimer timer;
-    QVector<QSharedPointer<Notification> > asyncQueue;
+    QVector<QSharedPointer<Notification> > ephemeralQueue;
     QVector<QSharedPointer<Notification> > interactiveQueue;
     QVector<QSharedPointer<Notification> > snapQueue;
     QMap<NotificationID, int> displayTimes;
@@ -103,8 +103,8 @@ void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
     p->timer.stop();
     incrementDisplayTimes(elapsed);
     switch(n->getType()) {
-    case Notification::Type::Ephemeral : insertAsync(n); break;
-    case Notification::Type::Confirmation : insertSync(n); break;
+    case Notification::Type::Ephemeral : insertEphemeral(n); break;
+    case Notification::Type::Confirmation : insertConfirmation(n); break;
     case Notification::Type::Interactive : insertInteractive(n); break;
     case Notification::Type::SnapDecision : insertSnap(n); break;
     default:
@@ -118,9 +118,9 @@ void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
 }
 
 void NotificationModel::removeNotification(const NotificationID id) {
-    for(int i=0; i<p->asyncQueue.size(); i++) {
-        if(p->asyncQueue[i]->getID() == id) {
-            p->asyncQueue.erase(p->asyncQueue.begin() + i);
+    for(int i=0; i<p->ephemeralQueue.size(); i++) {
+        if(p->ephemeralQueue[i]->getID() == id) {
+            p->ephemeralQueue.erase(p->ephemeralQueue.begin() + i);
             emit queueSizeChanged(queued());
             return;
         }
@@ -202,9 +202,9 @@ bool NotificationModel::nonSnapTimeout() {
         restartTimer = true;
         emit queueSizeChanged(queued());
     }
-    if(!showingNotificationOfType(Notification::Type::Ephemeral) && !p->asyncQueue.empty()) {
-        QSharedPointer<Notification> n = p->asyncQueue[0];
-        p->asyncQueue.pop_front();
+    if(!showingNotificationOfType(Notification::Type::Ephemeral) && !p->ephemeralQueue.empty()) {
+        QSharedPointer<Notification> n = p->ephemeralQueue[0];
+        p->ephemeralQueue.pop_front();
         insertToVisible(n, insertionPoint(n));
         restartTimer = true;
         emit queueSizeChanged(queued());
@@ -227,7 +227,7 @@ void NotificationModel::removeNonSnap() {
         switch(n->getType()) {
         case Notification::Type::SnapDecision : break;
         case Notification::Type::Confirmation : deleteFromVisible(i); break;
-        case Notification::Type::Ephemeral : deleteFromVisible(i); p->asyncQueue.push_front(n); queueSizeChanged(queued()); break;
+        case Notification::Type::Ephemeral : deleteFromVisible(i); p->ephemeralQueue.push_front(n); queueSizeChanged(queued()); break;
         case Notification::Type::Interactive : deleteFromVisible(i); p->interactiveQueue.push_front(n); queueSizeChanged(queued()); break;
         case Notification::Type::PlaceHolder : break;
         }
@@ -254,12 +254,12 @@ int NotificationModel::nextTimeout() const {
     return mintime;
 }
 
-void NotificationModel::insertAsync(QSharedPointer<Notification> n) {
+void NotificationModel::insertEphemeral(QSharedPointer<Notification> n) {
     Q_ASSERT(n->getType() == Notification::Type::Ephemeral);
 
     if(showingNotificationOfType(Notification::Type::SnapDecision)) {
-        p->asyncQueue.push_back(n);
-        qStableSort(p->asyncQueue.begin(), p->asyncQueue.end(), notificationCompare);
+        p->ephemeralQueue.push_back(n);
+        qStableSort(p->ephemeralQueue.begin(), p->ephemeralQueue.end(), notificationCompare);
         emit queueSizeChanged(queued());
     } else if(showingNotificationOfType(Notification::Type::Ephemeral)) {
         int loc = findFirst(Notification::Type::Ephemeral);
@@ -267,11 +267,11 @@ void NotificationModel::insertAsync(QSharedPointer<Notification> n) {
         if(n->getUrgency() > showing->getUrgency()) {
             deleteFromVisible(loc);
             insertToVisible(n, loc);
-            p->asyncQueue.push_front(showing);
+            p->ephemeralQueue.push_front(showing);
         } else {
-            p->asyncQueue.push_back(n);
+            p->ephemeralQueue.push_back(n);
         }
-        qStableSort(p->asyncQueue.begin(), p->asyncQueue.end(), notificationCompare);
+        qStableSort(p->ephemeralQueue.begin(), p->ephemeralQueue.end(), notificationCompare);
         emit queueSizeChanged(queued());
     } else {
         insertToVisible(n);
@@ -305,7 +305,7 @@ void NotificationModel::insertInteractive(QSharedPointer<Notification> n) {
 }
 
 
-void NotificationModel::insertSync(QSharedPointer<Notification> n) {
+void NotificationModel::insertConfirmation(QSharedPointer<Notification> n) {
     Q_ASSERT(n->getType() == Notification::Type::Confirmation);
     if(showingNotificationOfType(Notification::Type::Confirmation)) {
         deleteFirst(); // Synchronous is always first.
@@ -378,7 +378,7 @@ void NotificationModel::insertToVisible(QSharedPointer<Notification> n, int loca
 }
 
 int NotificationModel::queued() const {
-    return p->asyncQueue.size() + p->interactiveQueue.size() + p->snapQueue.size();
+    return p->ephemeralQueue.size() + p->interactiveQueue.size() + p->snapQueue.size();
 }
 
 bool NotificationModel::showingNotificationOfType(const Notification::Type type) const {
