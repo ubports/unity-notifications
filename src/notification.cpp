@@ -168,3 +168,11 @@ void Notification::setHints(int hints) {
     p->hints = hints;
     emit hintsChanged(p->hints);
 }
+
+void Notification::onHovered() {
+
+}
+
+void Notification::onDisplayed() {
+
+}

@@ -55,7 +55,7 @@ public:
     enum Type { Confirmation, Ephemeral, Interactive, SnapDecision, PlaceHolder };
     enum Hint { None = 0, ButtonTint = 1 << 1, IconOnly = 1 << 2 };
 
-signals:
+Q_SIGNALS:
     void bodyChanged(QString text);
     void iconChanged(QString icon);
     void secondaryIconChanged(QString secondaryIcon);
@@ -65,6 +65,13 @@ signals:
     void typeChanged(Type type);
     void actionsChanged(QStringList actions);
     void hintsChanged(int hints);
+
+    void dismissed();
+    void completed();
+
+public Q_SLOTS:
+    void onHovered();
+    void onDisplayed();
 
 public:
     Notification(QObject *parent=0);
