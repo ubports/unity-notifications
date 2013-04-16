@@ -3,3 +3,5 @@ target_link_libraries(notificationtest notifybackend)
 qt5_use_modules(notificationtest Gui Core)
 
 add_test(notification notificationtest)
+
+add_qml_test(NotificationInterface)
