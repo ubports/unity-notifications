@@ -29,114 +29,124 @@ UbuntuShape {
     width: parent.width
     height: childrenRect.height
     color: Qt.rgba(0, 0, 0, 0.85)
+    opacity: 0
+    visible: opacity > 0
 
-    Item {
+    MouseArea {
+        id: interactiveArea
+
+        anchors.fill: contentColumn
+        objectName: "interactiveArea"
+        visible: type == "Notifications.Type.Interactive"
+        onClicked: print("clicked " + actions.get(0).id)
+    }
+
+    Column {
+        id: contentColumn
+
         anchors {
             left: parent.left
             right: parent.right
             top: parent.top
+            margins: units.gu(1)
         }
-        height: childrenRect.height + contentColumn.anchors.margins * 2
+        height: childrenRect.height + contentColumn.anchors.margins
+        spacing: units.gu(1)
 
-        Column {
-            id: contentColumn
+        Row {
+            id: topRow
 
+            spacing: units.gu(1)
             anchors {
                 left: parent.left
                 right: parent.right
-                top: parent.top
-                margins: units.gu(1)
             }
             height: childrenRect.height
-            spacing: units.gu(1)
 
-            Row {
-                id: topRow
+            UbuntuShape {
+                id: icon
 
-                spacing: units.gu(1)
-                width: parent.width
-                height: childrenRect.height
+                objectName: "icon"
+                width: (body == "") ? units.gu(2) : units.gu(6)
+                height: (body == "") ? units.gu(2) : units.gu(6)
+                image: Image {
+                    id: avatarIcon
 
-                UbuntuShape {
-                    id: icon
-
-                    objectName: "icon"
-                    width: (body == "") ? units.gu(2) : units.gu(6)
-                    height: (body == "") ? units.gu(2) : units.gu(6)
-                    image: Image {
-                        id: avatarIcon
-
-                        fillMode: Image.PreserveAspectCrop
-                        sourceSize.width: parent.width
-                        sourceSize.height: parent.height
-                    }
-                }
-
-                Image {
-                    id: secondaryIcon
-
-                    objectName: "secondaryIcon"
-                    width: units.gu(2)
-                    height: units.gu(2)
-                    visible: source !== undefined && source != "" && bodyLabel.visible
-                    sourceSize.width: width
-                    sourceSize.height: height
                     fillMode: Image.PreserveAspectCrop
-                }
-
-                Column {
-                    id: labelColumn
-                    width: parent.width - x
-                    height: childrenRect.height
-
-                    Label {
-                        id: summaryLabel
-
-                        objectName: "summaryLabel"
-                        width: parent.width - x
-                        fontSize: "medium"
-                        color: "#f3f3e7"
-                        elide: Text.ElideRight
-                    }
-
-                    Label {
-                        id: bodyLabel
-
-                        objectName: "bodyLabel"
-                        width: parent.width - x
-                        visible: body != ""
-                        fontSize: "small"
-                        color: "#f3f3e7"
-                        opacity: 0.6
-                        wrapMode: Text.WordWrap
-                        maximumLineCount: 10
-                        elide: Text.ElideRight
-                    }
                 }
             }
 
-            Row {
-                id: buttonRow
+            Image {
+                id: secondaryIcon
 
-                objectName: "buttonRow"
-                spacing: units.gu(1)
-                layoutDirection: Qt.RightToLeft
-                visible: type == "Notifications.Type.SnapDecision"
-                width: childrenRect.width
+                objectName: "secondaryIcon"
+                width: units.gu(2)
+                height: units.gu(2)
+                visible: source !== undefined && source != "" && bodyLabel.visible
+                fillMode: Image.PreserveAspectCrop
+            }
 
-                Repeater {
-                    model: actions
+            Column {
+                id: labelColumn
+                width: parent.width - x
 
-                    Button {
-                        id: button
+                Label {
+                    id: summaryLabel
 
-                        objectName: "button" + index
-                        color: Positioner.isFirstItem ? "#d85317" : "#cdcdcb"
-                        width: (topRow.width - units.gu(1)) / 2
-                        height: units.gu(4)
-                        text: label
-                        onClicked: print("clicked " + id)
+                    objectName: "summaryLabel"
+                    anchors {
+                        left: parent.left
+                        right: parent.right
                     }
+                    fontSize: "medium"
+                    font.bold: true
+                    color: "#f3f3e7"
+                    elide: Text.ElideRight
+                }
+
+                Label {
+                    id: bodyLabel
+
+                    objectName: "bodyLabel"
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+                    visible: body != ""
+                    fontSize: "small"
+                    color: "#f3f3e7"
+                    opacity: 0.6
+                    wrapMode: Text.WordWrap
+                    maximumLineCount: 10
+                    elide: Text.ElideRight
+                }
+            }
+        }
+
+        Row {
+            id: buttonRow
+
+            objectName: "buttonRow"
+            spacing: units.gu(1)
+            layoutDirection: Qt.RightToLeft
+            visible: type == "Notifications.Type.SnapDecision"
+            anchors {
+                left: parent.left
+                right: parent.right
+            }
+
+            Repeater {
+                model: actions
+
+                Button {
+                    id: button
+
+                    objectName: "button" + index
+                    color: Positioner.isFirstItem ? "#d85317" : "#cdcdcb"
+                    width: (topRow.width - units.gu(1)) / 2
+                    height: units.gu(4)
+                    text: label
+                    onClicked: print("clicked " + id)
                 }
             }
         }

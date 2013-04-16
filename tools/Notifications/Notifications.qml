@@ -16,12 +16,12 @@
 
 import QtQuick 2.0
 import Ubuntu.Components 0.1
+import "timings.js" as Timings
 
 ListView {
     id: notificationRenderer
 
     objectName: "notificationRenderer"
-    anchors.fill: parent
     interactive: false
 
     spacing: units.gu(.5)
@@ -31,6 +31,42 @@ ListView {
         secondaryIconSource: model.secondaryIcon
         summary: model.summary
         body: model.body
-        //actions: model.actions
+        actions: model.actions
     }
+
+    populate: Transition {
+        NumberAnimation {
+            property: "opacity"
+            to: 1
+            duration: Timings.snapBeat
+            easing.type: Timings.easing
+        }
+    }
+
+    add: Transition {
+        NumberAnimation {
+            property: "opacity"
+            to: 1
+            duration: Timings.snapBeat
+            easing.type: Timings.easing
+        }
+    }
+
+    remove: Transition {
+        NumberAnimation {
+            property: "opacity"
+            to: 0
+            duration: Timings.fastBeat
+            easing.type: Timings.easing
+        }
+    }
+
+    displaced: Transition {
+        NumberAnimation {
+            properties: "x,y"
+            duration: Timings.fastBeat
+            easing.type: Timings.easing
+        }
+    }
+
 }
