@@ -135,3 +135,12 @@ void Notification::setActions(QStringList actions) {
     p->actions = actions;
     emit actionsChanged(p->actions);
 }
+
+void Notification::invokeAction(QString action) const {
+    for(int i=0; i<p->actions.size(); i++) {
+        if(p->actions[i] == action)
+            p->server->invokeAction(p->id, action);
+            return;
+    }
+    printf("Error: tried to invoke action not in actionList.\n");
+}

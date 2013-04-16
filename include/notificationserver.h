@@ -62,6 +62,7 @@ class NotificationServer : public QDBusAbstractAdaptor {
 public:
     NotificationServer(NotificationModel &m, QObject *parent=nullptr);
     ~NotificationServer();
+    void invokeAction(unsigned int id, QString action);
 
 public slots:
     QStringList GetCapabilities() const;

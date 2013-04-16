@@ -77,6 +77,8 @@ public:
     QStringList getActions() const;
     void setActions(QStringList actions);
 
+    void invokeAction(QString action) const;
+
     bool operator<(const Notification &n) const; // Order by "interestingness".
 };
 
