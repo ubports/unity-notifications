@@ -39,6 +39,7 @@ class Notification : public QObject {
     Q_PROPERTY(QString summary READ getSummary WRITE setSummary NOTIFY summaryChanged)
     Q_PROPERTY(QString body READ getBody WRITE setBody NOTIFY bodyChanged)
     Q_PROPERTY(NotificationID id READ getID)
+    Q_PROPERTY(int value READ getValue WRITE setValue NOTIFY valueChanged)
     Q_PROPERTY(QString icon READ getIcon WRITE setIcon NOTIFY iconChanged)
     Q_PROPERTY(QString secondaryIcon READ getSecondaryIcon WRITE setSecondaryIcon NOTIFY secondaryIconChanged)
     Q_PROPERTY(Urgency urgency READ getUrgency WRITE setUrgency NOTIFY urgencyChanged)
@@ -60,6 +61,7 @@ signals:
     void iconChanged(QString icon);
     void secondaryIconChanged(QString secondaryIcon);
     void summaryChanged(QString summary);
+    void valueChanged(int value);
     void urgencyChanged(Urgency urg);
     void typeChanged(Type type);
     void actionsChanged(QStringList actions);
@@ -82,6 +84,8 @@ public:
     void setBody(const QString text);
     QString getSummary() const;
     void setSummary(QString summary);
+    int getValue() const;
+    void setValue(int value);
     Urgency getUrgency() const;
     void setUrgency(Urgency urg);
     Type getType() const;

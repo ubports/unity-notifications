@@ -29,6 +29,7 @@ struct NotificationPrivate {
     Notification::Urgency urg;
     QString summary;
     QString body;
+    int value;
     Notification::Type type;
     NotificationServer *server;
     QString icon;
@@ -46,6 +47,7 @@ Notification::Notification(QObject *parent) : QObject(parent), p(new Notificatio
     p->urg = Notification::Urgency::Low;
     p->body = "default text";
     p->server = nullptr;
+    p->value = -2;
 }
 
 Notification::Notification(NotificationID id, const Urgency ur, QString text, Type type, NotificationServer *srv, QObject *parent) :
@@ -55,6 +57,7 @@ Notification::Notification(NotificationID id, const Urgency ur, QString text, Ty
     p->body = text;
     p->type = type;
     p->server = srv;
+    p->value = -2;
 }
 
 Notification::Notification(NotificationID id, const Urgency ur, Type type, NotificationServer *srv, QObject *parent) :
@@ -121,6 +124,15 @@ QString Notification::getSummary() const {
 void Notification::setSummary(QString summary) {
     p->summary = summary;
     emit summaryChanged(p->summary);
+}
+
+int Notification::getValue() const {
+    return p->value;
+}
+
+void Notification::setValue(int value) {
+    p->value = value;
+    emit valueChanged(p->value);
 }
 
 Notification::Urgency Notification::getUrgency() const {
