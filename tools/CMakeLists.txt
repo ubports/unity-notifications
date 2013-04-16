@@ -22,3 +22,11 @@ target_link_libraries(dbusserver notifybackend)
 add_executable(dbusclient dbusclient.cpp clientMainWindow.cpp)
 qt5_use_modules(dbusclient Widgets DBus)
 target_link_libraries(dbusclient notifybackend)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Notifications
+    DESTINATION ${CMAKE_BINARY_DIR}/tools
+)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/datatest.qml
+    DESTINATION ${CMAKE_BINARY_DIR}/tools
+)
