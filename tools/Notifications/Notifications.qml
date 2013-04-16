@@ -29,8 +29,8 @@ ListView {
         objectName: "notification" + index
         iconSource: model.icon
         secondaryIconSource: model.secondaryIcon
-        summary: notificationmodel.data.summary
-        body: notificationmodel.data.body
+        summary: model.summary
+        body: model.body
         //actions: model.actions
     }
 }
