@@ -45,18 +45,17 @@ class Notification : public QObject {
     Q_PROPERTY(Urgency urgency READ getUrgency WRITE setUrgency NOTIFY urgencyChanged)
     Q_PROPERTY(Type type READ getType WRITE setType NOTIFY typeChanged)
     Q_PROPERTY(QStringList actions READ getActions WRITE setActions NOTIFY actionsChanged)
+    Q_PROPERTY(int hints READ getHints WRITE setHints NOTIFY hintsChanged)
 
 private:
-
     QScopedPointer<NotificationPrivate> p;
 
 public:
     enum Urgency { Low, Normal, Critical };
     enum Type { Confirmation, Ephemeral, Interactive, SnapDecision, PlaceHolder };
-    enum Hint { ButtonTint, IconOnly };
+    enum Hint { None = 0, ButtonTint = 1 << 1, IconOnly = 1 << 2 };
 
 signals:
-
     void bodyChanged(QString text);
     void iconChanged(QString icon);
     void secondaryIconChanged(QString secondaryIcon);
@@ -65,13 +64,13 @@ signals:
     void urgencyChanged(Urgency urg);
     void typeChanged(Type type);
     void actionsChanged(QStringList actions);
+    void hintsChanged(int hints);
 
 public:
     Notification(QObject *parent=0);
     Notification(NotificationID id, const Urgency ur, QString text, Type type=Confirmation, NotificationServer *srv=nullptr, QObject *parent=0);
     Notification(NotificationID id, const Urgency ur, Type type=Confirmation, NotificationServer *srv=nullptr, QObject *parent=0);
     virtual ~Notification();
-
 
     NotificationID getID() const;
     int getDisplayTime() const;
@@ -92,6 +91,8 @@ public:
     void setType(Type type);
     QStringList getActions() const;
     void setActions(QStringList actions);
+    int getHints() const;
+    void setHints(int hints);
 
     bool operator<(const Notification &n) const; // Order by "interestingness".
 };

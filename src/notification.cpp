@@ -35,6 +35,7 @@ struct NotificationPrivate {
     QString icon;
     QString secondaryIcon;
     QStringList actions;
+    int hints;
 };
 
 /*
@@ -48,6 +49,7 @@ Notification::Notification(QObject *parent) : QObject(parent), p(new Notificatio
     p->body = "default text";
     p->server = nullptr;
     p->value = -2;
+    p->hints = Notification::Hint::None;
 }
 
 Notification::Notification(NotificationID id, const Urgency ur, QString text, Type type, NotificationServer *srv, QObject *parent) :
@@ -58,6 +60,7 @@ Notification::Notification(NotificationID id, const Urgency ur, QString text, Ty
     p->type = type;
     p->server = srv;
     p->value = -2;
+    p->hints = Notification::Hint::None;
 }
 
 Notification::Notification(NotificationID id, const Urgency ur, Type type, NotificationServer *srv, QObject *parent) :
@@ -155,4 +158,13 @@ QStringList Notification::getActions() const {
 void Notification::setActions(QStringList actions) {
     p->actions = actions;
     emit actionsChanged(p->actions);
+}
+
+int Notification::getHints() const {
+    return p->hints;
+}
+
+void Notification::setHints(int hints) {
+    p->hints = hints;
+    emit hintsChanged(p->hints);
 }
