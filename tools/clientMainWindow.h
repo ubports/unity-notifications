@@ -24,6 +24,7 @@
 #include <QListView>
 #include "ui_clientMainWindow.h"
 #include "notify-backend.h"
+#include "notification.h"
 
 class NotificationClient;
 
@@ -39,7 +40,7 @@ public slots:
 
 private:
     NotificationClient &client;
-    void sendNotification(NotificationType type, Urgency urg, QString text);
+    void sendNotification(Notification::Type type, Notification::Urgency urg, QString text);
 
 private slots:
     void sendLowNotification();

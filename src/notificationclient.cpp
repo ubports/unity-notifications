@@ -31,7 +31,7 @@ NotificationClient::~NotificationClient() {
 
 }
 
-unsigned int NotificationClient::sendNotification(NotificationType ntype, Urgency urg, QString text) {
+unsigned int NotificationClient::sendNotification(Notification::Type ntype, Notification::Urgency urg, QString text) {
     QString app_name("client test");
     unsigned int replaces_id = 0;
     QString app_icon("/usr/share/icons/unity-icon-theme/search/16/search_field.png");
@@ -39,10 +39,10 @@ unsigned int NotificationClient::sendNotification(NotificationType ntype, Urgenc
     QStringList actions;
     QMap<QString, QVariant> hints;
     hints["urgency"] = (char)urg;
-    if(ntype == SYNCHRONOUS) {
+    if(ntype == Notification::Type::Confirmation) {
         hints[SYNCH_HINT] = "yes";
     }
-    if(ntype == SNAP) {
+    if(ntype == Notification::Type::SnapDecision) {
         QStringList snaps;
         snaps.push_back("one");
         snaps.push_back("two");
@@ -50,7 +50,7 @@ unsigned int NotificationClient::sendNotification(NotificationType ntype, Urgenc
         snaps.push_back("four");
         hints[SNAP_HINT] = snaps;
     }
-    if(ntype == INTERACTIVE) {
+    if(ntype == Notification::Type::Interactive) {
         hints[INTERACTIVE_HINT] = "targetapp";
     }
     int timeout = 5000;

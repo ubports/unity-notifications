@@ -20,9 +20,10 @@
 #ifndef NOTIFICATIONCLIENT_H_
 #define NOTIFICATIONCLIENT_H_
 
-#include"notify-backend.h"
-#include<QObject>
-#include<QDBusInterface>
+#include "notify-backend.h"
+#include "notification.h"
+#include <QObject>
+#include <QDBusInterface>
 
 class ClientMainWindow;
 
@@ -32,7 +33,7 @@ class NotificationClient : public QObject {
 public:
     NotificationClient(QObject *parent=0);
     ~NotificationClient();
-    unsigned int sendNotification(NotificationType ntype, Urgency urg, QString text);
+    unsigned int sendNotification(Notification::Type ntype, Notification::Urgency urg, QString text);
 
 public slots:
     void NotificationClosed(unsigned int id, unsigned int reason);

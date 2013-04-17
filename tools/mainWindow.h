@@ -24,6 +24,7 @@
 #include <QListView>
 #include "ui_mainWindow.h"
 #include "notify-backend.h"
+#include "notification.h"
 
 class NotificationModel;
 
@@ -47,7 +48,7 @@ private:
     static const int interactiveOffset = 20000;
     static const int snapOffset = 40000;
 
-    void sendNotification(int id, NotificationType type, Urgency urg, QString text) const;
+    void sendNotification(int id, Notification::Type type, Notification::Urgency urg, QString text) const;
 
 public slots:
     void queueSizeChanged(int newsize);
