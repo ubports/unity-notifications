@@ -32,6 +32,10 @@ NotificationServer::~NotificationServer() {
 
 }
 
+void NotificationServer::invokeAction(unsigned int id, QString action) {
+    emit ActionInvoked(id, action);
+}
+
 QStringList NotificationServer::GetCapabilities() const {
     QStringList capabilities;
     capabilities.push_back("actions");
@@ -103,6 +107,7 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
         }
         if(numActions > maxActions) {
             printf("Too many strings for Snap Decisions. Has %d, maximum %d.\n", numActions, maxActions);
+            return FAILURE;
         }
         n->setActions(actionList);
     } else {

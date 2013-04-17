@@ -101,6 +101,8 @@ public:
     int getHints() const;
     void setHints(int hints);
 
+    void invokeAction(QString action) const;
+
     bool operator<(const Notification &n) const; // Order by "interestingness".
 };
 
