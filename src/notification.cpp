@@ -175,6 +175,8 @@ void Notification::onHovered() {
 
 void Notification::onDisplayed() {
 
+}
+
 void Notification::invokeAction(QString action) const {
     for(int i=0; i<p->actions.size(); i++) {
         if(p->actions[i] == action)
