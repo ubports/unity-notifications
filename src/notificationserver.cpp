@@ -51,7 +51,7 @@ QStringList NotificationServer::GetCapabilities() const {
     return capabilities;
 }
 
-Notification* NotificationServer::buildNotification(NotificationID id, const Hints &hints) {
+Notification* NotificationServer::buildNotification(NotificationID id, const Hints &hints, int expireTimeout) {
     Notification::Urgency urg = Notification::Urgency::Low;
     if(hints.find(URGENCY_HINT) != hints.end()) {
         QVariant u = hints[URGENCY_HINT].variant();
@@ -69,7 +69,7 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
     } else if(hints.find(INTERACTIVE_HINT) != hints.end()) {
         ntype = Notification::Type::Interactive;
     }
-    return new Notification(id, urg, ntype, this);
+    return new Notification(id, expireTimeout, urg, ntype, this);
 
 }
 
@@ -88,7 +88,7 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
         currentId = replaces_id;
         notification = model.getNotification(replaces_id);
     } else {
-        Notification *n = buildNotification(currentId, hints);
+        Notification *n = buildNotification(currentId, hints, expire_timeout);
         if(!n) {
             return FAILURE;
         }

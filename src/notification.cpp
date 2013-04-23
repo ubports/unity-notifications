@@ -48,18 +48,18 @@ Notification::Notification(QObject *parent) : QObject(parent), p(new Notificatio
     p->server = nullptr;
 }
 
-Notification::Notification(NotificationID id, const Urgency ur, QString text, Type type, NotificationServer *srv, QObject *parent) :
+Notification::Notification(NotificationID id, int displayTime, const Urgency ur, QString text, Type type, NotificationServer *srv, QObject *parent) :
                 QObject(parent), p(new NotificationPrivate()) {
     p->id = id;
     p->urg = ur;
     p->body = text;
     p->type = type;
     p->server = srv;
-    p->displayTime = 5000;
+    p->displayTime = displayTime;
 }
 
-Notification::Notification(NotificationID id, const Urgency ur, Type type, NotificationServer *srv, QObject *parent) :
-    Notification(id, ur, "", type, srv, parent){
+Notification::Notification(NotificationID id, int displayTime, const Urgency ur, Type type, NotificationServer *srv, QObject *parent) :
+    Notification(id, displayTime, ur, "", type, srv, parent){
 
 }
 

@@ -12,9 +12,9 @@ int main(int argc, char *argv[]) {
     QQuickView view;
 
 
-    QSharedPointer<Notification> msg(new Notification(55, Notification::Urgency::Low, "default notification", Notification::Type::Ephemeral));
-    QSharedPointer<Notification> msg2(new Notification(56, Notification::Urgency::Normal, "default notification", Notification::Type::Ephemeral));
-    QSharedPointer<Notification> msg3(new Notification(57, Notification::Urgency::Critical, "default notification", Notification::Type::Ephemeral));
+    QSharedPointer<Notification> msg(new Notification(55, 5000, Notification::Urgency::Low, "default notification", Notification::Type::Ephemeral));
+    QSharedPointer<Notification> msg2(new Notification(56, 5000, Notification::Urgency::Normal, "default notification", Notification::Type::Ephemeral));
+    QSharedPointer<Notification> msg3(new Notification(57, 5000, Notification::Urgency::Critical, "default notification", Notification::Type::Ephemeral));
     NotificationModel *m = new NotificationModel();
 
     m->insertNotification(msg);

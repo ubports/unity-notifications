@@ -77,9 +77,10 @@ void MainWindow::queueSizeChanged(int newsize) {
 }
 
 void MainWindow::sendSynchronousNotification() {
+    int timeout = 5000;
     QString text("sync number ");
     text += QString::number(syncCount, 10);
-    QSharedPointer<Notification> n(new Notification(syncOffset + syncCount++, Notification::Low, text, Notification::Confirmation));
+    QSharedPointer<Notification> n(new Notification(syncOffset + syncCount++, timeout, Notification::Low, text, Notification::Confirmation));
 
     m->insertNotification(n); // Wrap in a try/catch eventually.
 }
@@ -121,6 +122,7 @@ void MainWindow::sendCriticalSnapNotification() {
 }
 
 void MainWindow::sendNotification(int id, Notification::Type type, Notification::Urgency urg, QString text) const {
-    QSharedPointer<Notification> n(new Notification(id, urg, text, type));
+    int timeout = 5000;
+    QSharedPointer<Notification> n(new Notification(id, timeout, urg, text, type));
     m->insertNotification(n); // Wrap in a try/catch eventually.
 }

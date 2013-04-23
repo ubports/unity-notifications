@@ -64,8 +64,8 @@ signals:
 
 public:
     Notification(QObject *parent=0);
-    Notification(NotificationID id, const Urgency ur, QString text, Type type=Confirmation, NotificationServer *srv=nullptr, QObject *parent=0);
-    Notification(NotificationID id, const Urgency ur, Type type=Confirmation, NotificationServer *srv=nullptr, QObject *parent=0);
+    Notification(NotificationID id, int displayTime, const Urgency ur, QString text, Type type=Confirmation, NotificationServer *srv=nullptr, QObject *parent=0);
+    Notification(NotificationID id, int displayTime, const Urgency ur, Type type=Confirmation, NotificationServer *srv=nullptr, QObject *parent=0);
     virtual ~Notification();
 
 
