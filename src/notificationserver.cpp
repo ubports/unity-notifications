@@ -80,21 +80,28 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     const int minActions = 4;
     const int maxActions = 12;
     QImage icon(app_icon);
-    if(replaces_id != 0) {
-        // Update existing notification.
-        // Not implemented yet.
-        return replaces_id;
-    }
     int currentId = idCounter;
-    Notification *n = buildNotification(currentId, hints);
-    if(!n) {
-        return FAILURE;
+    QSharedPointer<Notification> notification;
+    if(replaces_id != 0) {
+        if(!model.hasNotification(replaces_id))
+            return FAILURE;
+        currentId = replaces_id;
+        notification = model.getNotification(replaces_id);
+    } else {
+        Notification *n = buildNotification(currentId, hints);
+        if(!n) {
+            return FAILURE;
+        }
+        notification.reset(n);
+        idCounter++;
+        if(idCounter == 0) // Spec forbids zero as return value.
+            idCounter = 1;
     }
-    QSharedPointer<Notification> notification(n);
-    n->setBody(body);
-    n->setIcon(icon);
-    n->setSummary(summary);
-    if(n->getType() == Notification::Type::SnapDecision) {
+
+    // Do this first because it can fail. In case we are updating an
+    // existing notification exiting now means all old state is
+    // preserved.
+    if(notification->getType() == Notification::Type::SnapDecision) {
         QVariant snapActions = hints[SNAP_HINT].variant();
         if(!snapActions.canConvert<QStringList>()) {
             printf("Malformed snap decisions list.\n");
@@ -110,14 +117,16 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
             printf("Too many strings for Snap Decisions. Has %d, maximum %d.\n", numActions, maxActions);
             return FAILURE;
         }
-        n->setActions(actionList);
+        notification->setActions(actionList);
     } else {
-        n->setActions(actions);
+        notification->setActions(actions);
     }
-    model.insertNotification(notification);
-    idCounter++;
-    if(idCounter == 0) // Spec forbids zero as return value.
-        idCounter = 1;
+    notification->setBody(body);
+    notification->setIcon(icon);
+    notification->setSummary(summary);
+    if(replaces_id == 0) {
+        model.insertNotification(notification);
+    }
     return currentId;
 }
 
