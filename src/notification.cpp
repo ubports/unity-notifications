@@ -33,6 +33,7 @@ struct NotificationPrivate {
     NotificationServer *server;
     QImage icon;
     QStringList actions;
+    int displayTime;
 };
 
 /*
@@ -54,6 +55,7 @@ Notification::Notification(NotificationID id, const Urgency ur, QString text, Ty
     p->body = text;
     p->type = type;
     p->server = srv;
+    p->displayTime = 5000;
 }
 
 Notification::Notification(NotificationID id, const Urgency ur, Type type, NotificationServer *srv, QObject *parent) :
@@ -86,7 +88,7 @@ Notification::Type Notification::getType() const {
 }
 
 int Notification::getDisplayTime() const {
-    return 5000;
+    return p->displayTime;
 }
 
 bool Notification::operator<(const Notification &n) const {
