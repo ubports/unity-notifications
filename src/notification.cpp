@@ -71,8 +71,10 @@ QString Notification::getBody() const {
 }
 
 void Notification::setBody(const QString text) {
-    p->body = text;
-    emit bodyChanged(text);
+    if(p->body != text) {
+        p->body = text;
+        emit bodyChanged(text);
+    }
 }
 
 NotificationID Notification::getID() const {
@@ -110,21 +112,27 @@ QString Notification::getSummary() const {
 }
 
 void Notification::setSummary(QString summary) {
-    p->summary = summary;
-    emit summaryChanged(p->summary);
+    if(p->summary != summary) {
+        p->summary = summary;
+        emit summaryChanged(p->summary);
+    }
 }
 
 Notification::Urgency Notification::getUrgency() const {
     return p->urg;
 }
 void Notification::setUrgency(Notification::Urgency urg) {
-    p->urg = urg;
-    emit urgencyChanged(p->urg);
+    if(p->urg != urg) {
+        p->urg = urg;
+        emit urgencyChanged(p->urg);
+    }
 }
 
 void Notification::setType(Type type) {
-    p->type = type;
-    emit typeChanged(p->type);
+    if(p->type != p->type) {
+        p->type = type;
+        emit typeChanged(p->type);
+    }
 }
 
 QStringList Notification::getActions() const {
@@ -132,8 +140,10 @@ QStringList Notification::getActions() const {
 }
 
 void Notification::setActions(QStringList actions) {
-    p->actions = actions;
-    emit actionsChanged(p->actions);
+    if(p->actions != actions) {
+        p->actions = actions;
+        emit actionsChanged(p->actions);
+    }
 }
 
 void Notification::invokeAction(QString action) const {
