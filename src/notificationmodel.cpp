@@ -86,6 +86,36 @@ void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
     p->timer.start();
 }
 
+QSharedPointer<Notification> NotificationModel::getNotification(NotificationID id) const {
+    for(int i=0; i<p->asyncQueue.size(); i++) {
+        if(p->asyncQueue[i]->getID() == id) {
+            return p->asyncQueue[i];
+        }
+    }
+    for(int i=0; i<p->interactiveQueue.size(); i++) {
+        if(p->interactiveQueue[i]->getID() == id) {
+            return p->interactiveQueue[i];
+        }
+    }
+    for(int i=0; i<p->snapQueue.size(); i++) {
+        if(p->snapQueue[i]->getID() == id) {
+            return p->snapQueue[i];
+        }
+    }
+    for(int i=0; i<p->displayedNotifications.size(); i++) {
+        if(p->displayedNotifications[i]->getID() == id) {
+            return p->displayedNotifications[i];
+        }
+    }
+
+    QSharedPointer<Notification> empty;
+    return empty;
+}
+
+bool NotificationModel::hasNotification(NotificationID id) const {
+    return getNotification(id).isNull();
+}
+
 void NotificationModel::removeNotification(const NotificationID id) {
     for(int i=0; i<p->asyncQueue.size(); i++) {
         if(p->asyncQueue[i]->getID() == id) {
