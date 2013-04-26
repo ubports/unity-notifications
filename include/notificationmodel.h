@@ -59,6 +59,8 @@ public:
     virtual QHash<int, QByteArray> roleNames() const;
 
     void insertNotification(QSharedPointer<Notification> n);
+    QSharedPointer<Notification> getNotification(NotificationID id) const;
+    bool hasNotification(NotificationID id) const;
 
     Q_INVOKABLE int queued() const;
     Q_INVOKABLE int numNotifications() const;

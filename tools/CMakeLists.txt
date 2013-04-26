@@ -7,6 +7,8 @@ mainWindow.h
 ${GUI_HEADERS}
 )
 
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
 qt5_use_modules(viewer Widgets)
 target_link_libraries(viewer notifybackend)
 

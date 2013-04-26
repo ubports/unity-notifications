@@ -36,6 +36,7 @@ struct NotificationPrivate {
     QString secondaryIcon;
     QStringList actions;
     int hints;
+    int displayTime;
 };
 
 /*
@@ -52,7 +53,7 @@ Notification::Notification(QObject *parent) : QObject(parent), p(new Notificatio
     p->hints = Notification::Hint::None;
 }
 
-Notification::Notification(NotificationID id, const Urgency ur, QString text, Type type, NotificationServer *srv, QObject *parent) :
+Notification::Notification(NotificationID id, int displayTime, const Urgency ur, QString text, Type type, NotificationServer *srv, QObject *parent) :
                 QObject(parent), p(new NotificationPrivate()) {
     p->id = id;
     p->urg = ur;
@@ -61,10 +62,11 @@ Notification::Notification(NotificationID id, const Urgency ur, QString text, Ty
     p->server = srv;
     p->value = -2;
     p->hints = Notification::Hint::None;
+    p->displayTime = displayTime;
 }
 
-Notification::Notification(NotificationID id, const Urgency ur, Type type, NotificationServer *srv, QObject *parent) :
-    Notification(id, ur, "", type, srv, parent){
+Notification::Notification(NotificationID id, int displayTime, const Urgency ur, Type type, NotificationServer *srv, QObject *parent) :
+    Notification(id, displayTime, ur, "", type, srv, parent){
 
 }
 
@@ -78,8 +80,10 @@ QString Notification::getBody() const {
 }
 
 void Notification::setBody(const QString text) {
-    p->body = text;
-    emit bodyChanged(text);
+    if(p->body != text) {
+        p->body = text;
+        emit bodyChanged(text);
+    }
 }
 
 NotificationID Notification::getID() const {
@@ -91,7 +95,7 @@ Notification::Type Notification::getType() const {
 }
 
 int Notification::getDisplayTime() const {
-    return 5000;
+    return p->displayTime;
 }
 
 bool Notification::operator<(const Notification &n) const {
@@ -125,8 +129,10 @@ QString Notification::getSummary() const {
 }
 
 void Notification::setSummary(QString summary) {
-    p->summary = summary;
-    emit summaryChanged(p->summary);
+    if(p->summary != summary) {
+        p->summary = summary;
+        emit summaryChanged(p->summary);
+    }
 }
 
 int Notification::getValue() const {
@@ -142,13 +148,17 @@ Notification::Urgency Notification::getUrgency() const {
     return p->urg;
 }
 void Notification::setUrgency(Notification::Urgency urg) {
-    p->urg = urg;
-    emit urgencyChanged(p->urg);
+    if(p->urg != urg) {
+        p->urg = urg;
+        emit urgencyChanged(p->urg);
+    }
 }
 
 void Notification::setType(Type type) {
-    p->type = type;
-    emit typeChanged(p->type);
+    if(p->type != p->type) {
+        p->type = type;
+        emit typeChanged(p->type);
+    }
 }
 
 QStringList Notification::getActions() const {
@@ -156,8 +166,10 @@ QStringList Notification::getActions() const {
 }
 
 void Notification::setActions(QStringList actions) {
-    p->actions = actions;
-    emit actionsChanged(p->actions);
+    if(p->actions != actions) {
+        p->actions = actions;
+        emit actionsChanged(p->actions);
+    }
 }
 
 int Notification::getHints() const {

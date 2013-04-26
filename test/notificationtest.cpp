@@ -1,13 +1,15 @@
 #include "notification.h"
 #include "notificationbackend.h"
 #include "renderer.h"
+#include "notification.h"
 
 #include <cassert>
 #include <cstdio>
 
 void testSimpleInsertion() {
+    int timeout = 5000;
     Renderer r;
-    Notification *n = new Notification(42, Notification::Urgency::Low, "this is text");
+    Notification *n = new Notification(42, timeout, Notification::Low, "this is text");
     NotificationBackend be(r);
 
     assert(be.numNotifications() == 0);
@@ -18,10 +20,11 @@ void testSimpleInsertion() {
 }
 
 void testOrder() {
+    int timeout = 5000;
     Renderer r;
-    Notification *n1 = new Notification(1, Notification::Urgency::Low, "low");
-    Notification *n2 = new Notification(2, Notification::Urgency::Normal, "high");
-    Notification *n3 = new Notification(3, Notification::Urgency::Critical, "critical");
+    Notification *n1 = new Notification(1, timeout, Notification::Low, "low");
+    Notification *n2 = new Notification(2, timeout, Notification::Normal, "high");
+    Notification *n3 = new Notification(3, timeout, Notification::Critical, "critical");
     NotificationBackend be(r);
 
     be.insertNotification(n1);
@@ -36,11 +39,12 @@ void testOrder() {
 }
 
 void testRenderCalls() {
+    int timeout = 5000;
     Renderer r;
     NotificationBackend be(r);
-    Notification *n1 = new Notification(1, Notification::Urgency::Low, "text");
-    Notification *n2 = new Notification(2, Notification::Urgency::Low, "here too");
-    Notification *n3 = new Notification(3, Notification::Urgency::Low, "third");
+    Notification *n1 = new Notification(1, timeout, Notification::Low, "text");
+    Notification *n2 = new Notification(2, timeout, Notification::Low, "here too");
+    Notification *n3 = new Notification(3, timeout, Notification::Low, "third");
 
     assert(r.numChanges() == 0);
     be.insertNotification(n1);
@@ -58,14 +62,15 @@ void testRenderCalls() {
 }
 
 void testFullQueue() {
+    int timeout = 5000;
     Renderer r;
     NotificationBackend be(r);
     for(unsigned int i=0; i< MAX_NOTIFICATIONS; i++) {
-        Notification *n = new Notification(i, Notification::Urgency::Low, "text");
+        Notification *n = new Notification(i, timeout, Notification::Low, "text");
         bool result = be.insertNotification(n);
         assert(result);
     }
-    Notification *wontFit = new Notification(1111, Notification::Urgency::Critical, "foo");
+    Notification *wontFit = new Notification(1111, timeout, Notification::Critical, "foo");
     bool result = be.insertNotification(wontFit);
     assert(!result);
     assert(be.numNotifications() == MAX_NOTIFICATIONS);

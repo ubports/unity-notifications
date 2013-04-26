@@ -51,7 +51,7 @@ QStringList NotificationServer::GetCapabilities() const {
     return capabilities;
 }
 
-Notification* NotificationServer::buildNotification(NotificationID id, const Hints &hints) {
+Notification* NotificationServer::buildNotification(NotificationID id, const Hints &hints, int expireTimeout) {
     Notification::Urgency urg = Notification::Urgency::Low;
     if(hints.find(URGENCY_HINT) != hints.end()) {
         QVariant u = hints[URGENCY_HINT].variant();
@@ -69,7 +69,7 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
     } else if(hints.find(INTERACTIVE_HINT) != hints.end()) {
         ntype = Notification::Type::Interactive;
     }
-    return new Notification(id, urg, ntype, this);
+    return new Notification(id, expireTimeout, urg, ntype, this);
 
 }
 
@@ -79,21 +79,29 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     const int FAILURE = 0; // Is this correct?
     const int minActions = 4;
     const int maxActions = 12;
-    if(replaces_id != 0) {
-        // Update existing notification.
-        // Not implemented yet.
-        return replaces_id;
-    }
+    //QImage icon(app_icon);
     int currentId = idCounter;
-    Notification *n = buildNotification(currentId, hints);
-    if(!n) {
-        return FAILURE;
+    QSharedPointer<Notification> notification;
+    if(replaces_id != 0) {
+        if(!model.hasNotification(replaces_id))
+            return FAILURE;
+        currentId = replaces_id;
+        notification = model.getNotification(replaces_id);
+    } else {
+        Notification *n = buildNotification(currentId, hints, expire_timeout);
+        if(!n) {
+            return FAILURE;
+        }
+        notification.reset(n);
+        idCounter++;
+        if(idCounter == 0) // Spec forbids zero as return value.
+            idCounter = 1;
     }
-    QSharedPointer<Notification> notification(n);
-    n->setBody(body);
-    n->setIcon(app_icon);
-    n->setSummary(summary);
-    if(n->getType() == Notification::Type::SnapDecision) {
+
+    // Do this first because it can fail. In case we are updating an
+    // existing notification exiting now means all old state is
+    // preserved.
+    if(notification->getType() == Notification::Type::SnapDecision) {
         QVariant snapActions = hints[SNAP_HINT].variant();
         if(!snapActions.canConvert<QStringList>()) {
             printf("Malformed snap decisions list.\n");
@@ -109,14 +117,16 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
             printf("Too many strings for Snap Decisions. Has %d, maximum %d.\n", numActions, maxActions);
             return FAILURE;
         }
-        n->setActions(actionList);
+        notification->setActions(actionList);
     } else {
-        n->setActions(actions);
+        notification->setActions(actions);
     }
-    model.insertNotification(notification);
-    idCounter++;
-    if(idCounter == 0) // Spec forbids zero as return value.
-        idCounter = 1;
+    notification->setBody(body);
+    notification->setIcon(app_icon);
+    notification->setSummary(summary);
+    if(replaces_id == 0) {
+        model.insertNotification(notification);
+    }
     return currentId;
 }
 

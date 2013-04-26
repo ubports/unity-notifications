@@ -80,10 +80,12 @@ int main(int argc, char **argv) {
     QApplication app(argc, argv);
     qDBusRegisterMetaType<InfoStruct>();
     NotificationClient *cl = new NotificationClient(&app);
+    printf("ZZZ\n");
     ClientMainWindow *win = new ClientMainWindow(*cl);
     QObject::connect(cl, SIGNAL(eventHappened(QString)), win, SLOT(appendText(QString)));
+    printf("XXX\n");
     QDBusInterface service(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE);
-
+    printf("YYY\n");
     if(!QDBusConnection::sessionBus().connect(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE,
             "NotificationClosed", cl, SLOT(NotificationClosed(unsigned int, unsigned int)))) {
         printf("Could not connect to NotificationClosed signal.\n\n");

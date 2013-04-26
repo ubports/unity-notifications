@@ -45,9 +45,15 @@ class Renderer;
 class NotificationBackend;
 class Notification;
 
-#define DBUS_SERVICE_NAME "com.canonical.notificationproto" // org.freedesktop.Notifications
-#define DBUS_INTERFACE "com.canonical.notificationproto" // "org.freedesktop.Notifications
-#define DBUS_PATH "/com/canonical/notificationproto" // "/org/freedesktop.Notifications"
+#if 1
+#define DBUS_SERVICE_NAME "com.canonical.notificationproto"
+#define DBUS_INTERFACE    "com.canonical.notificationproto"
+#define DBUS_PATH         "/com/canonical/notificationproto"
+#else
+#define DBUS_SERVICE_NAME "org.freedesktop.Notifications"
+#define DBUS_INTERFACE    "org.freedesktop.Notifications"
+#define DBUS_PATH         "/org/freedesktop/Notifications"
+#endif
 
 #define URGENCY_HINT "urgency"
 #define SYNCH_HINT "x-canonical-private-synchronous"
