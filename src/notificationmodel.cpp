@@ -188,7 +188,9 @@ void NotificationModel::deleteFirst() {
 }
 
 void NotificationModel::deleteFromVisible(int loc) {
-    QModelIndex deletePoint = QAbstractItemModel::createIndex(loc, 0);
+    //QModelIndex deletePoint = QAbstractItemModel::createIndex(loc, 0);
+    //beginRemoveRows(deletePoint, loc, loc);
+    QModelIndex deletePoint = QModelIndex();
     beginRemoveRows(deletePoint, loc, loc);
     QSharedPointer<Notification> n = p->displayedNotifications[loc];
     p->displayTimes.erase(p->displayTimes.find(n->getID()));
@@ -400,8 +402,10 @@ void NotificationModel::insertToVisible(QSharedPointer<Notification> n, int loca
         printf("Bad insert.\n");
         return;
     }
-    QModelIndex insertionPoint = QAbstractItemModel::createIndex(location, 0);
-    beginInsertRows(insertionPoint, location, location);
+    //QModelIndex insertionPoint = QAbstractItemModel::createIndex(location, 0);
+    //beginInsertRows(insertionPoint, location, location);
+    QModelIndex insertionPoint = QModelIndex();
+    beginInsertRows(insertionPoint, rowCount(insertionPoint), rowCount(insertionPoint));
     p->displayedNotifications.insert(location, n);
     endInsertRows();
     p->displayTimes[n->getID()] = 0;
