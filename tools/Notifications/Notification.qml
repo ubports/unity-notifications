@@ -129,7 +129,7 @@ UbuntuShape {
             objectName: "buttonRow"
             spacing: units.gu(1)
             layoutDirection: Qt.RightToLeft
-            visible: type == "Notifications.Type.SnapDecision"
+            //visible: type == "Notifications.Type.SnapDecision"
             anchors {
                 left: parent.left
                 right: parent.right

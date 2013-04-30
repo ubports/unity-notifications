@@ -21,6 +21,7 @@
 #ifndef NOTIFICATION_HPP_
 #define NOTIFICATION_HPP_
 
+#include "actionmodel.h"
 #include "notify-backend.h"
 #include <QString>
 #include <QObject>
@@ -44,7 +45,7 @@ class Notification : public QObject {
     Q_PROPERTY(QString secondaryIcon READ getSecondaryIcon WRITE setSecondaryIcon NOTIFY secondaryIconChanged)
     Q_PROPERTY(Urgency urgency READ getUrgency WRITE setUrgency NOTIFY urgencyChanged)
     Q_PROPERTY(Type type READ getType WRITE setType NOTIFY typeChanged)
-    Q_PROPERTY(QStringList actions READ getActions WRITE setActions NOTIFY actionsChanged)
+    Q_PROPERTY(ActionModel* actions READ getActions NOTIFY actionsChanged)
     Q_PROPERTY(int hints READ getHints WRITE setHints NOTIFY hintsChanged)
 
 private:
@@ -96,8 +97,9 @@ public:
     void setUrgency(Urgency urg);
     Type getType() const;
     void setType(Type type);
-    QStringList getActions() const;
+    ActionModel* getActions() const;
     void setActions(QStringList actions);
+
     int getHints() const;
     void setHints(int hints);
 

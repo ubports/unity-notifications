@@ -15,4 +15,4 @@ notificationclient.cpp
 ../include/notificationclient.h
 )
 
-qt5_use_modules(notifybackend Widgets DBus)
+qt5_use_modules(notifybackend Widgets DBus Qml)

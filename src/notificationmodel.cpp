@@ -23,6 +23,7 @@
 #include <QList>
 #include <QVector>
 #include <QMap>
+#include <QStringListModel>
 
 struct NotificationModelPrivate {
     QList<QSharedPointer<Notification> > displayedNotifications;
@@ -81,8 +82,8 @@ QVariant NotificationModel::data(const QModelIndex &index, int role) const {
         case RoleSecondaryIcon:
             return QVariant(p->displayedNotifications[index.row()]->getSecondaryIcon());
 
-        case RoleActions:
-            return QVariant(p->displayedNotifications[index.row()]->getActions());
+        case RoleActions: 
+            return QVariant::fromValue(p->displayedNotifications[index.row()]->getActions());
 
         case RoleHints:
             return QVariant(p->displayedNotifications[index.row()]->getHints());

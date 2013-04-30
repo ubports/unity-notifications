@@ -17,19 +17,16 @@
 #ifndef ACTION_MODEL_HPP_
 #define ACTION_MODEL_HPP_
 
-#include <QAbstractListModel>
-#include <QSharedPointer>
-
-#include "action.h"
+#include <QStringListModel>
 
 struct ActionModelPrivate;
 
 enum ActionsRoles {
-    RoleLabel  = Qt::UserRole + 1,
-    RoleAction = Qt::UserRole + 2
+    RoleActionLabel = Qt::UserRole + 1,
+    RoleActionId    = Qt::UserRole + 2
 };
 
-class ActionModel : public QAbstractListModel  {
+class ActionModel : public QStringListModel {
 	Q_OBJECT
 
 public:
@@ -40,7 +37,7 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual QHash<int, QByteArray> roleNames() const;
 
-    void insertAction(QSharedPointer<Action> action);
+    void insertAction(QString label, QString id);
 
 private:
     QScopedPointer<ActionModelPrivate> p;

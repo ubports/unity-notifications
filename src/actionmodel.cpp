@@ -17,17 +17,18 @@
 #include "actionmodel.h"
 
 struct ActionModelPrivate {
-	QList<QSharedPointer<Action> > actions;
+    QList<QString> labels;
+    QList<QString> ids;
 };
 
-ActionModel::ActionModel(QObject *parent) : QAbstractListModel(parent), p(new ActionModelPrivate) {
+ActionModel::ActionModel(QObject *parent) : QStringListModel(parent), p(new ActionModelPrivate) {
 }
 
 ActionModel::~ActionModel() {
 }
 
 int ActionModel::rowCount(const QModelIndex &index) const {
-    return p->actions.size();
+    return p->labels.size();
 }
 
 QVariant ActionModel::data(const QModelIndex &index, int role) const {
@@ -35,11 +36,11 @@ QVariant ActionModel::data(const QModelIndex &index, int role) const {
             return QVariant();
 
     switch(role) {
-        case RoleLabel:
-            return QVariant(p->actions[index.row()]->getLabel());
+        case RoleActionLabel:
+            return QVariant(p->labels[index.row()]);
 
-        case RoleAction:
-            return QVariant(p->actions[index.row()]->getAction());
+        case RoleActionId:
+            return QVariant(p->ids[index.row()]);
 
         default:
             return QVariant();
@@ -49,12 +50,13 @@ QVariant ActionModel::data(const QModelIndex &index, int role) const {
 QHash<int, QByteArray> ActionModel::roleNames() const {
     QHash<int, QByteArray> roles;
 
-    roles.insert(RoleLabel, "label");
-    roles.insert(RoleAction, "action");
+    roles.insert(RoleActionLabel, "label");
+    roles.insert(RoleActionId, "id");
 
     return roles;
 }
 
-void ActionModel::insertAction(QSharedPointer<Action> action) {
-	p->actions.push_back(action);
+void ActionModel::insertAction(QString label, QString id) {
+    p->labels.push_back(label);
+    p->ids.push_back(id);
 }

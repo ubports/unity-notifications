@@ -35,6 +35,7 @@ struct NotificationPrivate {
     QString icon;
     QString secondaryIcon;
     QStringList actions;
+    ActionModel* actionsModel;
     int hints;
     int displayTime;
 };
@@ -51,6 +52,7 @@ Notification::Notification(QObject *parent) : QObject(parent), p(new Notificatio
     p->server = nullptr;
     p->value = -2;
     p->hints = Notification::Hint::None;
+    p->actionsModel = new ActionModel();
 }
 
 Notification::Notification(NotificationID id, int displayTime, const Urgency ur, QString text, Type type, NotificationServer *srv, QObject *parent) :
@@ -63,11 +65,12 @@ Notification::Notification(NotificationID id, int displayTime, const Urgency ur,
     p->value = -2;
     p->hints = Notification::Hint::None;
     p->displayTime = displayTime;
+    p->actionsModel = new ActionModel();
 }
 
 Notification::Notification(NotificationID id, int displayTime, const Urgency ur, Type type, NotificationServer *srv, QObject *parent) :
     Notification(id, displayTime, ur, "", type, srv, parent){
-
+    p->actionsModel = new ActionModel();
 }
 
 Notification::~Notification() {
@@ -161,14 +164,18 @@ void Notification::setType(Type type) {
     }
 }
 
-QStringList Notification::getActions() const {
-    return p->actions;
+ActionModel* Notification::getActions() const {
+    return p->actionsModel;
 }
 
 void Notification::setActions(QStringList actions) {
     if(p->actions != actions) {
         p->actions = actions;
         emit actionsChanged(p->actions);
+
+        for (int i = 0; i < p->actions.size(); i += 2) {
+            p->actionsModel->insertAction(p->actions[i], p->actions[i+1]);
+        }
     }
 }
 
