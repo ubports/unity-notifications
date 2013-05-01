@@ -198,9 +198,10 @@ void Notification::onDisplayed() {
 
 void Notification::invokeAction(QString action) const {
     for(int i=0; i<p->actions.size(); i++) {
-        if(p->actions[i] == action)
+        if(p->actions[i] == action) {
             p->server->invokeAction(p->id, action);
             return;
+        }
     }
     printf("Error: tried to invoke action not in actionList.\n");
 }
