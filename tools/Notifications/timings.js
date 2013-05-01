@@ -14,27 +14,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.0
-import "Notifications"
-import Ubuntu.Components 0.1
+var rhythm     = 700;
+var fastBeat   = 0.5 * rhythm;
+var snapBeat   = 0.5 * fastBeat;
+var slowBeat   = rhythm;
+var sleepyBeat = slowBeat * 2;
 
-Rectangle {
-    id: rootRect
-    width: units.gu(40)
-    height: units.gu(71)
-    color: "white"
-
-    Image {
-        anchors.fill: parent
-        fillMode: Image.Tile
-        source: "Notifications/graphics/tile.png"
-    }
-
-    Notifications {
-        id: notifications
-
-        model: notificationmodel
-        anchors.fill: parent
-        anchors.margins: units.gu(1)
-    }
-}
+var easing     = "OutQuint";

@@ -19,15 +19,16 @@
 
 #include "notificationmodel.h"
 #include "notification.h"
-#include<QTimer>
-#include<QList>
-#include<QVector>
-#include<QMap>
+#include <QTimer>
+#include <QList>
+#include <QVector>
+#include <QMap>
+#include <QStringListModel>
 
 struct NotificationModelPrivate {
     QList<QSharedPointer<Notification> > displayedNotifications;
     QTimer timer;
-    QVector<QSharedPointer<Notification> > asyncQueue;
+    QVector<QSharedPointer<Notification> > ephemeralQueue;
     QVector<QSharedPointer<Notification> > interactiveQueue;
     QVector<QSharedPointer<Notification> > snapQueue;
     QMap<NotificationID, int> displayTimes;
@@ -40,6 +41,7 @@ bool notificationCompare(const QSharedPointer<Notification> &first, const QShare
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent), p(new NotificationModelPrivate) {
     connect(&(p->timer), SIGNAL(timeout()), this, SLOT(timeout()));
     p->timer.setSingleShot(true);
+
 }
 
 NotificationModel::~NotificationModel() {
@@ -50,18 +52,48 @@ int NotificationModel::rowCount(const QModelIndex &parent) const {
     return p->displayedNotifications.size();
 }
 
-QVariant NotificationModel::data(const QModelIndex &parent, int role) const {
-    //printf("Data %d.\n", parent.row());
-    if (!parent.isValid())
+QVariant NotificationModel::data(const QModelIndex &index, int role) const {
+    //printf("Data %d.\n", index.row());
+    if (!index.isValid())
             return QVariant();
 
-    if (role != Qt::DisplayRole)
-        return QVariant();
-    return QVariant(p->displayedNotifications[parent.row()]->getBody());
-}
+    switch(role) {
+        case RoleType:
+            return QVariant(p->displayedNotifications[index.row()]->getType());
 
-Q_INVOKABLE QString NotificationModel::tempHackGetData() const {
-    return p->displayedNotifications[0]->getBody();
+        case RoleUrgency:
+            return QVariant(p->displayedNotifications[index.row()]->getUrgency());
+
+        case RoleId:
+            return QVariant(p->displayedNotifications[index.row()]->getID());
+
+        case RoleSummary:
+            return QVariant(p->displayedNotifications[index.row()]->getSummary());
+
+        case RoleBody:
+            return QVariant(p->displayedNotifications[index.row()]->getBody());
+
+        case RoleValue:
+            return QVariant(p->displayedNotifications[index.row()]->getValue());
+
+        case RoleIcon:
+            return QVariant(p->displayedNotifications[index.row()]->getIcon());
+
+        case RoleSecondaryIcon:
+            return QVariant(p->displayedNotifications[index.row()]->getSecondaryIcon());
+
+        case RoleActions: 
+            return QVariant::fromValue(p->displayedNotifications[index.row()]->getActions());
+
+        case RoleHints:
+            return QVariant(p->displayedNotifications[index.row()]->getHints());
+
+        case RoleNotification:
+            return QVariant(p->displayedNotifications[index.row()]);
+
+        default:
+            return QVariant();
+    }
 }
 
 void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
@@ -72,8 +104,8 @@ void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
     p->timer.stop();
     incrementDisplayTimes(elapsed);
     switch(n->getType()) {
-    case Notification::Type::Ephemeral : insertAsync(n); break;
-    case Notification::Type::Confirmation : insertSync(n); break;
+    case Notification::Type::Ephemeral : insertEphemeral(n); break;
+    case Notification::Type::Confirmation : insertConfirmation(n); break;
     case Notification::Type::Interactive : insertInteractive(n); break;
     case Notification::Type::SnapDecision : insertSnap(n); break;
     default:
@@ -87,9 +119,9 @@ void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
 }
 
 QSharedPointer<Notification> NotificationModel::getNotification(NotificationID id) const {
-    for(int i=0; i<p->asyncQueue.size(); i++) {
-        if(p->asyncQueue[i]->getID() == id) {
-            return p->asyncQueue[i];
+    for(int i=0; i<p->ephemeralQueue.size(); i++) {
+        if(p->ephemeralQueue[i]->getID() == id) {
+            return p->ephemeralQueue[i];
         }
     }
     for(int i=0; i<p->interactiveQueue.size(); i++) {
@@ -117,9 +149,9 @@ bool NotificationModel::hasNotification(NotificationID id) const {
 }
 
 void NotificationModel::removeNotification(const NotificationID id) {
-    for(int i=0; i<p->asyncQueue.size(); i++) {
-        if(p->asyncQueue[i]->getID() == id) {
-            p->asyncQueue.erase(p->asyncQueue.begin() + i);
+    for(int i=0; i<p->ephemeralQueue.size(); i++) {
+        if(p->ephemeralQueue[i]->getID() == id) {
+            p->ephemeralQueue.erase(p->ephemeralQueue.begin() + i);
             emit queueSizeChanged(queued());
             return;
         }
@@ -157,7 +189,9 @@ void NotificationModel::deleteFirst() {
 }
 
 void NotificationModel::deleteFromVisible(int loc) {
-    QModelIndex deletePoint = QAbstractItemModel::createIndex(loc, 0);
+    //QModelIndex deletePoint = QAbstractItemModel::createIndex(loc, 0);
+    //beginRemoveRows(deletePoint, loc, loc);
+    QModelIndex deletePoint = QModelIndex();
     beginRemoveRows(deletePoint, loc, loc);
     QSharedPointer<Notification> n = p->displayedNotifications[loc];
     p->displayTimes.erase(p->displayTimes.find(n->getID()));
@@ -201,9 +235,9 @@ bool NotificationModel::nonSnapTimeout() {
         restartTimer = true;
         emit queueSizeChanged(queued());
     }
-    if(!showingNotificationOfType(Notification::Type::Ephemeral) && !p->asyncQueue.empty()) {
-        QSharedPointer<Notification> n = p->asyncQueue[0];
-        p->asyncQueue.pop_front();
+    if(!showingNotificationOfType(Notification::Type::Ephemeral) && !p->ephemeralQueue.empty()) {
+        QSharedPointer<Notification> n = p->ephemeralQueue[0];
+        p->ephemeralQueue.pop_front();
         insertToVisible(n, insertionPoint(n));
         restartTimer = true;
         emit queueSizeChanged(queued());
@@ -226,7 +260,7 @@ void NotificationModel::removeNonSnap() {
         switch(n->getType()) {
         case Notification::Type::SnapDecision : break;
         case Notification::Type::Confirmation : deleteFromVisible(i); break;
-        case Notification::Type::Ephemeral : deleteFromVisible(i); p->asyncQueue.push_front(n); queueSizeChanged(queued()); break;
+        case Notification::Type::Ephemeral : deleteFromVisible(i); p->ephemeralQueue.push_front(n); queueSizeChanged(queued()); break;
         case Notification::Type::Interactive : deleteFromVisible(i); p->interactiveQueue.push_front(n); queueSizeChanged(queued()); break;
         case Notification::Type::PlaceHolder : break;
         }
@@ -253,12 +287,12 @@ int NotificationModel::nextTimeout() const {
     return mintime;
 }
 
-void NotificationModel::insertAsync(QSharedPointer<Notification> n) {
+void NotificationModel::insertEphemeral(QSharedPointer<Notification> n) {
     Q_ASSERT(n->getType() == Notification::Type::Ephemeral);
 
     if(showingNotificationOfType(Notification::Type::SnapDecision)) {
-        p->asyncQueue.push_back(n);
-        qStableSort(p->asyncQueue.begin(), p->asyncQueue.end(), notificationCompare);
+        p->ephemeralQueue.push_back(n);
+        qStableSort(p->ephemeralQueue.begin(), p->ephemeralQueue.end(), notificationCompare);
         emit queueSizeChanged(queued());
     } else if(showingNotificationOfType(Notification::Type::Ephemeral)) {
         int loc = findFirst(Notification::Type::Ephemeral);
@@ -266,11 +300,11 @@ void NotificationModel::insertAsync(QSharedPointer<Notification> n) {
         if(n->getUrgency() > showing->getUrgency()) {
             deleteFromVisible(loc);
             insertToVisible(n, loc);
-            p->asyncQueue.push_front(showing);
+            p->ephemeralQueue.push_front(showing);
         } else {
-            p->asyncQueue.push_back(n);
+            p->ephemeralQueue.push_back(n);
         }
-        qStableSort(p->asyncQueue.begin(), p->asyncQueue.end(), notificationCompare);
+        qStableSort(p->ephemeralQueue.begin(), p->ephemeralQueue.end(), notificationCompare);
         emit queueSizeChanged(queued());
     } else {
         insertToVisible(n);
@@ -304,7 +338,7 @@ void NotificationModel::insertInteractive(QSharedPointer<Notification> n) {
 }
 
 
-void NotificationModel::insertSync(QSharedPointer<Notification> n) {
+void NotificationModel::insertConfirmation(QSharedPointer<Notification> n) {
     Q_ASSERT(n->getType() == Notification::Type::Confirmation);
     if(showingNotificationOfType(Notification::Type::Confirmation)) {
         deleteFirst(); // Synchronous is always first.
@@ -369,15 +403,17 @@ void NotificationModel::insertToVisible(QSharedPointer<Notification> n, int loca
         printf("Bad insert.\n");
         return;
     }
-    QModelIndex insertionPoint = QAbstractItemModel::createIndex(location, 0);
-    beginInsertRows(insertionPoint, location, location);
+    //QModelIndex insertionPoint = QAbstractItemModel::createIndex(location, 0);
+    //beginInsertRows(insertionPoint, location, location);
+    QModelIndex insertionPoint = QModelIndex();
+    beginInsertRows(insertionPoint, rowCount(insertionPoint), rowCount(insertionPoint));
     p->displayedNotifications.insert(location, n);
     endInsertRows();
     p->displayTimes[n->getID()] = 0;
 }
 
 int NotificationModel::queued() const {
-    return p->asyncQueue.size() + p->interactiveQueue.size() + p->snapQueue.size();
+    return p->ephemeralQueue.size() + p->interactiveQueue.size() + p->snapQueue.size();
 }
 
 bool NotificationModel::showingNotificationOfType(const Notification::Type type) const {
@@ -410,4 +446,22 @@ int NotificationModel::findFirst(const Notification::Type type) const {
             return i;
     }
     return -1;
+}
+
+QHash<int, QByteArray> NotificationModel::roleNames() const {
+    QHash<int, QByteArray> roles;
+
+    roles.insert(RoleType, "type");
+    roles.insert(RoleUrgency, "urgency");
+    roles.insert(RoleId, "id");
+    roles.insert(RoleSummary, "summary");
+    roles.insert(RoleBody, "body");
+    roles.insert(RoleValue, "value");
+    roles.insert(RoleIcon, "icon");
+    roles.insert(RoleSecondaryIcon, "secondaryIcon");
+    roles.insert(RoleActions, "actions");
+    roles.insert(RoleHints, "hints");
+    roles.insert(RoleNotification, "notification");
+
+    return roles;
 }

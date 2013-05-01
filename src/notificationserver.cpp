@@ -79,7 +79,7 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     const int FAILURE = 0; // Is this correct?
     const int minActions = 4;
     const int maxActions = 12;
-    QImage icon(app_icon);
+    //QImage icon(app_icon);
     int currentId = idCounter;
     QSharedPointer<Notification> notification;
     if(replaces_id != 0) {
@@ -122,7 +122,7 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
         notification->setActions(actions);
     }
     notification->setBody(body);
-    notification->setIcon(icon);
+    notification->setIcon(app_icon);
     notification->setSummary(summary);
     if(replaces_id == 0) {
         model.insertNotification(notification);

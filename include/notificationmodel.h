@@ -20,15 +20,29 @@
 #ifndef NOTIFICATIONMODEL_H
 #define NOTIFICATIONMODEL_H
 
-#include<QAbstractListModel>
-#include<QSharedPointer>
-#include<QScopedPointer>
+#include <QAbstractListModel>
+#include <QSharedPointer>
+#include <QScopedPointer>
 #include "notify-backend.h"
 #include "notification.h"
 
 class Notification;
 
 struct NotificationModelPrivate;
+
+enum Roles {
+    RoleType          = Qt::UserRole + 1,
+    RoleUrgency       = Qt::UserRole + 2,
+    RoleId            = Qt::UserRole + 3,
+    RoleSummary       = Qt::UserRole + 4,
+    RoleBody          = Qt::UserRole + 5,
+    RoleValue         = Qt::UserRole + 6,
+    RoleIcon          = Qt::UserRole + 7,
+    RoleSecondaryIcon = Qt::UserRole + 8,
+    RoleActions       = Qt::UserRole + 9,
+    RoleHints         = Qt::UserRole + 10,
+    RoleNotification  = Qt::UserRole + 11
+};
 
 class NotificationModel : public QAbstractListModel {
     Q_OBJECT
@@ -42,6 +56,7 @@ public:
 
     virtual int rowCount(const QModelIndex &parent) const;
     virtual QVariant data(const QModelIndex &parent, int role) const;
+    virtual QHash<int, QByteArray> roleNames() const;
 
     void insertNotification(QSharedPointer<Notification> n);
     QSharedPointer<Notification> getNotification(NotificationID id) const;
@@ -50,7 +65,6 @@ public:
     Q_INVOKABLE int queued() const;
     Q_INVOKABLE int numNotifications() const;
     Q_INVOKABLE void removeNotification(const NotificationID id);
-    Q_INVOKABLE QString tempHackGetData() const;
 
 private slots:
     void timeout();
@@ -69,8 +83,8 @@ private:
     void removeNonSnap();
 
     int insertionPoint(const QSharedPointer<Notification> n) const;
-    void insertAsync(QSharedPointer<Notification> n);
-    void insertSync(QSharedPointer<Notification> n);
+    void insertEphemeral(QSharedPointer<Notification> n);
+    void insertConfirmation(QSharedPointer<Notification> n);
     void insertInteractive(QSharedPointer<Notification> n);
     void insertSnap(QSharedPointer<Notification> n);
     void insertToVisible(QSharedPointer<Notification> n, int location=-1);
