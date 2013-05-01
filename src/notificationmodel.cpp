@@ -465,3 +465,10 @@ QHash<int, QByteArray> NotificationModel::roleNames() const {
 
     return roles;
 }
+
+void NotificationModel::triggerAction(const int notificationId, const QString actionId) {
+    // FIXME: also hook up the DBus-reply about the triggered action of the notification
+    // and remove any pending timeout that might still be running
+    getNotification(notificationId)->invokeAction(actionId);
+    removeNotification(notificationId);
+}

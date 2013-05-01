@@ -15,7 +15,6 @@ int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     QQuickView view;
     NotificationModel *m = new NotificationModel();
-    //ServerMainWindow *w = new ServerMainWindow(m);
 
     new NotificationServer(*m, &app);
 
@@ -27,8 +26,6 @@ int main(int argc, char *argv[]) {
         printf("Could not register to DBus session.\n");
         return 1;
     }
-    //w->show();
-
 
     // Shared pointer problem: http://qt-project.org/wiki/SharedPointersAndQmlOwnership
     view.rootContext()->setContextProperty("notificationmodel", m);

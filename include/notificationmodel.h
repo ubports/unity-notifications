@@ -65,6 +65,7 @@ public:
     Q_INVOKABLE int queued() const;
     Q_INVOKABLE int numNotifications() const;
     Q_INVOKABLE void removeNotification(const NotificationID id);
+    Q_INVOKABLE void triggerAction(const int notificationId, const QString actionId);
 
 private slots:
     void timeout();

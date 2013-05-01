@@ -25,6 +25,7 @@ UbuntuShape {
     property alias summary: summaryLabel.text
     property alias body: bodyLabel.text
     property var actions
+    property var notificationId
 
     width: parent.width
     height: childrenRect.height
@@ -38,7 +39,10 @@ UbuntuShape {
         anchors.fill: contentColumn
         objectName: "interactiveArea"
         visible: type == "Notifications.Type.Interactive"
-        onClicked: print("clicked " + actions.get(0).id)
+        onClicked: {
+            notificationRenderer.model.triggerAction(notificationId, id);
+            print("clicked " + actions.get(0).id)
+        }
     }
 
     Column {
@@ -146,7 +150,7 @@ UbuntuShape {
                     width: (topRow.width - units.gu(1)) / 2
                     height: units.gu(4)
                     text: label
-                    onClicked: print("clicked " + id)
+                    onClicked: notificationRenderer.model.triggerAction(notificationId, id);
                 }
             }
         }
