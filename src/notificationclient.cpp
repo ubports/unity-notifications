@@ -44,10 +44,10 @@ unsigned int NotificationClient::sendNotification(Notification::Type ntype, Noti
     }
     if(ntype == Notification::Type::SnapDecision) {
         QStringList snaps;
-        snaps.push_back("one");
-        snaps.push_back("two");
-        snaps.push_back("three");
-        snaps.push_back("four");
+        snaps.push_back("true");
+        snaps.push_back("Yes");
+        snaps.push_back("false");
+        snaps.push_back("No");
         hints[SNAP_HINT] = snaps;
     }
     if(ntype == Notification::Type::Interactive) {
