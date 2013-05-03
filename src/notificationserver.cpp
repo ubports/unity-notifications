@@ -51,7 +51,8 @@ QStringList NotificationServer::GetCapabilities() const {
     return capabilities;
 }
 
-Notification* NotificationServer::buildNotification(NotificationID id, const Hints &hints, int expireTimeout) {
+Notification* NotificationServer::buildNotification(NotificationID id, const Hints &hints) {
+    int expireTimeout = 0;
     Notification::Urgency urg = Notification::Urgency::Low;
     if(hints.find(URGENCY_HINT) != hints.end()) {
         QVariant u = hints[URGENCY_HINT].variant();
@@ -62,12 +63,16 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
         }
     }
     Notification::Type ntype = Notification::Type::Ephemeral;
+    expireTimeout = 5000;
     if(hints.find(SYNCH_HINT) != hints.end()) {
+        expireTimeout = 3000;
         ntype = Notification::Type::Confirmation;
     } else if (hints.find(SNAP_HINT) != hints.end()) {
+        expireTimeout = 30000;
         ntype = Notification::Type::SnapDecision;
     } else if(hints.find(INTERACTIVE_HINT) != hints.end()) {
         ntype = Notification::Type::Interactive;
+        expireTimeout = 5000;
     }
     return new Notification(id, expireTimeout, urg, ntype, this);
 
@@ -88,7 +93,7 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
         currentId = replaces_id;
         notification = model.getNotification(replaces_id);
     } else {
-        Notification *n = buildNotification(currentId, hints, expire_timeout);
+        Notification *n = buildNotification(currentId, hints);
         if(!n) {
             return FAILURE;
         }
@@ -136,7 +141,7 @@ void NotificationServer::CloseNotification(NotificationID id, unsigned int reaso
 
 void NotificationServer::GetServerInformation (QString &name, QString &vendor, QString &version, QString &specVersion) const {
     name = "Unity notification server";
-    vendor = "Canonical";
+    vendor = "Canonical Ltd";
     version = "1.1";
     specVersion = "1.1";
 }

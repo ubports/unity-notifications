@@ -77,7 +77,7 @@ signals:
     void ActionInvoked(unsigned int id, QString action_key);
 
 private:
-    Notification* buildNotification(NotificationID id, const Hints &hints, int expireTimeout);
+    Notification* buildNotification(NotificationID id, const Hints &hints);
     NotificationModel &model;
     int idCounter;
 
