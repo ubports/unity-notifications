@@ -113,7 +113,7 @@ void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
         break;
     }
     int timeout = nextTimeout();
-    Q_ASSERT(timeout > 0);
+    //Q_ASSERT(timeout > 0);
     p->timer.setInterval(timeout);
     p->timer.start();
 }
