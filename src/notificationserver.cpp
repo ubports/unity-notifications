@@ -142,6 +142,6 @@ void NotificationServer::CloseNotification (unsigned int id) {
 void NotificationServer::GetServerInformation (QString &name, QString &vendor, QString &version, QString &specVersion) const {
     name = "Unity notification server";
     vendor = "Canonical Ltd";
-    version = "1.1";
+    version = "1.2";
     specVersion = "1.1";
 }
