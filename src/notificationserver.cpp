@@ -46,6 +46,7 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back("urgency");
     capabilities.push_back("x-canonical-private-synchronous");
     capabilities.push_back("x-canonical-append");
+    capabilities.push_back("x-canonical-snap-decisions");
     capabilities.push_back("x-canonical-private-icon-only");
     capabilities.push_back("x-canonical-truncation");
     return capabilities;
@@ -107,12 +108,14 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     // existing notification exiting now means all old state is
     // preserved.
     if(notification->getType() == Notification::Type::SnapDecision) {
-        QVariant snapActions = hints[SNAP_HINT].variant();
+        /*QVariant snapActions = hints[SNAP_HINT].variant();
         if(!snapActions.canConvert<QStringList>()) {
             printf("Malformed snap decisions list.\n");
             return FAILURE;
         }
         QStringList actionList = snapActions.toStringList();
+        for(int i=0; i<actionList.size(); i++)
+            printf ("%d. %s\n", i, actionList[i].toStdString().c_str());
         int numActions = actionList.size();
         if(numActions < minActions) {
             printf("Too few strings for Snap Decisions. Has %d, requires %d.\n", numActions, minActions);
@@ -123,7 +126,7 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
             return FAILURE;
         }
         notification->setActions(actionList);
-    } else {
+    } else {*/
         notification->setActions(actions);
     }
     notification->setBody(body);
