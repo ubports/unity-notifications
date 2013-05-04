@@ -45,10 +45,12 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back("image/svg+xml");
     capabilities.push_back("urgency");
     capabilities.push_back("x-canonical-private-synchronous");
-    capabilities.push_back("x-canonical-append");
-    capabilities.push_back("x-canonical-snap-decisions");
     capabilities.push_back("x-canonical-private-icon-only");
+    capabilities.push_back("x-canonical-private-button-tint");
+    capabilities.push_back("x-canonical-append");
     capabilities.push_back("x-canonical-truncation");
+    capabilities.push_back("x-canonical-snap-decisions");
+    capabilities.push_back("x-canonical-secondary-icon");
     return capabilities;
 }
 
@@ -132,6 +134,10 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     notification->setBody(body);
     notification->setIcon(app_icon);
     notification->setSummary(summary);
+
+    QVariant secondaryIcon = hints[SECONDARY_ICON_HINT].variant();
+    notification->setSecondaryIcon(secondaryIcon.toString());
+
     if(replaces_id == 0) {
         model.insertNotification(notification);
     }

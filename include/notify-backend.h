@@ -59,5 +59,7 @@ class Notification;
 #define SYNCH_HINT "x-canonical-private-synchronous"
 #define SNAP_HINT "x-canonical-snap-decisions"
 #define INTERACTIVE_HINT "x-canonical-switch-to-application"
+#define SECONDARY_ICON_HINT "x-canonical-secondary-icon"
+#define BUTTON_TINT_HINT "x-canonical-private-button-tint"
 
 #endif

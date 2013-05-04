@@ -52,13 +52,7 @@ class Notification;
 class NotificationServer : public QDBusAbstractAdaptor {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", DBUS_INTERFACE)
-/*
-    Q_CLASSINFO("D-Bus Introspection", ""
-            "  <interface name=\"com.canonical.notificationproto\">\n"
-            "    <method name=\"GetCapabilities\"/>\n"
-            "  </interface>\n"
-            )
-            */
+
 public:
     NotificationServer(NotificationModel &m, QObject *parent=nullptr);
     ~NotificationServer();
@@ -72,7 +66,6 @@ public slots:
             QStringList actions, Hints hints, int expire_timeout);
 
 signals:
-
     void NotificationClosed(unsigned int id, unsigned int reason);
     void ActionInvoked(unsigned int id, QString action_key);
 
