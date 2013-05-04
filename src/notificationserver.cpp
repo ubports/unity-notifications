@@ -138,8 +138,9 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     return currentId;
 }
 
-void NotificationServer::CloseNotification(NotificationID id, unsigned int reason) {
-    emit NotificationClosed(id, reason);
+void NotificationServer::CloseNotification (unsigned int id) {
+    emit NotificationClosed(id, 1);
+    model.removeNotification(id);
 }
 
 void NotificationServer::GetServerInformation (QString &name, QString &vendor, QString &version, QString &specVersion) const {
