@@ -76,7 +76,7 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
 unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces_id, QString app_icon,
         QString summary, QString body,
         QStringList actions, Hints hints, int expire_timeout) {
-    const unsigned int FAILURE = (unsigned int)-1; // Is this correct?
+    const unsigned int FAILURE = 0; // Is this correct?
     const int minActions = 4;
     const int maxActions = 12;
     //QImage icon(app_icon);
