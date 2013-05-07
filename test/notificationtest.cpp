@@ -2,6 +2,7 @@
 #include "notificationmodel.h"
 #include "notification.h"
 
+#include<QApplication>
 #include <cassert>
 #include <cstdio>
 
@@ -37,7 +38,7 @@ void testFullQueue() {
     int timeout = 5000;
     NotificationModel m;
     for(unsigned int i=0; i< MAX_NOTIFICATIONS; i++) {
-        QSharedPointer<Notification> n(new Notification(i, timeout, Notification::Low, "text"));
+        QSharedPointer<Notification> n(new Notification(i, timeout, Notification::Low, "text", Notification::Ephemeral));
         m.insertNotification(n);
     }
     assert((unsigned int)m.numNotifications() == MAX_NOTIFICATIONS);
@@ -47,6 +48,7 @@ void testFullQueue() {
 }
 
 int main(int argc, char **argv) {
+    QApplication app(argc, argv);
 #ifdef NDEBUG
     fprintf(stderr, "NDEBUG is defined, tests will not work.");
     return 1;
