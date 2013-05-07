@@ -60,4 +60,6 @@ class Notification;
 #define SNAP_HINT "x-canonical-snap-decisions"
 #define INTERACTIVE_HINT "x-canonical-switch-to-application"
 
+#define APPEND_HINT "x-canonical-append"
+
 #endif

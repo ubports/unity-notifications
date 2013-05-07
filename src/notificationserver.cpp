@@ -45,7 +45,7 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back("image/svg+xml");
     capabilities.push_back("urgency");
     capabilities.push_back("x-canonical-private-synchronous");
-    capabilities.push_back("x-canonical-append");
+    capabilities.push_back(APPEND_HINT);
     capabilities.push_back("x-canonical-private-icon-only");
     capabilities.push_back("x-canonical-truncation");
     return capabilities;
@@ -87,6 +87,11 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
             return FAILURE;
         currentId = replaces_id;
         notification = model.getNotification(replaces_id);
+        // Appending text is a special case.
+        if (hints.find(APPEND_HINT) != hints.end()) {
+            notification->setBody(notification->getBody() + body);
+            return notification->getID();
+        }
     } else {
         Notification *n = buildNotification(currentId, hints, expire_timeout);
         if(!n) {
