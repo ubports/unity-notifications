@@ -56,7 +56,7 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
     if(hints.find(URGENCY_HINT) != hints.end()) {
         QVariant u = hints[URGENCY_HINT].variant();
         if(!u.canConvert(QVariant::Int)) {
-            printf("Invalid urgency value.\n");
+            fprintf(stderr, "Invalid urgency value.\n");
         } else {
             urg = (Notification::Urgency) u.toInt();
         }
@@ -83,8 +83,10 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     int currentId = idCounter;
     QSharedPointer<Notification> notification;
     if(replaces_id != 0) {
-        if(!model.hasNotification(replaces_id))
+        if(!model.hasNotification(replaces_id)) {
+            fprintf(stderr, "Tried to change non-existing notification %d.\n", replaces_id);
             return FAILURE;
+        }
         currentId = replaces_id;
         notification = model.getNotification(replaces_id);
         // Appending text is a special case.
@@ -95,6 +97,7 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     } else {
         Notification *n = buildNotification(currentId, hints, expire_timeout);
         if(!n) {
+            fprintf(stderr, "Could not build notification object.\n");
             return FAILURE;
         }
         notification.reset(n);
@@ -109,17 +112,17 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     if(notification->getType() == Notification::Type::SnapDecision) {
         QVariant snapActions = hints[SNAP_HINT].variant();
         if(!snapActions.canConvert<QStringList>()) {
-            printf("Malformed snap decisions list.\n");
+            fprintf(stderr, "Malformed snap decisions list.\n");
             return FAILURE;
         }
         QStringList actionList = snapActions.toStringList();
         int numActions = actionList.size();
         if(numActions < minActions) {
-            printf("Too few strings for Snap Decisions. Has %d, requires %d.\n", numActions, minActions);
+            fprintf(stderr, "Too few strings for Snap Decisions. Has %d, requires %d.\n", numActions, minActions);
             return FAILURE;
         }
         if(numActions > maxActions) {
-            printf("Too many strings for Snap Decisions. Has %d, maximum %d.\n", numActions, maxActions);
+            fprintf(stderr, "Too many strings for Snap Decisions. Has %d, maximum %d.\n", numActions, maxActions);
             return FAILURE;
         }
         notification->setActions(actionList);
