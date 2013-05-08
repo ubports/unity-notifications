@@ -176,6 +176,7 @@ void NotificationModel::removeNotification(const NotificationID id) {
     for(int i=0; i<p->displayedNotifications.size(); i++) {
         if(p->displayedNotifications[i]->getID() == id) {
             deleteFromVisible(i);
+            timeout(); // Simulate a timeout so visual state is updated.
             return;
         }
     }
@@ -201,7 +202,15 @@ void NotificationModel::deleteFromVisible(int loc) {
 
 void NotificationModel::timeout() {
     bool restartTimer = false;
-    incrementDisplayTimes(p->timer.interval());
+    // We might call this function before the timer
+    // has expired (e.g. because a notification was
+    // manually removed)
+    if(p->timer.isActive()) {
+       incrementDisplayTimes(p->timer.interval() - p->timer.remainingTime());
+       p->timer.stop();
+    } else {
+        incrementDisplayTimes(p->timer.interval());
+    }
     pruneExpired();
     if(!p->displayedNotifications.empty()) {
         restartTimer = true;

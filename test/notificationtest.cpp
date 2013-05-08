@@ -36,21 +36,42 @@ void testTypeSimple() {
 
 void testOrder() {
     const int timeout = 5000;
-    QSharedPointer<Notification> n1(new Notification(1, timeout, Notification::Low, "low"));
-    QSharedPointer<Notification> n2(new Notification(2, timeout, Notification::Normal, "high"));
-    QSharedPointer<Notification> n3(new Notification(3, timeout, Notification::Critical, "critical"));
+    QSharedPointer<Notification> n1(new Notification(1, timeout, Notification::Low, "low", Notification::Ephemeral));
+    QSharedPointer<Notification> n2(new Notification(2, timeout, Notification::Normal, "high", Notification::Ephemeral));
+    QSharedPointer<Notification> n3(new Notification(3, timeout, Notification::Critical, "critical", Notification::Ephemeral));
     NotificationModel m;
 
     m.insertNotification(n1);
     assert(m.showingNotification(n1->getID()));
+
     m.insertNotification(n2);
     assert(!m.showingNotification(n1->getID()));
     assert(m.showingNotification(n2->getID()));
+    assert(m.queued() == 1);
 
     m.insertNotification(n3);
     assert(!m.showingNotification(n1->getID()));
     assert(!m.showingNotification(n2->getID()));
     assert(m.showingNotification(n3->getID()));
+    assert(m.queued() == 2);
+
+    m.removeNotification(n3->getID());
+    assert(!m.showingNotification(n1->getID()));
+    assert(m.showingNotification(n2->getID()));
+    assert(!m.showingNotification(n3->getID()));
+    assert(m.queued() == 1);
+
+    m.removeNotification(n2->getID());
+    assert(m.showingNotification(n1->getID()));
+    assert(!m.showingNotification(n2->getID()));
+    assert(!m.showingNotification(n3->getID()));
+    assert(m.queued() == 0);
+
+    m.removeNotification(n1->getID());
+    assert(!m.showingNotification(n1->getID()));
+    assert(!m.showingNotification(n2->getID()));
+    assert(!m.showingNotification(n3->getID()));
+    assert(m.queued() == 0);
 }
 
 void testFullQueue() {
