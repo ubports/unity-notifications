@@ -18,11 +18,11 @@ void testSimpleInsertion() {
     assert(m.numNotifications() == 0);
 }
 
-void testOrder() {
+void testTypeSimple() {
     int timeout = 5000;
     QSharedPointer<Notification> n1(new Notification(1, timeout, Notification::Low, "low", Notification::Ephemeral));
-    QSharedPointer<Notification> n2(new Notification(2, timeout, Notification::Low, "high", Notification::SnapDecision));
-    QSharedPointer<Notification> n3(new Notification(3, timeout, Notification::Low, "critical", Notification::Confirmation));
+    QSharedPointer<Notification> n2(new Notification(2, timeout, Notification::Low, "low", Notification::SnapDecision));
+    QSharedPointer<Notification> n3(new Notification(3, timeout, Notification::Low, "low", Notification::Confirmation));
     NotificationModel m;
 
     m.insertNotification(n1);
@@ -32,6 +32,25 @@ void testOrder() {
 
     m.insertNotification(n3);
     assert(m.showingNotificationOfType(Notification::Confirmation));
+}
+
+void testOrder() {
+    const int timeout = 5000;
+    QSharedPointer<Notification> n1(new Notification(1, timeout, Notification::Low, "low"));
+    QSharedPointer<Notification> n2(new Notification(2, timeout, Notification::Normal, "high"));
+    QSharedPointer<Notification> n3(new Notification(3, timeout, Notification::Critical, "critical"));
+    NotificationModel m;
+
+    m.insertNotification(n1);
+    assert(m.showingNotification(n1->getID()));
+    m.insertNotification(n2);
+    assert(!m.showingNotification(n1->getID()));
+    assert(m.showingNotification(n2->getID()));
+
+    m.insertNotification(n3);
+    assert(!m.showingNotification(n1->getID()));
+    assert(!m.showingNotification(n2->getID()));
+    assert(m.showingNotification(n3->getID()));
 }
 
 void testFullQueue() {
@@ -54,8 +73,9 @@ int main(int argc, char **argv) {
     return 1;
 #else
     testSimpleInsertion();
-    testOrder();
+    testTypeSimple();
     testFullQueue();
+    testOrder();
     return 0;
 #endif
 }

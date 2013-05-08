@@ -420,6 +420,15 @@ bool NotificationModel::showingNotificationOfType(const Notification::Type type)
     return countShowing(type) > 0;
 }
 
+bool NotificationModel::showingNotification(const NotificationID id) const {
+    for(int i=0; i<p->displayedNotifications.size(); i++) {
+        if(p->displayedNotifications[i]->getID() == id) {
+            return true;
+        }
+    }
+    return false;
+}
+
 int NotificationModel::countShowing(const Notification::Type type) const {
     int count = 0;
     for(int i=0; i<p->displayedNotifications.size(); i++) {

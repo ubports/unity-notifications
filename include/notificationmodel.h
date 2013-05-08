@@ -67,6 +67,7 @@ public:
     Q_INVOKABLE void removeNotification(const NotificationID id);
 
     bool showingNotificationOfType(const Notification::Type type) const;
+    bool showingNotification(const NotificationID id) const;
 
 private slots:
     void timeout();
