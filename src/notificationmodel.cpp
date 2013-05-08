@@ -216,7 +216,7 @@ void NotificationModel::timeout() {
             emit queueSizeChanged(queued());
         }
     } else {
-        restartTimer = nonSnapTimeout();
+        restartTimer |= nonSnapTimeout();
     }
     if(restartTimer) {
         int timeout = nextTimeout();
