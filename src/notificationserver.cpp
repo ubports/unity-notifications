@@ -125,6 +125,10 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
             fprintf(stderr, "Too many strings for Snap Decisions. Has %d, maximum %d.\n", numActions, maxActions);
             return FAILURE;
         }
+        if(numActions % 2 != 0) {
+            fprintf(stderr, "Number of actions must be even, not odd.\n");
+            return FAILURE;
+        }
         notification->setActions(actionList);
     } else {
         notification->setActions(actions);
