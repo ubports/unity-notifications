@@ -74,6 +74,34 @@ void testOrder() {
     assert(m.queued() == 0);
 }
 
+void testHas() {
+    const int timeout = 5000;
+    QSharedPointer<Notification> n1(new Notification(1, timeout, Notification::Low, "low", Notification::Ephemeral));
+    QSharedPointer<Notification> n2(new Notification(2, timeout, Notification::Low, "low", Notification::Ephemeral));
+    QSharedPointer<Notification> n3(new Notification(3, timeout, Notification::Low, "low", Notification::Ephemeral));
+    NotificationModel m;
+
+    assert(!m.hasNotification(1));
+    assert(!m.hasNotification(2));
+    assert(!m.hasNotification(3));
+
+    m.insertNotification(n1);
+    assert(m.hasNotification(1));
+    assert(!m.hasNotification(2));
+    assert(!m.hasNotification(3));
+
+    m.insertNotification(n2);
+    assert(m.hasNotification(1));
+    assert(m.hasNotification(2));
+    assert(!m.hasNotification(3));
+
+    m.insertNotification(n3);
+    assert(m.hasNotification(1));
+    assert(m.hasNotification(2));
+    assert(m.hasNotification(3));
+}
+
+
 void testFullQueue() {
     int timeout = 5000;
     NotificationModel m;
@@ -97,6 +125,7 @@ int main(int argc, char **argv) {
     testTypeSimple();
     testFullQueue();
     testOrder();
+    testHas();
     return 0;
 #endif
 }

@@ -145,7 +145,7 @@ QSharedPointer<Notification> NotificationModel::getNotification(NotificationID i
 }
 
 bool NotificationModel::hasNotification(NotificationID id) const {
-    return getNotification(id).isNull();
+    return !(getNotification(id).isNull());
 }
 
 void NotificationModel::removeNotification(const NotificationID id) {
