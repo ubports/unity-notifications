@@ -115,6 +115,16 @@ QString Notification::getIcon() const {
 
 void Notification::setIcon(QString icon) {
     p->icon = icon;
+
+    // FIXME: currently Qt lacks an equivalent to gtk+'s
+    // gtk_icon_theme_append_search_path(), which the old
+    // NotifyOSD uses to add /usr/share/notify-osd/icons
+    // to the search-path for icons, thus any symbolic icon
+    // from that set won't be found
+    if (!icon.startsWith("/")) {
+        p->icon.prepend("image://gicon/");
+    }
+
     emit iconChanged(p->icon);
 }
 
