@@ -1,92 +1,131 @@
 #include "notification.h"
-#include "notificationbackend.h"
-#include "renderer.h"
+#include "notificationmodel.h"
 #include "notification.h"
 
+#include<QApplication>
 #include <cassert>
 #include <cstdio>
 
 void testSimpleInsertion() {
     int timeout = 5000;
-    Renderer r;
-    Notification *n = new Notification(42, timeout, Notification::Low, "this is text");
-    NotificationBackend be(r);
+    QSharedPointer<Notification> n(new Notification(42, timeout, Notification::Low, "this is text"));
+    NotificationModel m;
 
-    assert(be.numNotifications() == 0);
-    be.insertNotification(n);
-    assert(be.numNotifications() == 1);
-    be.deleteNotification(n);
-    assert(be.numNotifications() == 0);
+    assert(m.numNotifications() == 0);
+    m.insertNotification(n);
+    assert(m.numNotifications() == 1);
+    m.removeNotification(n->getID());
+    assert(m.numNotifications() == 0);
+}
+
+void testTypeSimple() {
+    int timeout = 5000;
+    QSharedPointer<Notification> n1(new Notification(1, timeout, Notification::Low, "low", Notification::Ephemeral));
+    QSharedPointer<Notification> n2(new Notification(2, timeout, Notification::Low, "low", Notification::SnapDecision));
+    QSharedPointer<Notification> n3(new Notification(3, timeout, Notification::Low, "low", Notification::Confirmation));
+    NotificationModel m;
+
+    m.insertNotification(n1);
+    assert(m.showingNotificationOfType(Notification::Ephemeral));
+    m.insertNotification(n2);
+    assert(m.showingNotificationOfType(Notification::SnapDecision));
+
+    m.insertNotification(n3);
+    assert(m.showingNotificationOfType(Notification::Confirmation));
 }
 
 void testOrder() {
-    int timeout = 5000;
-    Renderer r;
-    Notification *n1 = new Notification(1, timeout, Notification::Low, "low");
-    Notification *n2 = new Notification(2, timeout, Notification::Normal, "high");
-    Notification *n3 = new Notification(3, timeout, Notification::Critical, "critical");
-    NotificationBackend be(r);
+    const int timeout = 5000;
+    QSharedPointer<Notification> n1(new Notification(1, timeout, Notification::Low, "low", Notification::Ephemeral));
+    QSharedPointer<Notification> n2(new Notification(2, timeout, Notification::Normal, "high", Notification::Ephemeral));
+    QSharedPointer<Notification> n3(new Notification(3, timeout, Notification::Critical, "critical", Notification::Ephemeral));
+    NotificationModel m;
 
-    be.insertNotification(n1);
-    be.insertNotification(n2);
-    assert(be.getNotification(0).getID() == n2->getID());
-    assert(be.getNotification(1).getID() == n1->getID());
+    m.insertNotification(n1);
+    assert(m.showingNotification(n1->getID()));
 
-    be.insertNotification(n3);
-    assert(be.getNotification(0).getID() == n3->getID());
-    assert(be.getNotification(1).getID() == n2->getID());
-    assert(be.getNotification(2).getID() == n1->getID());
+    m.insertNotification(n2);
+    assert(!m.showingNotification(n1->getID()));
+    assert(m.showingNotification(n2->getID()));
+    assert(m.queued() == 1);
+
+    m.insertNotification(n3);
+    assert(!m.showingNotification(n1->getID()));
+    assert(!m.showingNotification(n2->getID()));
+    assert(m.showingNotification(n3->getID()));
+    assert(m.queued() == 2);
+
+    m.removeNotification(n3->getID());
+    assert(!m.showingNotification(n1->getID()));
+    assert(m.showingNotification(n2->getID()));
+    assert(!m.showingNotification(n3->getID()));
+    assert(m.queued() == 1);
+
+    m.removeNotification(n2->getID());
+    assert(m.showingNotification(n1->getID()));
+    assert(!m.showingNotification(n2->getID()));
+    assert(!m.showingNotification(n3->getID()));
+    assert(m.queued() == 0);
+
+    m.removeNotification(n1->getID());
+    assert(!m.showingNotification(n1->getID()));
+    assert(!m.showingNotification(n2->getID()));
+    assert(!m.showingNotification(n3->getID()));
+    assert(m.queued() == 0);
 }
 
-void testRenderCalls() {
-    int timeout = 5000;
-    Renderer r;
-    NotificationBackend be(r);
-    Notification *n1 = new Notification(1, timeout, Notification::Low, "text");
-    Notification *n2 = new Notification(2, timeout, Notification::Low, "here too");
-    Notification *n3 = new Notification(3, timeout, Notification::Low, "third");
+void testHas() {
+    const int timeout = 5000;
+    QSharedPointer<Notification> n1(new Notification(1, timeout, Notification::Low, "low", Notification::Ephemeral));
+    QSharedPointer<Notification> n2(new Notification(2, timeout, Notification::Low, "low", Notification::Ephemeral));
+    QSharedPointer<Notification> n3(new Notification(3, timeout, Notification::Low, "low", Notification::Ephemeral));
+    NotificationModel m;
 
-    assert(r.numChanges() == 0);
-    be.insertNotification(n1);
-    assert(r.numChanges() == 1);
-    be.insertNotification(n2);
-    assert(r.numChanges() == 2);
-    be.insertNotification(n3);
-    assert(r.numChanges() == 3);
+    assert(!m.hasNotification(1));
+    assert(!m.hasNotification(2));
+    assert(!m.hasNotification(3));
 
-    be.deleteNotification(n2);
-    assert(r.numChanges() == 4);
-    be.clear();
-    assert(r.numChanges() == 5);
-    assert(be.numNotifications() == 0);
+    m.insertNotification(n1);
+    assert(m.hasNotification(1));
+    assert(!m.hasNotification(2));
+    assert(!m.hasNotification(3));
+
+    m.insertNotification(n2);
+    assert(m.hasNotification(1));
+    assert(m.hasNotification(2));
+    assert(!m.hasNotification(3));
+
+    m.insertNotification(n3);
+    assert(m.hasNotification(1));
+    assert(m.hasNotification(2));
+    assert(m.hasNotification(3));
 }
+
 
 void testFullQueue() {
     int timeout = 5000;
-    Renderer r;
-    NotificationBackend be(r);
+    NotificationModel m;
     for(unsigned int i=0; i< MAX_NOTIFICATIONS; i++) {
-        Notification *n = new Notification(i, timeout, Notification::Low, "text");
-        bool result = be.insertNotification(n);
-        assert(result);
+        QSharedPointer<Notification> n(new Notification(i, timeout, Notification::Low, "text", Notification::Ephemeral));
+        m.insertNotification(n);
     }
-    Notification *wontFit = new Notification(1111, timeout, Notification::Critical, "foo");
-    bool result = be.insertNotification(wontFit);
-    assert(!result);
-    assert(be.numNotifications() == MAX_NOTIFICATIONS);
-    delete wontFit;
-
+    assert((unsigned int)m.numNotifications() == MAX_NOTIFICATIONS);
+    QSharedPointer<Notification> wontFit(new Notification(1111, timeout, Notification::Critical, "foo"));
+    m.insertNotification(wontFit);
+    assert((unsigned int)m.numNotifications() == MAX_NOTIFICATIONS);
 }
 
 int main(int argc, char **argv) {
+    QApplication app(argc, argv);
 #ifdef NDEBUG
     fprintf(stderr, "NDEBUG is defined, tests will not work.");
     return 1;
 #else
     testSimpleInsertion();
-    testOrder();
-    testRenderCalls();
+    testTypeSimple();
     testFullQueue();
+    testOrder();
+    testHas();
     return 0;
 #endif
 }

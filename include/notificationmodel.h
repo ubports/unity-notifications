@@ -67,6 +67,9 @@ public:
     Q_INVOKABLE void removeNotification(const NotificationID id);
     Q_INVOKABLE void triggerAction(const int notificationId, const QString actionId);
 
+    bool showingNotificationOfType(const Notification::Type type) const;
+    bool showingNotification(const NotificationID id) const;
+
 private slots:
     void timeout();
 
@@ -92,7 +95,6 @@ private:
     void deleteFromVisible(int loc);
     void deleteFirst();
     int findFirst(const Notification::Type type) const;
-    bool showingNotificationOfType(const Notification::Type type) const;
     int countShowing(const Notification::Type type) const;
 };
 

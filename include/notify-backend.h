@@ -62,4 +62,6 @@ class Notification;
 #define SECONDARY_ICON_HINT "x-canonical-secondary-icon"
 #define BUTTON_TINT_HINT "x-canonical-private-button-tint"
 
+#define APPEND_HINT "x-canonical-append"
+
 #endif

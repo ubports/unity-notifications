@@ -72,7 +72,7 @@ signals:
 private:
     Notification* buildNotification(NotificationID id, const Hints &hints);
     NotificationModel &model;
-    int idCounter;
+    unsigned int idCounter;
 
 };
 

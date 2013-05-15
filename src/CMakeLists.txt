@@ -3,8 +3,6 @@ actionmodel.cpp
 ../include/actionmodel.h
 notification.cpp
 ../include/notification.h
-notificationbackend.cpp
-renderer.cpp
 notificationmodel.cpp
 ../include/notificationmodel.h
 notificationserver.cpp

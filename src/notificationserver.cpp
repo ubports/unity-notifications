@@ -45,9 +45,9 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back("image/svg+xml");
     capabilities.push_back("urgency");
     capabilities.push_back("x-canonical-private-synchronous");
+    capabilities.push_back(APPEND_HINT);
     capabilities.push_back("x-canonical-private-icon-only");
     capabilities.push_back("x-canonical-private-button-tint");
-    capabilities.push_back("x-canonical-append");
     capabilities.push_back("x-canonical-truncation");
     capabilities.push_back("x-canonical-snap-decisions");
     capabilities.push_back("x-canonical-secondary-icon");
@@ -60,7 +60,7 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
     if(hints.find(URGENCY_HINT) != hints.end()) {
         QVariant u = hints[URGENCY_HINT].variant();
         if(!u.canConvert(QVariant::Int)) {
-            printf("Invalid urgency value.\n");
+            fprintf(stderr, "Invalid urgency value.\n");
         } else {
             urg = (Notification::Urgency) u.toInt();
         }
@@ -84,20 +84,28 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
 unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces_id, QString app_icon,
         QString summary, QString body,
         QStringList actions, Hints hints, int expire_timeout) {
-    const int FAILURE = 0; // Is this correct?
+    const unsigned int FAILURE = 0; // Is this correct?
     const int minActions = 4;
     const int maxActions = 12;
     //QImage icon(app_icon);
     int currentId = idCounter;
     QSharedPointer<Notification> notification;
     if(replaces_id != 0) {
-        if(!model.hasNotification(replaces_id))
+        if(!model.hasNotification(replaces_id)) {
+            fprintf(stderr, "Tried to change non-existing notification %d.\n", replaces_id);
             return FAILURE;
+        }
         currentId = replaces_id;
         notification = model.getNotification(replaces_id);
+        // Appending text is a special case.
+        if (hints.find(APPEND_HINT) != hints.end()) {
+            notification->setBody(notification->getBody() + body);
+            return notification->getID();
+        }
     } else {
         Notification *n = buildNotification(currentId, hints);
         if(!n) {
+            fprintf(stderr, "Could not build notification object.\n");
             return FAILURE;
         }
         notification.reset(n);
@@ -112,11 +120,15 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     if(notification->getType() == Notification::Type::SnapDecision) {
         int numActions = actions.size();
         if(numActions < minActions) {
-            printf("Too few strings for Snap Decisions. Has %d, requires %d.\n", numActions, minActions);
+            fprintf(stderr, "Too few strings for Snap Decisions. Has %d, requires %d.\n", numActions, minActions);
             return FAILURE;
         }
         if(numActions > maxActions) {
-            printf("Too many strings for Snap Decisions. Has %d, maximum %d.\n", numActions, maxActions);
+            fprintf(stderr, "Too many strings for Snap Decisions. Has %d, maximum %d.\n", numActions, maxActions);
+            return FAILURE;
+        }
+        if(numActions % 2 != 0) {
+            fprintf(stderr, "Number of actions must be even, not odd.\n");
             return FAILURE;
         }
         notification->setActions(actions);
