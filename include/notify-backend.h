@@ -60,8 +60,9 @@ class Notification;
 #define SNAP_HINT "x-canonical-snap-decisions"
 #define INTERACTIVE_HINT "x-canonical-switch-to-application"
 #define SECONDARY_ICON_HINT "x-canonical-secondary-icon"
+#define ICON_ONLY_HINT "x-canonical-private-icon-only"
 #define BUTTON_TINT_HINT "x-canonical-private-button-tint"
-
+#define TRUNCATION_HINT "x-canonical-truncation"
 #define APPEND_HINT "x-canonical-append"
 
 #endif

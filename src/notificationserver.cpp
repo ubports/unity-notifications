@@ -26,6 +26,8 @@
 NotificationServer::NotificationServer(NotificationModel &m, QObject *parent) :
     QDBusAbstractAdaptor(parent), model(m), idCounter(1) {
     qDBusRegisterMetaType<Hints>();
+
+    connect(this, SIGNAL(dataChanged(unsigned int)), &m, SLOT(onDataChanged(unsigned int)));
 }
 
 NotificationServer::~NotificationServer() {
@@ -36,6 +38,12 @@ void NotificationServer::invokeAction(unsigned int id, QString action) {
     emit ActionInvoked(id, action);
 }
 
+
+#define INTERACTIVE_HINT "x-canonical-switch-to-application"
+
+
+
+
 QStringList NotificationServer::GetCapabilities() const {
     QStringList capabilities;
     capabilities.push_back("actions");
@@ -43,14 +51,15 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back("body-markup");
     capabilities.push_back("icon-static");
     capabilities.push_back("image/svg+xml");
-    capabilities.push_back("urgency");
-    capabilities.push_back("x-canonical-private-synchronous");
+    capabilities.push_back(URGENCY_HINT);
+    capabilities.push_back(SYNCH_HINT);
     capabilities.push_back(APPEND_HINT);
-    capabilities.push_back("x-canonical-private-icon-only");
-    capabilities.push_back("x-canonical-private-button-tint");
-    capabilities.push_back("x-canonical-truncation");
-    capabilities.push_back("x-canonical-snap-decisions");
-    capabilities.push_back("x-canonical-secondary-icon");
+    capabilities.push_back(ICON_ONLY_HINT);
+    capabilities.push_back(BUTTON_TINT_HINT);
+    capabilities.push_back(TRUNCATION_HINT);
+    capabilities.push_back(SNAP_HINT);
+    capabilities.push_back(SECONDARY_ICON_HINT);
+
     return capabilities;
 }
 
@@ -77,8 +86,11 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
         ntype = Notification::Type::Interactive;
         expireTimeout = 5000;
     }
-    return new Notification(id, expireTimeout, urg, ntype, this);
 
+    Notification* n = new Notification(id, expireTimeout, urg, ntype, this);
+    connect(n, SIGNAL(dataChanged(unsigned int)), this, SLOT(onDataChanged(unsigned int)));
+
+    return n;
 }
 
 unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces_id, QString app_icon,
@@ -98,11 +110,23 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
         currentId = replaces_id;
         notification = model.getNotification(replaces_id);
         // Appending text is a special case.
-        if (hints.find(APPEND_HINT) != hints.end()) {
+        /*if (hints.find(APPEND_HINT) != hints.end()) {
             notification->setBody(notification->getBody() + body);
             return notification->getID();
-        }
+        }*/
     } else {
+        // Appending text is a special case.
+        if (hints.find(APPEND_HINT) != hints.end()) {
+            notification = model.getNotification(summary);
+            if (notification) {
+                //qDebug() << "\n" << "old body:" << notification->getBody() << "\n";
+                QString newBody = QString(notification->getBody() + "\n" + body);
+                notification->setBody(newBody);
+                //qDebug() << "new body:" << notification->getBody() << "\n";
+                return notification->getID();                
+            }
+        }
+
         Notification *n = buildNotification(currentId, hints);
         if(!n) {
             fprintf(stderr, "Could not build notification object.\n");
@@ -156,4 +180,8 @@ void NotificationServer::GetServerInformation (QString &name, QString &vendor, Q
     vendor = "Canonical Ltd";
     version = "1.2";
     specVersion = "1.1";
+}
+
+void NotificationServer::onDataChanged(unsigned int id) {
+    emit dataChanged(id);
 }

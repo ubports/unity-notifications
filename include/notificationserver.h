@@ -64,10 +64,12 @@ public slots:
     QStringList GetCapabilities() const;
     unsigned int Notify (QString app_name, unsigned int replaces_id, QString app_icon, QString summary, QString body,
             QStringList actions, Hints hints, int expire_timeout);
+    void onDataChanged(unsigned int id);
 
 signals:
     void NotificationClosed(unsigned int id, unsigned int reason);
     void ActionInvoked(unsigned int id, QString action_key);
+    void dataChanged(unsigned int id);
 
 private:
     Notification* buildNotification(NotificationID id, const Hints &hints);

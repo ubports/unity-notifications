@@ -67,6 +67,8 @@ Q_SIGNALS:
     void actionsChanged(QStringList actions);
     void hintsChanged(int hints);
 
+    void dataChanged(unsigned int id);
+
     void dismissed();
     void completed();
 

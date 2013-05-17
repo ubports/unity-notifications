@@ -26,6 +26,8 @@ UbuntuShape {
     property alias body: bodyLabel.text
     property var actions
     property var notificationId
+    property var type
+    property var notification
 
     width: parent.width
     height: childrenRect.height
@@ -44,7 +46,7 @@ UbuntuShape {
             print("clicked " + actions.get(0).id)
         }
     }
-
+    
     Column {
         id: contentColumn
 
@@ -71,8 +73,9 @@ UbuntuShape {
                 id: icon
 
                 objectName: "icon"
-                width: (body == "") ? units.gu(2) : units.gu(6)
-                height: (body == "") ? units.gu(2) : units.gu(6)
+                width: units.gu(6)
+                height: units.gu(6)
+                visible: iconSource !== undefined && iconSource != ""
                 image: Image {
                     id: avatarIcon
 

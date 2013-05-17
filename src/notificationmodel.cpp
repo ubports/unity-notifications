@@ -24,6 +24,7 @@
 #include <QVector>
 #include <QMap>
 #include <QStringListModel>
+#include <QDebug>
 
 struct NotificationModelPrivate {
     QList<QSharedPointer<Notification> > displayedNotifications;
@@ -41,7 +42,6 @@ bool notificationCompare(const QSharedPointer<Notification> &first, const QShare
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent), p(new NotificationModelPrivate) {
     connect(&(p->timer), SIGNAL(timeout()), this, SLOT(timeout()));
     p->timer.setSingleShot(true);
-
 }
 
 NotificationModel::~NotificationModel() {
@@ -136,6 +136,32 @@ QSharedPointer<Notification> NotificationModel::getNotification(NotificationID i
     }
     for(int i=0; i<p->displayedNotifications.size(); i++) {
         if(p->displayedNotifications[i]->getID() == id) {
+            return p->displayedNotifications[i];
+        }
+    }
+
+    QSharedPointer<Notification> empty;
+    return empty;
+}
+
+QSharedPointer<Notification> NotificationModel::getNotification(QString summary) const {
+    for(int i=0; i<p->ephemeralQueue.size(); i++) {
+        if(p->ephemeralQueue[i]->getSummary() == summary) {
+            return p->ephemeralQueue[i];
+        }
+    }
+    for(int i=0; i<p->interactiveQueue.size(); i++) {
+        if(p->interactiveQueue[i]->getSummary() == summary) {
+            return p->interactiveQueue[i];
+        }
+    }
+    for(int i=0; i<p->snapQueue.size(); i++) {
+        if(p->snapQueue[i]->getSummary() == summary) {
+            return p->snapQueue[i];
+        }
+    }
+    for(int i=0; i<p->displayedNotifications.size(); i++) {
+        if(p->displayedNotifications[i]->getSummary() == summary) {
             return p->displayedNotifications[i];
         }
     }
@@ -487,4 +513,15 @@ QHash<int, QByteArray> NotificationModel::roleNames() const {
 void NotificationModel::triggerAction(const int notificationId, const QString actionId) {
     getNotification(notificationId)->invokeAction(actionId);
     removeNotification(notificationId);
+}
+
+void NotificationModel::onDataChanged(unsigned int id) {
+    // FIXME: not really the right way to do it by assuming
+    // it's always the first notification being displayed
+    // that's affected by a potential data-change
+    emit dataChanged(index(0, 0), index(0, 0));
+
+    // FIXME: the timeout duration of the affected notification
+    // needs to increase at least by two seconds per added or
+    // changed line of text
 }
