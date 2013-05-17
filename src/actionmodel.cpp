@@ -60,3 +60,7 @@ void ActionModel::insertAction(QString id, QString label) {
     p->ids.push_back(id);
     p->labels.push_back(label);
 }
+
+QString ActionModel::actionId(int index) const {
+    return p->ids[index];
+}

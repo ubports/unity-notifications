@@ -24,7 +24,6 @@
 #include <QVector>
 #include <QMap>
 #include <QStringListModel>
-#include <QDebug>
 
 struct NotificationModelPrivate {
     QList<QSharedPointer<Notification> > displayedNotifications;

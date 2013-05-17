@@ -109,20 +109,13 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
         }
         currentId = replaces_id;
         notification = model.getNotification(replaces_id);
-        // Appending text is a special case.
-        /*if (hints.find(APPEND_HINT) != hints.end()) {
-            notification->setBody(notification->getBody() + body);
-            return notification->getID();
-        }*/
     } else {
         // Appending text is a special case.
         if (hints.find(APPEND_HINT) != hints.end()) {
             notification = model.getNotification(summary);
             if (notification) {
-                //qDebug() << "\n" << "old body:" << notification->getBody() << "\n";
                 QString newBody = QString(notification->getBody() + "\n" + body);
                 notification->setBody(newBody);
-                //qDebug() << "new body:" << notification->getBody() << "\n";
                 return notification->getID();                
             }
         }
@@ -136,6 +129,15 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
         idCounter++;
         if(idCounter == 0) // Spec forbids zero as return value.
             idCounter = 1;
+    }
+
+    if(notification->getType() == Notification::Type::Interactive) {
+        int numActions = actions.size();
+        if(numActions != 2) {
+            fprintf(stderr, "Wrong number of actions for an interactive notification. Has %d, requires %d.\n", numActions, 2);
+            return FAILURE;
+        }
+        notification->setActions(actions);
     }
 
     // Do this first because it can fail. In case we are updating an
