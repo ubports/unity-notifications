@@ -116,6 +116,7 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
             model.notificationUpdated(currentId);
             return notification->getID();
         }
+        // Otherwise we let the code below update the fields.
     } else {
         Notification *n = buildNotification(currentId, hints);
         if(!n) {
