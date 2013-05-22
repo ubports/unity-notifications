@@ -45,7 +45,7 @@ class Renderer;
 class NotificationBackend;
 class Notification;
 
-#if 1
+#if 0
 #define DBUS_SERVICE_NAME "com.canonical.notificationproto"
 #define DBUS_INTERFACE    "com.canonical.notificationproto"
 #define DBUS_PATH         "/com/canonical/notificationproto"
@@ -59,7 +59,10 @@ class Notification;
 #define SYNCH_HINT "x-canonical-private-synchronous"
 #define SNAP_HINT "x-canonical-snap-decisions"
 #define INTERACTIVE_HINT "x-canonical-switch-to-application"
-
+#define SECONDARY_ICON_HINT "x-canonical-secondary-icon"
+#define ICON_ONLY_HINT "x-canonical-private-icon-only"
+#define BUTTON_TINT_HINT "x-canonical-private-button-tint"
+#define TRUNCATION_HINT "x-canonical-truncation"
 #define APPEND_HINT "x-canonical-append"
 
 #endif

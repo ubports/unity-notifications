@@ -14,7 +14,7 @@ target_link_libraries(viewer notifybackend)
 
 add_executable(qmltest qmltest.cpp)
 
-qt5_use_modules(qmltest Qml Quick)
+qt5_use_modules(qmltest Qml Quick DBus Widgets)
 target_link_libraries(qmltest notifybackend)
 
 add_executable(dbusserver dbusserver.cpp serverMainWindow.cpp)

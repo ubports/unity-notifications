@@ -26,6 +26,8 @@
 NotificationServer::NotificationServer(NotificationModel &m, QObject *parent) :
     QDBusAbstractAdaptor(parent), model(m), idCounter(1) {
     qDBusRegisterMetaType<Hints>();
+
+    connect(this, SIGNAL(dataChanged(unsigned int)), &m, SLOT(onDataChanged(unsigned int)));
 }
 
 NotificationServer::~NotificationServer() {
@@ -36,6 +38,12 @@ void NotificationServer::invokeAction(unsigned int id, QString action) {
     emit ActionInvoked(id, action);
 }
 
+
+#define INTERACTIVE_HINT "x-canonical-switch-to-application"
+
+
+
+
 QStringList NotificationServer::GetCapabilities() const {
     QStringList capabilities;
     capabilities.push_back("actions");
@@ -43,15 +51,20 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back("body-markup");
     capabilities.push_back("icon-static");
     capabilities.push_back("image/svg+xml");
-    capabilities.push_back("urgency");
-    capabilities.push_back("x-canonical-private-synchronous");
+    capabilities.push_back(URGENCY_HINT);
+    capabilities.push_back(SYNCH_HINT);
     capabilities.push_back(APPEND_HINT);
-    capabilities.push_back("x-canonical-private-icon-only");
-    capabilities.push_back("x-canonical-truncation");
+    capabilities.push_back(ICON_ONLY_HINT);
+    capabilities.push_back(BUTTON_TINT_HINT);
+    capabilities.push_back(TRUNCATION_HINT);
+    capabilities.push_back(SNAP_HINT);
+    capabilities.push_back(SECONDARY_ICON_HINT);
+
     return capabilities;
 }
 
-Notification* NotificationServer::buildNotification(NotificationID id, const Hints &hints, int expireTimeout) {
+Notification* NotificationServer::buildNotification(NotificationID id, const Hints &hints) {
+    int expireTimeout = 0;
     Notification::Urgency urg = Notification::Urgency::Low;
     if(hints.find(URGENCY_HINT) != hints.end()) {
         QVariant u = hints[URGENCY_HINT].variant();
@@ -62,15 +75,22 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
         }
     }
     Notification::Type ntype = Notification::Type::Ephemeral;
+    expireTimeout = 5000;
     if(hints.find(SYNCH_HINT) != hints.end()) {
+        expireTimeout = 3000;
         ntype = Notification::Type::Confirmation;
     } else if (hints.find(SNAP_HINT) != hints.end()) {
+        expireTimeout = 30000;
         ntype = Notification::Type::SnapDecision;
     } else if(hints.find(INTERACTIVE_HINT) != hints.end()) {
         ntype = Notification::Type::Interactive;
+        expireTimeout = 5000;
     }
-    return new Notification(id, expireTimeout, urg, ntype, this);
 
+    Notification* n = new Notification(id, expireTimeout, urg, ntype, this);
+    connect(n, SIGNAL(dataChanged(unsigned int)), this, SLOT(onDataChanged(unsigned int)));
+
+    return n;
 }
 
 unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces_id, QString app_icon,
@@ -91,12 +111,13 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
         notification = model.getNotification(replaces_id);
         // Appending text is a special case.
         if (hints.find(APPEND_HINT) != hints.end()) {
-            notification->setBody(notification->getBody() + body);
+            QString newBody = QString(notification->getBody() + "\n" + body);
+            notification->setBody(newBody);
             model.notificationUpdated(currentId);
             return notification->getID();
         }
     } else {
-        Notification *n = buildNotification(currentId, hints, expire_timeout);
+        Notification *n = buildNotification(currentId, hints);
         if(!n) {
             fprintf(stderr, "Could not build notification object.\n");
             return FAILURE;
@@ -107,17 +128,20 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
             idCounter = 1;
     }
 
+    if(notification->getType() == Notification::Type::Interactive) {
+        int numActions = actions.size();
+        if(numActions != 2) {
+            fprintf(stderr, "Wrong number of actions for an interactive notification. Has %d, requires %d.\n", numActions, 2);
+            return FAILURE;
+        }
+        notification->setActions(actions);
+    }
+
     // Do this first because it can fail. In case we are updating an
     // existing notification exiting now means all old state is
     // preserved.
     if(notification->getType() == Notification::Type::SnapDecision) {
-        QVariant snapActions = hints[SNAP_HINT].variant();
-        if(!snapActions.canConvert<QStringList>()) {
-            fprintf(stderr, "Malformed snap decisions list.\n");
-            return FAILURE;
-        }
-        QStringList actionList = snapActions.toStringList();
-        int numActions = actionList.size();
+        int numActions = actions.size();
         if(numActions < minActions) {
             fprintf(stderr, "Too few strings for Snap Decisions. Has %d, requires %d.\n", numActions, minActions);
             return FAILURE;
@@ -130,25 +154,33 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
             fprintf(stderr, "Number of actions must be even, not odd.\n");
             return FAILURE;
         }
-        notification->setActions(actionList);
-    } else {
         notification->setActions(actions);
     }
     notification->setBody(body);
     notification->setIcon(app_icon);
     notification->setSummary(summary);
+
+    QVariant secondaryIcon = hints[SECONDARY_ICON_HINT].variant();
+    notification->setSecondaryIcon(secondaryIcon.toString());
+
     if(replaces_id == 0) {
         model.insertNotification(notification);
     }
     return currentId;
 }
 
-void NotificationServer::CloseNotification(NotificationID id, unsigned int reason) {
-    emit NotificationClosed(id, reason);
+void NotificationServer::CloseNotification (unsigned int id) {
+    emit NotificationClosed(id, 1);
+    model.removeNotification(id);
 }
 
-void NotificationServer::GetServerInformation (QString &name, QString &vendor, QString &version) const {
+void NotificationServer::GetServerInformation (QString &name, QString &vendor, QString &version, QString &specVersion) const {
     name = "Unity notification server";
-    vendor = "Canonical";
-    version = "something";
+    vendor = "Canonical Ltd";
+    version = "1.2";
+    specVersion = "1.1";
+}
+
+void NotificationServer::onDataChanged(unsigned int id) {
+    emit dataChanged(id);
 }

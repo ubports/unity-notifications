@@ -75,7 +75,7 @@ Notification::Notification(NotificationID id, int displayTime, const Urgency ur,
 
 Notification::~Notification() {
     if(p->server)
-        p->server->CloseNotification(p->id, 0);
+        p->server->CloseNotification(p->id);
 }
 
 QString Notification::getBody() const {
@@ -86,6 +86,7 @@ void Notification::setBody(const QString text) {
     if(p->body != text) {
         p->body = text;
         emit bodyChanged(text);
+        emit dataChanged(p->id);
     }
 }
 
@@ -114,8 +115,24 @@ QString Notification::getIcon() const {
 }
 
 void Notification::setIcon(QString icon) {
-    p->icon = icon;
+    if (icon.startsWith(" ") || icon.size() == 0) {
+        p->icon = nullptr;
+    }
+    else {
+        p->icon = icon;
+
+        // FIXME: currently Qt lacks an equivalent to gtk+'s
+        // gtk_icon_theme_append_search_path(), which the old
+        // NotifyOSD uses to add /usr/share/notify-osd/icons
+        // to the search-path for icons, thus any symbolic icon
+        // from that set won't be found
+        if (!icon.startsWith("/")) {
+            p->icon.prepend("image://gicon/");
+        }
+    }
+
     emit iconChanged(p->icon);
+    emit dataChanged(p->id);
 }
 
 QString Notification::getSecondaryIcon() const {
@@ -125,6 +142,7 @@ QString Notification::getSecondaryIcon() const {
 void Notification::setSecondaryIcon(QString secondaryIcon) {
     p->secondaryIcon = secondaryIcon;
     emit secondaryIconChanged(p->secondaryIcon);
+    emit dataChanged(p->id);
 }
 
 QString Notification::getSummary() const {
@@ -135,6 +153,7 @@ void Notification::setSummary(QString summary) {
     if(p->summary != summary) {
         p->summary = summary;
         emit summaryChanged(p->summary);
+        emit dataChanged(p->id);
     }
 }
 
@@ -145,6 +164,7 @@ int Notification::getValue() const {
 void Notification::setValue(int value) {
     p->value = value;
     emit valueChanged(p->value);
+    emit dataChanged(p->id);
 }
 
 Notification::Urgency Notification::getUrgency() const {
@@ -198,9 +218,10 @@ void Notification::onDisplayed() {
 
 void Notification::invokeAction(QString action) const {
     for(int i=0; i<p->actions.size(); i++) {
-        if(p->actions[i] == action)
+        if(p->actions[i] == action) {
             p->server->invokeAction(p->id, action);
             return;
+        }
     }
     printf("Error: tried to invoke action not in actionList.\n");
 }

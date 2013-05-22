@@ -39,15 +39,16 @@ unsigned int NotificationClient::sendNotification(Notification::Type ntype, Noti
     QStringList actions;
     QMap<QString, QVariant> hints;
     hints["urgency"] = (char)urg;
+
     if(ntype == Notification::Type::Confirmation) {
         hints[SYNCH_HINT] = "yes";
     }
     if(ntype == Notification::Type::SnapDecision) {
         QStringList snaps;
-        snaps.push_back("true");
-        snaps.push_back("Yes");
-        snaps.push_back("false");
-        snaps.push_back("No");
+        snaps.push_back("Ok");
+        snaps.push_back("ok_id");
+        snaps.push_back("Cancel");
+        snaps.push_back("cancel_id");
         hints[SNAP_HINT] = snaps;
     }
     if(ntype == Notification::Type::Interactive) {

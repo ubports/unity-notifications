@@ -55,16 +55,18 @@ public:
     virtual ~NotificationModel();
 
     virtual int rowCount(const QModelIndex &parent) const;
-    virtual QVariant data(const QModelIndex &parent, int role) const;
+    virtual QVariant data(const QModelIndex &index, int role) const;
     virtual QHash<int, QByteArray> roleNames() const;
 
     void insertNotification(QSharedPointer<Notification> n);
     QSharedPointer<Notification> getNotification(NotificationID id) const;
+    QSharedPointer<Notification> getNotification(QString summary) const;
     bool hasNotification(NotificationID id) const;
 
     Q_INVOKABLE int queued() const;
     Q_INVOKABLE int numNotifications() const;
     Q_INVOKABLE void removeNotification(const NotificationID id);
+    Q_INVOKABLE void triggerAction(const int notificationId, const QString actionId);
 
     bool showingNotificationOfType(const Notification::Type type) const;
     bool showingNotification(const NotificationID id) const;
@@ -73,9 +75,9 @@ public:
 
 private slots:
     void timeout();
+    void onDataChanged(unsigned int id);
 
-signals:
-
+Q_SIGNALS:
     void queueSizeChanged(int newSize);
 
 private:
