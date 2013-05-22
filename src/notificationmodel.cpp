@@ -253,6 +253,7 @@ bool NotificationModel::nonSnapTimeout() {
     }
     return restartTimer;
 }
+
 void NotificationModel::pruneExpired() {
     for(int i=p->displayedNotifications.size()-1; i>=0; i--) {
         QSharedPointer<Notification> n = p->displayedNotifications[i];
@@ -482,4 +483,16 @@ QHash<int, QByteArray> NotificationModel::roleNames() const {
     roles.insert(RoleNotification, "notification");
 
     return roles;
+}
+
+void NotificationModel::notificationUpdated(const NotificationID id) {
+    if(showingNotification(id)) {
+        incrementDisplayTimes(p->timer.interval() - p->timer.remainingTime());
+        p->timer.stop();
+        p->displayTimes[id] = 0;
+        int timeout = nextTimeout();
+        Q_ASSERT(timeout > 0);
+        p->timer.setInterval(timeout);
+        p->timer.start();
+    }
 }

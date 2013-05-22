@@ -92,6 +92,7 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
         // Appending text is a special case.
         if (hints.find(APPEND_HINT) != hints.end()) {
             notification->setBody(notification->getBody() + body);
+            model.notificationUpdated(currentId);
             return notification->getID();
         }
     } else {

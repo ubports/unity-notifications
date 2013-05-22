@@ -1,4 +1,4 @@
-project(columbus C CXX)
+project(notification-server C CXX)
 cmake_minimum_required(VERSION 2.8.9)
 
 if(PROJECT_BINARY_DIR STREQUAL PROJECT_SOURCE_DIR)

@@ -69,6 +69,8 @@ public:
     bool showingNotificationOfType(const Notification::Type type) const;
     bool showingNotification(const NotificationID id) const;
 
+    void notificationUpdated(const NotificationID id);
+
 private slots:
     void timeout();
 
