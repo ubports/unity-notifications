@@ -15,6 +15,8 @@ if(${basic_warnings})
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic")
 endif()
 
+set(LIBDIR "lib" CACHE PATH "Destination install dir for the library")
+
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
