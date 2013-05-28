@@ -33,11 +33,12 @@ class NotificationClient : public QObject {
 public:
     NotificationClient(QObject *parent=0);
     ~NotificationClient();
-    unsigned int sendNotification(Notification::Type ntype, Notification::Urgency urg, QString text);
+    NotificationID sendNotification(Notification::Type ntype, Notification::Urgency urg, QString text);
+    NotificationID appendText(NotificationID id, QString text);
 
 public slots:
-    void NotificationClosed(unsigned int id, unsigned int reason);
-    void ActionInvoked(unsigned int id, QString key);
+    void NotificationClosed(NotificationID id, unsigned int reason);
+    void ActionInvoked(NotificationID id, QString key);
 
 signals:
 

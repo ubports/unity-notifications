@@ -31,7 +31,7 @@ NotificationClient::~NotificationClient() {
 
 }
 
-unsigned int NotificationClient::sendNotification(Notification::Type ntype, Notification::Urgency urg, QString text) {
+NotificationID NotificationClient::sendNotification(Notification::Type ntype, Notification::Urgency urg, QString text) {
     QString app_name("client test");
     unsigned int replaces_id = 0;
     QString app_icon("/usr/share/icons/unity-icon-theme/search/16/search_field.png");
@@ -58,19 +58,36 @@ unsigned int NotificationClient::sendNotification(Notification::Type ntype, Noti
     QDBusReply<unsigned int> result = service.call("Notify",
             app_name, replaces_id, app_icon, summary, text, actions, hints, timeout);
     if(!result.isValid()) {
-        return (unsigned int) -1;
+        return (NotificationID) -1;
     }
     return result.value();
 }
 
-void NotificationClient::NotificationClosed(unsigned int id, unsigned int reason) {
+NotificationID NotificationClient::appendText(NotificationID id, QString text) {
+    QString app_name("append");
+    QString app_icon("");
+    QString summary("");
+    QStringList actions;
+    QMap<QString, QVariant> hints;
+    hints[APPEND_HINT] = QVariant(true);
+    int timeout = 5000;
+    QDBusReply<unsigned int> result = service.call("Notify",
+            app_name, id, app_icon, summary, text, actions, hints, timeout);
+    if(!result.isValid()) {
+        return (NotificationID) -1;
+    }
+    return result.value();
+
+}
+
+void NotificationClient::NotificationClosed(NotificationID id, unsigned int reason) {
     QString msg("Got NotificationClosed signal for notification ");
     msg += QString::number(id, 10);
     msg += ".\n";
     emit eventHappened(msg);
 }
 
-void NotificationClient::ActionInvoked(unsigned int id, QString key) {
+void NotificationClient::ActionInvoked(NotificationID id, QString key) {
     QString msg("Got ActionInvoked signal for notification ");
     msg += QString::number(id, 10);
     msg += " event \"";
