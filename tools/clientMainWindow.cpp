@@ -45,7 +45,8 @@ ClientMainWindow::~ClientMainWindow() {
 }
 
 void ClientMainWindow::sendNotification(Notification::Type type, Notification::Urgency urg, QString text) {
-    unsigned int res = client.sendNotification(type, urg, text);
+    QString summary("summary");
+    unsigned int res = client.sendNotification(type, urg, summary, text);
     QString msg = "Sent Notification which got reply id ";
     msg += QString::number(res, 10);
     msg += ".\n";
