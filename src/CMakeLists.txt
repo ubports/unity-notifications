@@ -26,11 +26,19 @@ notificationplugin.cpp
 ../include/notificationplugin.h
 )
 
+add_library(notifyclientplugin MODULE
+notificationclientplugin.cpp
+../include/notificationclientplugin.h
+notificationclient.cpp
+../include/notificationclient.h
+)
+
 qt5_use_modules(notifybackend Widgets DBus Qml)
 qt5_use_modules(notifyplugin Widgets DBus Qml)
+qt5_use_modules(notifyclientplugin Widgets DBus Qml)
 
 install(
-  TARGETS notifyplugin
+  TARGETS notifyplugin notifyclientplugin
   ARCHIVE DESTINATION ${LIBDIR}
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION ${LIBDIR}
