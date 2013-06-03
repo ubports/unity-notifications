@@ -32,7 +32,6 @@ void NotificationClientPlugin::registerTypes(const char *uri) {
 
 void NotificationClientPlugin::initializeEngine(QQmlEngine *engine, const char *uri) {
     NotificationClient *cl = new NotificationClient(engine);
-    QDBusInterface service(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE);
     if(!QDBusConnection::sessionBus().connect(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE,
             "NotificationClosed", cl, SLOT(NotificationClosed(unsigned int, unsigned int)))) {
         printf("Could not connect to NotificationClosed signal.\n\n");
