@@ -1,0 +1,22 @@
+Source: unity-notifications
+Section: libs
+Priority: optional
+Maintainer: Ubuntu Core Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Build-Depends: debhelper (>= 9~),
+               cmake,
+               pkg-config,
+               qtdeclarative5-dev,
+               qtbase5-dev-tools,
+# For Qml tests
+               qtdeclarative5-dev-tools,
+Standards-Version: 3.9.4
+
+Package: unity-notifications
+Section: libs
+Architecture: any
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+Description: Unity Notifications - shared library
+ This package provides an interface and implementation of desktop notifications.

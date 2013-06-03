@@ -6,6 +6,7 @@ if(PROJECT_BINARY_DIR STREQUAL PROJECT_SOURCE_DIR)
 endif()
 
 option(basic_warnings "Basic compiler warnings." ON)
+option(build_tools "Build developer tools." OFF)
 include(FindPkgConfig)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++0x")
@@ -24,12 +25,14 @@ find_package(Qt5Widgets REQUIRED)
 
 include_directories(include)
 add_subdirectory(src)
-add_subdirectory(tools)
+if(${build_tools})
+  add_subdirectory(tools)
+endif()
 
 find_program(qmltestrunner_exe qmltestrunner)
 
 if(NOT qmltestrunner_exe)
-  msg(FATAL_ERROR "Could not locate qmltestrunner.")
+  message(FATAL_ERROR "Could not locate qmltestrunner.")
 endif()
 
 macro(add_qml_test COMPONENT_NAME)
