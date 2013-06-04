@@ -7,6 +7,8 @@ endif()
 
 option(basic_warnings "Basic compiler warnings." ON)
 option(build_tools "Build developer tools." OFF)
+option(private_dbus "Use private dbus namespace to prevent clashes during development." OFF)
+
 include(FindPkgConfig)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++0x")
@@ -24,6 +26,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Qt5Widgets REQUIRED)
 
 include_directories(include)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
+add_subdirectory(include)
 add_subdirectory(src)
 if(${build_tools})
   add_subdirectory(tools)

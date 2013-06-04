@@ -48,7 +48,7 @@ class NotificationModel : public QAbstractListModel {
     Q_OBJECT
 
 public:
-    static const int maxNotifications = 50;
+    static const int maxNotifications = MAX_NOTIFICATIONS;
     static const int maxSnapsShown = 5;
 
     NotificationModel(QObject *parent=nullptr);
