@@ -31,7 +31,7 @@ class NotificationClient : public QObject {
     Q_OBJECT
 
 public:
-    NotificationClient(QObject *parent=0);
+    NotificationClient(QObject *parent=nullptr);
     ~NotificationClient();
     NotificationID sendNotification(Notification::Type ntype, Notification::Urgency urg, QString summary, QString body);
     NotificationID appendText(NotificationID id, QString text);

@@ -77,9 +77,9 @@ public Q_SLOTS:
     void onDisplayed();
 
 public:
-    Notification(QObject *parent=0);
-    Notification(NotificationID id, int displayTime, const Urgency ur, QString text, Type type=Ephemeral, NotificationServer *srv=nullptr, QObject *parent=0);
-    Notification(NotificationID id, int displayTime, const Urgency ur, Type type=Ephemeral, NotificationServer *srv=nullptr, QObject *parent=0);
+    Notification(QObject *parent=nullptr);
+    Notification(NotificationID id, int displayTime, const Urgency ur, QString text, Type type=Ephemeral, NotificationServer *srv=nullptr, QObject *parent=nullptr);
+    Notification(NotificationID id, int displayTime, const Urgency ur, Type type=Ephemeral, NotificationServer *srv=nullptr, QObject *parent=nullptr);
     virtual ~Notification();
 
     NotificationID getID() const;
