@@ -36,12 +36,12 @@ public:
     NotificationID sendNotification(Notification::Type ntype, Notification::Urgency urg, QString summary, QString body);
     NotificationID appendText(NotificationID id, QString text);
 
-public slots:
+public Q_SLOTS:
     /* These slots are needed to catch the incoming DBus messages. */
     void NotificationClosed(NotificationID id, unsigned int reason);
     void ActionInvoked(NotificationID id, QString key);
 
-signals:
+Q_SIGNALS:
     /* These signals are for client applications to bind to. */
     void closed(NotificationID id, unsigned int reason);
     void invoked(NotificationID id, QString key);

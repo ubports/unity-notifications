@@ -80,19 +80,19 @@ NotificationID NotificationClient::appendText(NotificationID id, QString text) {
 }
 
 void NotificationClient::NotificationClosed(NotificationID id, unsigned int reason) {
-    emit closed(id, reason);
+    Q_EMIT closed(id, reason);
     QString msg("Got NotificationClosed signal for notification ");
     msg += QString::number(id, 10);
     msg += ".\n";
-    emit eventHappened(msg);
+    Q_EMIT eventHappened(msg);
 }
 
 void NotificationClient::ActionInvoked(NotificationID id, QString key) {
-    emit invoked(id, key);
+    Q_EMIT invoked(id, key);
     QString msg("Got ActionInvoked signal for notification ");
     msg += QString::number(id, 10);
     msg += " event \"";
     msg += key;
     msg += "\".\n";
-    emit eventHappened(msg);
+    Q_EMIT eventHappened(msg);
 }
