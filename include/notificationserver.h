@@ -20,7 +20,7 @@
 #ifndef NOTIFICATIONSERVER_H
 #define NOTIFICATIONSERVER_H
 
-#include"notify-backend.h"
+#include "notify-backend.h"
 
 /* http://www.galago-project.org/specs/notification/0.9/x408.html#commands
  *
