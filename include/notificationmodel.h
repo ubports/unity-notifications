@@ -73,7 +73,7 @@ public:
 
     void notificationUpdated(const NotificationID id);
 
-private slots:
+private Q_SLOTS:
     void timeout();
     void onDataChanged(unsigned int id);
 

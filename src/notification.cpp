@@ -85,8 +85,8 @@ QString Notification::getBody() const {
 void Notification::setBody(const QString text) {
     if(p->body != text) {
         p->body = text;
-        emit bodyChanged(text);
-        emit dataChanged(p->id);
+        Q_EMIT bodyChanged(text);
+        Q_EMIT dataChanged(p->id);
     }
 }
 
@@ -131,8 +131,8 @@ void Notification::setIcon(QString icon) {
         }
     }
 
-    emit iconChanged(p->icon);
-    emit dataChanged(p->id);
+    Q_EMIT iconChanged(p->icon);
+    Q_EMIT dataChanged(p->id);
 }
 
 QString Notification::getSecondaryIcon() const {
@@ -141,8 +141,8 @@ QString Notification::getSecondaryIcon() const {
 
 void Notification::setSecondaryIcon(QString secondaryIcon) {
     p->secondaryIcon = secondaryIcon;
-    emit secondaryIconChanged(p->secondaryIcon);
-    emit dataChanged(p->id);
+    Q_EMIT secondaryIconChanged(p->secondaryIcon);
+    Q_EMIT dataChanged(p->id);
 }
 
 QString Notification::getSummary() const {
@@ -152,8 +152,8 @@ QString Notification::getSummary() const {
 void Notification::setSummary(QString summary) {
     if(p->summary != summary) {
         p->summary = summary;
-        emit summaryChanged(p->summary);
-        emit dataChanged(p->id);
+        Q_EMIT summaryChanged(p->summary);
+        Q_EMIT dataChanged(p->id);
     }
 }
 
@@ -163,8 +163,8 @@ int Notification::getValue() const {
 
 void Notification::setValue(int value) {
     p->value = value;
-    emit valueChanged(p->value);
-    emit dataChanged(p->id);
+    Q_EMIT valueChanged(p->value);
+    Q_EMIT dataChanged(p->id);
 }
 
 Notification::Urgency Notification::getUrgency() const {
@@ -173,14 +173,14 @@ Notification::Urgency Notification::getUrgency() const {
 void Notification::setUrgency(Notification::Urgency urg) {
     if(p->urg != urg) {
         p->urg = urg;
-        emit urgencyChanged(p->urg);
+        Q_EMIT urgencyChanged(p->urg);
     }
 }
 
 void Notification::setType(Type type) {
     if(p->type != p->type) {
         p->type = type;
-        emit typeChanged(p->type);
+        Q_EMIT typeChanged(p->type);
     }
 }
 
@@ -191,7 +191,7 @@ ActionModel* Notification::getActions() const {
 void Notification::setActions(QStringList actions) {
     if(p->actions != actions) {
         p->actions = actions;
-        emit actionsChanged(p->actions);
+        Q_EMIT actionsChanged(p->actions);
 
         for (int i = 0; i < p->actions.size(); i += 2) {
             p->actionsModel->insertAction(p->actions[i], p->actions[i+1]);
@@ -205,7 +205,7 @@ int Notification::getHints() const {
 
 void Notification::setHints(int hints) {
     p->hints = hints;
-    emit hintsChanged(p->hints);
+    Q_EMIT hintsChanged(p->hints);
 }
 
 void Notification::onHovered() {

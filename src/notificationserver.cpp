@@ -35,7 +35,7 @@ NotificationServer::~NotificationServer() {
 }
 
 void NotificationServer::invokeAction(unsigned int id, QString action) {
-    emit ActionInvoked(id, action);
+    Q_EMIT ActionInvoked(id, action);
 }
 
 
@@ -109,7 +109,9 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
         }
         currentId = replaces_id;
         notification = model.getNotification(replaces_id);
-        // Appending text is a special case.
+        // Appending text is a special case. This is the new update-behaviour
+        // for the append-hint and expects the client-app to use libnotify's
+        // call notify_notification_update()
         if (hints.find(APPEND_HINT) != hints.end()) {
             QString newBody = QString(notification->getBody() + "\n" + body);
             notification->setBody(newBody);
@@ -118,6 +120,22 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
         }
         // Otherwise we let the code below update the fields.
     } else {
+
+        // support append-hint also for a new notification using just the
+        // summary-text as "identifier"... this is legacy behaviour and
+        // only kept for compatibility-reasons... developer-docs have to
+        // be updated and extended with a remark that this will be dropped
+        // by the next cycle
+        if (hints.find(APPEND_HINT) != hints.end()) {
+            notification = model.getNotification(summary);
+            if (notification) {
+                QString newBody = QString(notification->getBody() + "\n" + body);
+                notification->setBody(newBody);
+                model.notificationUpdated(notification->getID());
+                return notification->getID();                
+            }
+        }
+
         Notification *n = buildNotification(currentId, hints);
         if(!n) {
             fprintf(stderr, "Could not build notification object.\n");
@@ -171,7 +189,7 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
 }
 
 void NotificationServer::CloseNotification (unsigned int id) {
-    emit NotificationClosed(id, 1);
+    Q_EMIT NotificationClosed(id, 1);
     model.removeNotification(id);
 }
 
@@ -183,5 +201,5 @@ void NotificationServer::GetServerInformation (QString &name, QString &vendor, Q
 }
 
 void NotificationServer::onDataChanged(unsigned int id) {
-    emit dataChanged(id);
+    Q_EMIT dataChanged(id);
 }

@@ -31,6 +31,7 @@
 void NotificationPlugin::registerTypes(const char *uri) {
     // @uri Unity.Notifications
     qmlRegisterUncreatableType<NotificationModel>(uri, 1, 0, "NotificationModel", "");
+    qmlRegisterType<Notification>(uri, 1, 0, "Notification");
 }
 
 void NotificationPlugin::initializeEngine(QQmlEngine *engine, const char *uri) {
