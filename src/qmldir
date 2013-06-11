@@ -1,2 +1,2 @@
-module Notifications
+module NotificationsBackend
 plugin notifyplugin
