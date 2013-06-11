@@ -20,11 +20,21 @@ add_library(notifybackend SHARED
 ${CORE_SRCS}
 )
 
+set_target_properties(notifybackend PROPERTIES
+  SOVERSION ${SONAME}
+  VERSION ${SOVERSION}
+  )
+
 add_library(notifyplugin MODULE
 ${CORE_SRCS}
 notificationplugin.cpp
 ../include/notificationplugin.h
 )
+
+set_target_properties(notifyplugin PROPERTIES
+  SOVERSION ${SONAME}
+  VERSION ${SOVERSION}
+  )
 
 add_library(notifyclientplugin MODULE
 notificationclientplugin.cpp
@@ -39,7 +49,10 @@ qt5_use_modules(notifyclientplugin Widgets DBus Qml)
 
 install(
   TARGETS notifyplugin notifyclientplugin
-  ARCHIVE DESTINATION ${LIBDIR}
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION ${LIBDIR}
+  ARCHIVE DESTINATION ${QT_IMPORTS_DIR}/Notifications.${SONAME}
+  LIBRARY DESTINATION ${QT_IMPORTS_DIR}/Notifications.${SONAME}
+)
+
+install(FILES qmldir
+  DESTINATION ${QT_IMPORTS_DIR}/Notifications.${SONAME}
 )
