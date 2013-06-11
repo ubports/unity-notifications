@@ -49,10 +49,10 @@ qt5_use_modules(notifyclientplugin Widgets DBus Qml)
 
 install(
   TARGETS notifyplugin notifyclientplugin
-  ARCHIVE DESTINATION ${LIBDIR}/Notifications.${SONAME}
-  LIBRARY DESTINATION ${LIBDIR}/Notifications.${SONAME}
+  ARCHIVE DESTINATION ${QT_IMPORTS_DIR}/Notifications.${SONAME}
+  LIBRARY DESTINATION ${QT_IMPORTS_DIR}/Notifications.${SONAME}
 )
 
 install(FILES qmldir
-  DESTINATION ${LIBDIR}/Notifications.${SONAME}
+  DESTINATION ${QT_IMPORTS_DIR}/Notifications.${SONAME}
 )
