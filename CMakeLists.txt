@@ -45,7 +45,7 @@ find_program(qmltestrunner_exe qmltestrunner)
 if(NOT qmltestrunner_exe)
   message(FATAL_ERROR "Could not locate qmltestrunner.")
 endif()
-  
+
 macro(add_qml_test COMPONENT_NAME)
     set(options NO_ADD_TEST NO_TARGETS)
 
