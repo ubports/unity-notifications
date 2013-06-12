@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
 
     // Shared pointer problem: http://qt-project.org/wiki/SharedPointersAndQmlOwnership
     view.rootContext()->setContextProperty("notificationmodel", m);
-    qmlRegisterType<Notification>("Notification", 0, 1, "Notification");
+    qmlRegisterType<Notification>("Notification", 1, 0, "Notification");
     /* Hardcoded URLs are bad but tolerable here in test code. */
     view.setSource(QUrl::fromLocalFile("../tools/datatest.qml"));
     view.show();
