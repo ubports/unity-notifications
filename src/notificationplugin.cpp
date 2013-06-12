@@ -28,16 +28,31 @@
 #include <QQmlEngine>
 #include <QQmlContext>
 
+// These are qml singletons, so we might as well store them
+// in global variables.
+static NotificationModel *m = NULL;
+static NotificationServer *s = NULL;
+
+
+static QObject* modelProvider(QQmlEngine* /* engine */, QJSEngine* /* scriptEngine */)
+{
+    return m;
+}
+
+static QObject* sourceProvider(QQmlEngine* /* engine */, QJSEngine* /* scriptEngine */)
+{
+    return s;
+}
+
 void NotificationPlugin::registerTypes(const char *uri) {
     // @uri Unity.Notifications
-    qmlRegisterUncreatableType<NotificationModel>(uri, 1, 0, "NotificationModel", "");
-    qmlRegisterType<Notification>(uri, 1, 0, "Notification");
+    qmlRegisterSingletonType<NotificationModel>(uri, 1, 0, "Model", modelProvider);
+    qmlRegisterSingletonType<NotificationServer>(uri, 1, 0, "Source", sourceProvider);
 }
 
 void NotificationPlugin::initializeEngine(QQmlEngine *engine, const char *uri) {
-    NotificationModel *m = new NotificationModel();
-
-    new NotificationServer(*m, engine);
+    m = new NotificationModel();
+    s = new NotificationServer(*m, engine);
 
     if(!QDBusConnection::sessionBus().registerService(DBUS_SERVICE_NAME)) {
         fprintf(stderr, "Service name already taken.\n");
@@ -45,7 +60,4 @@ void NotificationPlugin::initializeEngine(QQmlEngine *engine, const char *uri) {
     if(!QDBusConnection::sessionBus().registerObject(DBUS_PATH, engine)) {
         fprintf(stderr, "Could not register to DBus session.\n");
     }
-
-    // Shared pointer problem: http://qt-project.org/wiki/SharedPointersAndQmlOwnership
-    engine->rootContext()->setContextProperty("notificationmodel", m);
 }
