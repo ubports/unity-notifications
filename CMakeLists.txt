@@ -29,6 +29,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5Widgets REQUIRED)
+# Workaround for https://bugreports.qt-project.org/browse/QTBUG-29987
+set(QT_IMPORTS_DIR "${LIBDIR}/qt5/qml")
 
 include_directories(include)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
@@ -42,7 +44,7 @@ find_program(qmltestrunner_exe qmltestrunner)
 if(NOT qmltestrunner_exe)
   message(FATAL_ERROR "Could not locate qmltestrunner.")
 endif()
-
+  
 macro(add_qml_test COMPONENT_NAME)
     set(options NO_ADD_TEST NO_TARGETS)
 

@@ -47,12 +47,14 @@ qt5_use_modules(notifybackend Widgets DBus Qml)
 qt5_use_modules(notifyplugin Widgets DBus Qml)
 qt5_use_modules(notifyclientplugin Widgets DBus Qml)
 
+message(STATUS "foo ${QT_IMPORTS_DIR}")
+
 install(
   TARGETS notifyplugin notifyclientplugin
-  ARCHIVE DESTINATION ${QT_IMPORTS_DIR}/NotificationsBackend.${SONAME}
-  LIBRARY DESTINATION ${QT_IMPORTS_DIR}/NotificationsBackend.${SONAME}
+  ARCHIVE DESTINATION ${QT_IMPORTS_DIR}/Unity/Notifications.${SONAME}
+  LIBRARY DESTINATION ${QT_IMPORTS_DIR}/Unity/Notifications.${SONAME}
 )
 
 install(FILES qmldir
-  DESTINATION ${QT_IMPORTS_DIR}/NotificationsBackend.${SONAME}
+  DESTINATION ${QT_IMPORTS_DIR}/Unity/Notifications.${SONAME}
 )
