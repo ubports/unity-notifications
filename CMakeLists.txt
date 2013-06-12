@@ -34,6 +34,7 @@ set(QT_IMPORTS_DIR "${LIBDIR}/qt5/qml")
 
 include_directories(include)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
+add_subdirectory(include)
 add_subdirectory(src)
 if(${build_tools})
   add_subdirectory(tools)
