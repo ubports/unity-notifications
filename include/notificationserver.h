@@ -20,7 +20,7 @@
 #ifndef NOTIFICATIONSERVER_H
 #define NOTIFICATIONSERVER_H
 
-#include"notify-backend.h"
+#include "notify-backend.h"
 
 /* http://www.galago-project.org/specs/notification/0.9/x408.html#commands
  *
@@ -58,7 +58,7 @@ public:
     ~NotificationServer();
     void invokeAction(unsigned int id, QString action);
 
-public slots:
+public Q_SLOTS:
     void CloseNotification (unsigned int id);
     void GetServerInformation (QString &name, QString &vendor, QString &version, QString &specVersion) const;
     QStringList GetCapabilities() const;
@@ -66,7 +66,7 @@ public slots:
             QStringList actions, Hints hints, int expire_timeout);
     void onDataChanged(unsigned int id);
 
-signals:
+Q_SIGNALS:
     void NotificationClosed(unsigned int id, unsigned int reason);
     void ActionInvoked(unsigned int id, QString action_key);
     void dataChanged(unsigned int id);

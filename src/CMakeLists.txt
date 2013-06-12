@@ -26,6 +26,11 @@ notificationplugin.cpp
 ../include/notificationplugin.h
 )
 
+set_target_properties(notifyplugin PROPERTIES
+  SOVERSION ${SONAME}
+  VERSION ${SOVERSION}
+  )
+
 add_library(notifyclientplugin MODULE
 notificationclientplugin.cpp
 ../include/notificationclientplugin.h
@@ -33,13 +38,21 @@ notificationclient.cpp
 ../include/notificationclient.h
 )
 
+set_target_properties(notifyclientplugin PROPERTIES
+  SOVERSION ${SONAME}
+  VERSION ${SOVERSION}
+  )
+
 qt5_use_modules(notifybackend Widgets DBus Qml)
 qt5_use_modules(notifyplugin Widgets DBus Qml)
 qt5_use_modules(notifyclientplugin Widgets DBus Qml)
 
 install(
   TARGETS notifyplugin notifyclientplugin
-  ARCHIVE DESTINATION ${LIBDIR}
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION ${LIBDIR}
+  ARCHIVE DESTINATION ${QT_IMPORTS_DIR}/NotificationsBackend.${SONAME}
+  LIBRARY DESTINATION ${QT_IMPORTS_DIR}/NotificationsBackend.${SONAME}
+)
+
+install(FILES qmldir
+  DESTINATION ${QT_IMPORTS_DIR}/NotificationsBackend.${SONAME}
 )

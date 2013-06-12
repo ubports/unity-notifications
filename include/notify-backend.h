@@ -45,7 +45,7 @@ class Renderer;
 class NotificationBackend;
 class Notification;
 
-#if @PRIVATE_DBUS@
+#if 0
 #define DBUS_SERVICE_NAME "com.canonical.notificationproto"
 #define DBUS_INTERFACE    "com.canonical.notificationproto"
 #define DBUS_PATH         "/com/canonical/notificationproto"

@@ -177,7 +177,7 @@ void NotificationModel::removeNotification(const NotificationID id) {
     for(int i=0; i<p->ephemeralQueue.size(); i++) {
         if(p->ephemeralQueue[i]->getID() == id) {
             p->ephemeralQueue.erase(p->ephemeralQueue.begin() + i);
-            emit queueSizeChanged(queued());
+            Q_EMIT queueSizeChanged(queued());
             return;
         }
     }
@@ -185,7 +185,7 @@ void NotificationModel::removeNotification(const NotificationID id) {
     for(int i=0; i<p->snapQueue.size(); i++) {
         if(p->snapQueue[i]->getID() == id) {
             p->snapQueue.erase(p->snapQueue.begin() + i);
-            emit queueSizeChanged(queued());
+            Q_EMIT queueSizeChanged(queued());
             return;
         }
     }
@@ -193,7 +193,7 @@ void NotificationModel::removeNotification(const NotificationID id) {
     for(int i=0; i<p->interactiveQueue.size(); i++) {
         if(p->interactiveQueue[i]->getID() == id) {
             p->interactiveQueue.erase(p->interactiveQueue.begin() + i);
-            emit queueSizeChanged(queued());
+            Q_EMIT queueSizeChanged(queued());
             return;
         }
     }
@@ -247,7 +247,7 @@ void NotificationModel::timeout() {
             p->snapQueue.pop_front();
             insertToVisible(n, insertionPoint(n));
             restartTimer = true;
-            emit queueSizeChanged(queued());
+            Q_EMIT queueSizeChanged(queued());
         }
     } else {
         restartTimer |= nonSnapTimeout();
@@ -267,14 +267,14 @@ bool NotificationModel::nonSnapTimeout() {
         p->interactiveQueue.pop_front();
         insertToVisible(n, insertionPoint(n));
         restartTimer = true;
-        emit queueSizeChanged(queued());
+        Q_EMIT queueSizeChanged(queued());
     }
     if(!showingNotificationOfType(Notification::Type::Ephemeral) && !p->ephemeralQueue.empty()) {
         QSharedPointer<Notification> n = p->ephemeralQueue[0];
         p->ephemeralQueue.pop_front();
         insertToVisible(n, insertionPoint(n));
         restartTimer = true;
-        emit queueSizeChanged(queued());
+        Q_EMIT queueSizeChanged(queued());
     }
     return restartTimer;
 }
@@ -328,7 +328,7 @@ void NotificationModel::insertEphemeral(QSharedPointer<Notification> n) {
     if(showingNotificationOfType(Notification::Type::SnapDecision)) {
         p->ephemeralQueue.push_back(n);
         qStableSort(p->ephemeralQueue.begin(), p->ephemeralQueue.end(), notificationCompare);
-        emit queueSizeChanged(queued());
+        Q_EMIT queueSizeChanged(queued());
     } else if(showingNotificationOfType(Notification::Type::Ephemeral)) {
         int loc = findFirst(Notification::Type::Ephemeral);
         QSharedPointer<Notification> showing = p->displayedNotifications[loc];
@@ -340,7 +340,7 @@ void NotificationModel::insertEphemeral(QSharedPointer<Notification> n) {
             p->ephemeralQueue.push_back(n);
         }
         qStableSort(p->ephemeralQueue.begin(), p->ephemeralQueue.end(), notificationCompare);
-        emit queueSizeChanged(queued());
+        Q_EMIT queueSizeChanged(queued());
     } else {
         insertToVisible(n);
     }
@@ -352,7 +352,7 @@ void NotificationModel::insertInteractive(QSharedPointer<Notification> n) {
     if(showingNotificationOfType(Notification::Type::SnapDecision)) {
         p->interactiveQueue.push_back(n);
         qStableSort(p->interactiveQueue.begin(), p->interactiveQueue.end(), notificationCompare);
-        emit queueSizeChanged(queued());
+        Q_EMIT queueSizeChanged(queued());
     } else if(showingNotificationOfType(Notification::Type::Interactive)) {
         int loc = findFirst(Notification::Type::Interactive);
         QSharedPointer<Notification> showing = p->displayedNotifications[loc];
@@ -364,7 +364,7 @@ void NotificationModel::insertInteractive(QSharedPointer<Notification> n) {
             p->interactiveQueue.push_back(n);
         }
         qStableSort(p->interactiveQueue.begin(), p->interactiveQueue.end(), notificationCompare);
-        emit queueSizeChanged(queued());
+        Q_EMIT queueSizeChanged(queued());
     } else {
         int loc = insertionPoint(n);
         insertToVisible(n, loc);
@@ -403,7 +403,7 @@ void NotificationModel::insertSnap(QSharedPointer<Notification> n) {
             p->snapQueue.push_back(n);
         }
         qStableSort(p->snapQueue.begin(), p->snapQueue.end(), notificationCompare);
-        emit queueSizeChanged(queued());
+        Q_EMIT queueSizeChanged(queued());
     } else {
         int loc = insertionPoint(n);
         insertToVisible(n, loc);
@@ -531,7 +531,7 @@ void NotificationModel::onDataChanged(unsigned int id) {
     // FIXME: not really the right way to do it by assuming
     // it's always the first notification being displayed
     // that's affected by a potential data-change
-    emit dataChanged(index(0, 0), index(0, 0));
+    Q_EMIT dataChanged(index(0, 0), index(0, 0));
 
     // FIXME: the timeout duration of the affected notification
     // needs to increase at least by two seconds per added or

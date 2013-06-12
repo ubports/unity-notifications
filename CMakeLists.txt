@@ -1,6 +1,10 @@
 project(notification-server C CXX)
 cmake_minimum_required(VERSION 2.8.9)
 
+set(SONAME 1)
+set(VERSION 1.0)
+set(SOVERSION 1.0.0)
+
 if(PROJECT_BINARY_DIR STREQUAL PROJECT_SOURCE_DIR)
    message(FATAL_ERROR "In-tree build attempt detected, aborting. Set your build dir outside your source dir, delete CMakeCache.txt from source root and try again.")
 endif()
@@ -12,6 +16,7 @@ option(private_dbus "Use private dbus namespace to prevent clashes during develo
 include(FindPkgConfig)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++0x")
+add_definitions(-DQT_NO_KEYWORDS)
 
 if(${basic_warnings})
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -pedantic")
@@ -27,7 +32,6 @@ find_package(Qt5Widgets REQUIRED)
 
 include_directories(include)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
-add_subdirectory(include)
 add_subdirectory(src)
 if(${build_tools})
   add_subdirectory(tools)
@@ -91,4 +95,3 @@ endmacro(add_qml_test)
 
 enable_testing()
 add_subdirectory(test)
-
