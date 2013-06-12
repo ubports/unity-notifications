@@ -1,2 +1,2 @@
-module Notifications
-plugin notifications
+module Unity.Notifications
+plugin notifyplugin
