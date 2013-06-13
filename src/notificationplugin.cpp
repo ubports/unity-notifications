@@ -42,6 +42,7 @@ static QObject* modelProvider(QQmlEngine* /* engine */, QJSEngine* /* scriptEngi
 void NotificationPlugin::registerTypes(const char *uri) {
     // @uri Unity.Notifications
     qmlRegisterSingletonType<NotificationModel>(uri, 1, 0, "Model", modelProvider);
+    qmlRegisterUncreatableType<Notification>(uri, 1, 0, "Notification", "Notification objects can only be created by the plugin");
 }
 
 void NotificationPlugin::initializeEngine(QQmlEngine *engine, const char *uri) {
