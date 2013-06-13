@@ -24,6 +24,7 @@
 #include <QVector>
 #include <QMap>
 #include <QStringListModel>
+#include <QQmlEngine>
 
 struct NotificationModelPrivate {
     QList<QSharedPointer<Notification> > displayedNotifications;
@@ -450,7 +451,9 @@ void NotificationModel::insertToVisible(QSharedPointer<Notification> n, int loca
 Notification* NotificationModel::get(const unsigned int notificationId) const {
     for(int i=0; i<p->displayedNotifications.size(); i++) {
         if(p->displayedNotifications[i]->getID() == notificationId) {
-            return p->displayedNotifications[i].data();
+            Notification* n = p->displayedNotifications[i].data();
+            QQmlEngine::setObjectOwnership(n, QQmlEngine::CppOwnership);
+            return n;
         }
     }
 
