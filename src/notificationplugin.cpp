@@ -39,15 +39,9 @@ static QObject* modelProvider(QQmlEngine* /* engine */, QJSEngine* /* scriptEngi
     return m;
 }
 
-static QObject* sourceProvider(QQmlEngine* /* engine */, QJSEngine* /* scriptEngine */)
-{
-    return s;
-}
-
 void NotificationPlugin::registerTypes(const char *uri) {
     // @uri Unity.Notifications
     qmlRegisterSingletonType<NotificationModel>(uri, 1, 0, "Model", modelProvider);
-    qmlRegisterSingletonType<NotificationServer>(uri, 1, 0, "Source", sourceProvider);
 }
 
 void NotificationPlugin::initializeEngine(QQmlEngine *engine, const char *uri) {
