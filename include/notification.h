@@ -70,7 +70,7 @@ Q_SIGNALS:
     void dataChanged(unsigned int id);
 
     void dismissed();
-    void completed();
+    void completed(unsigned int id);
 
 public Q_SLOTS:
     void onHovered();
@@ -105,7 +105,7 @@ public:
     int getHints() const;
     void setHints(int hints);
 
-    void invokeAction(QString action) const;
+    Q_INVOKABLE void invokeAction(const QString action);
 
     bool operator<(const Notification &n) const; // Order by "interestingness".
 };

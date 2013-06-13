@@ -89,6 +89,7 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
 
     Notification* n = new Notification(id, expireTimeout, urg, ntype, this);
     connect(n, SIGNAL(dataChanged(unsigned int)), this, SLOT(onDataChanged(unsigned int)));
+    connect(n, SIGNAL(completed(unsigned int)), this, SLOT(onCompleted(unsigned int)));
 
     return n;
 }
@@ -202,4 +203,8 @@ void NotificationServer::GetServerInformation (QString &name, QString &vendor, Q
 
 void NotificationServer::onDataChanged(unsigned int id) {
     Q_EMIT dataChanged(id);
+}
+
+void NotificationServer::onCompleted(unsigned int id) {
+    CloseNotification(id);
 }

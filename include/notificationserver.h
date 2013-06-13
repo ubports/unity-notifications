@@ -65,6 +65,7 @@ public Q_SLOTS:
     unsigned int Notify (QString app_name, unsigned int replaces_id, QString app_icon, QString summary, QString body,
             QStringList actions, Hints hints, int expire_timeout);
     void onDataChanged(unsigned int id);
+    void onCompleted(unsigned int id);
 
 Q_SIGNALS:
     void NotificationClosed(unsigned int id, unsigned int reason);

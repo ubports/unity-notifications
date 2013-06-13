@@ -447,6 +447,16 @@ void NotificationModel::insertToVisible(QSharedPointer<Notification> n, int loca
     p->displayTimes[n->getID()] = 0;
 }
 
+Notification* NotificationModel::get(const unsigned int notificationId) const {
+    for(int i=0; i<p->displayedNotifications.size(); i++) {
+        if(p->displayedNotifications[i]->getID() == notificationId) {
+            return p->displayedNotifications[i].data();
+        }
+    }
+
+    return nullptr;
+}
+
 int NotificationModel::queued() const {
     return p->ephemeralQueue.size() + p->interactiveQueue.size() + p->snapQueue.size();
 }
@@ -520,11 +530,6 @@ void NotificationModel::notificationUpdated(const NotificationID id) {
         p->timer.setInterval(timeout);
         p->timer.start();
     }
-}
-
-void NotificationModel::triggerAction(const int notificationId, const QString actionId) {
-    getNotification(notificationId)->invokeAction(actionId);
-    removeNotification(notificationId);
 }
 
 void NotificationModel::onDataChanged(unsigned int id) {
