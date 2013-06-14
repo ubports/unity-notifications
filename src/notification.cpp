@@ -216,10 +216,11 @@ void Notification::onDisplayed() {
 
 }
 
-void Notification::invokeAction(QString action) const {
+void Notification::invokeAction(const QString action) {
     for(int i=0; i<p->actions.size(); i++) {
         if(p->actions[i] == action) {
             p->server->invokeAction(p->id, action);
+            Q_EMIT completed(p->id);
             return;
         }
     }
