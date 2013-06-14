@@ -63,9 +63,9 @@ public:
     QSharedPointer<Notification> getNotification(QString summary) const;
     bool hasNotification(NotificationID id) const;
 
-    // get() is only meant to be used from QML, since QML cannot handle
+    // getRaw() is only meant to be used from QML, since QML cannot handle
     // QSharedPointers... on C++-side only use getNotification() 
-    Q_INVOKABLE Notification* get(const unsigned int notificationId) const;
+    Q_INVOKABLE Notification* getRaw(const unsigned int notificationId) const;
 
     Q_INVOKABLE int queued() const;
     Q_INVOKABLE int numNotifications() const;

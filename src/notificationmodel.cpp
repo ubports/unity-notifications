@@ -448,7 +448,7 @@ void NotificationModel::insertToVisible(QSharedPointer<Notification> n, int loca
     p->displayTimes[n->getID()] = 0;
 }
 
-Notification* NotificationModel::get(const unsigned int notificationId) const {
+Notification* NotificationModel::getRaw(const unsigned int notificationId) const {
     for(int i=0; i<p->displayedNotifications.size(); i++) {
         if(p->displayedNotifications[i]->getID() == notificationId) {
             Notification* n = p->displayedNotifications[i].data();
