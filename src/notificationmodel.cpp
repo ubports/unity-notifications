@@ -540,8 +540,4 @@ void NotificationModel::onDataChanged(unsigned int id) {
     // it's always the first notification being displayed
     // that's affected by a potential data-change
     Q_EMIT dataChanged(index(0, 0), index(0, 0));
-
-    // FIXME: the timeout duration of the affected notification
-    // needs to increase at least by two seconds per added or
-    // changed line of text
 }
