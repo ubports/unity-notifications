@@ -7,7 +7,9 @@ on alternative platforms, such as mobile.
 
 Since the Dash is implemented in QML, this functionality
 is implemented as a QML plugin. Notification status is provided
-as a QAbstractListModel, making integration simple.
+as a QAbstractListModel, making integration simple. The exact
+form of the API is defined by the Dash, Unity-notifications
+only implements it.
 
 In the roadmap there is also plans to provide a QML plugin
 for sending notifications from client applications.
