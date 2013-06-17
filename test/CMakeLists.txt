@@ -4,4 +4,7 @@ qt5_use_modules(notificationtest Gui Core Widgets)
 
 add_test(notification notificationtest)
 
-add_qml_test(NotificationInterface)
+
+# Disabled until frontend and backend are fully
+# merged to respective trunks.
+#add_qml_test(NotificationInterface)
