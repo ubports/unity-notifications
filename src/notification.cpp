@@ -224,5 +224,5 @@ void Notification::invokeAction(const QString action) {
             return;
         }
     }
-    printf("Error: tried to invoke action not in actionList.\n");
+    fprintf(stderr, "Error: tried to invoke action not in actionList.\n");
 }
