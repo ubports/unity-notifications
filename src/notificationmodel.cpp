@@ -216,8 +216,6 @@ void NotificationModel::deleteFirst() {
 }
 
 void NotificationModel::deleteFromVisible(int loc) {
-    //QModelIndex deletePoint = QAbstractItemModel::createIndex(loc, 0);
-    //beginRemoveRows(deletePoint, loc, loc);
     QModelIndex deletePoint = QModelIndex();
     beginRemoveRows(deletePoint, loc, loc);
     QSharedPointer<Notification> n = p->displayedNotifications[loc];
