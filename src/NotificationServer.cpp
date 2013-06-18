@@ -17,9 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "notificationmodel.h"
-#include "notificationserver.h"
-#include "notification.h"
+#include "NotificationModel.h"
+#include "NotificationServer.h"
+#include "Notification.h"
 #include <QDBusMetaType>
 #include <QSharedPointer>
 

@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "notificationclient.h"
-#include "notificationclientplugin.h"
+#include "NotificationClient.h"
+#include "NotificationClientPlugin.h"
 
 #include <qqml.h>
 

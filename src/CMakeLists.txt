@@ -1,14 +1,14 @@
 set(CORE_SRCS
-actionmodel.cpp
-../include/actionmodel.h
-notification.cpp
-../include/notification.h
-notificationmodel.cpp
-../include/notificationmodel.h
-notificationserver.cpp
-../include/notificationserver.h
-notificationclient.cpp
-../include/notificationclient.h
+ActionModel.cpp
+../include/ActionModel.h
+Notification.cpp
+../include/Notification.h
+NotificationModel.cpp
+../include/NotificationModel.h
+NotificationServer.cpp
+../include/NotificationServer.h
+NotificationClient.cpp
+../include/NotificationClient.h
 )
 
 # Build everything twice. Since we have only a few
@@ -22,8 +22,8 @@ ${CORE_SRCS}
 
 add_library(notifyplugin MODULE
 ${CORE_SRCS}
-notificationplugin.cpp
-../include/notificationplugin.h
+NotificationPlugin.cpp
+../include/NotificationPlugin.h
 )
 
 set_target_properties(notifyplugin PROPERTIES
@@ -32,10 +32,10 @@ set_target_properties(notifyplugin PROPERTIES
   )
 
 add_library(notifyclientplugin MODULE
-notificationclientplugin.cpp
-../include/notificationclientplugin.h
-notificationclient.cpp
-../include/notificationclient.h
+NotificationClientPlugin.cpp
+../include/NotificationClientPlugin.h
+NotificationClient.cpp
+../include/NotificationClient.h
 )
 
 set_target_properties(notifyclientplugin PROPERTIES

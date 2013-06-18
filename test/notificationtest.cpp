@@ -1,6 +1,5 @@
-#include "notification.h"
-#include "notificationmodel.h"
-#include "notification.h"
+#include "Notification.h"
+#include "NotificationModel.h"
 
 #include<QApplication>
 #include <cassert>

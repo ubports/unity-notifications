@@ -21,7 +21,7 @@
 #ifndef NOTIFICATION_HPP_
 #define NOTIFICATION_HPP_
 
-#include "actionmodel.h"
+#include "ActionModel.h"
 #include "notify-backend.h"
 #include <QString>
 #include <QObject>

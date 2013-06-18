@@ -21,7 +21,7 @@
 #define NOTIFICATIONCLIENT_H_
 
 #include "notify-backend.h"
-#include "notification.h"
+#include "Notification.h"
 #include <QObject>
 #include <QDBusInterface>
 

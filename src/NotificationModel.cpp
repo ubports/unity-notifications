@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "notificationmodel.h"
-#include "notification.h"
+#include "NotificationModel.h"
+#include "Notification.h"
 #include <QTimer>
 #include <QList>
 #include <QVector>

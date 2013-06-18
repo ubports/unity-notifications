@@ -18,8 +18,8 @@
  */
 
 
-#include "notificationserver.h"
-#include "notification.h"
+#include "NotificationServer.h"
+#include "Notification.h"
 #include <string>
 
 using namespace std;

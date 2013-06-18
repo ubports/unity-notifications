@@ -24,7 +24,7 @@
 #include <QSharedPointer>
 #include <QScopedPointer>
 #include "notify-backend.h"
-#include "notification.h"
+#include "Notification.h"
 
 class Notification;
 
