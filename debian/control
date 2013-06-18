@@ -8,6 +8,8 @@ Build-Depends: debhelper (>= 9~),
                qtdeclarative5-dev,
                qtbase5-dev-tools,
 # For Qml tests
+               qtchooser,
+               qt5-default,
                qtdeclarative5-dev-tools,
                qtdeclarative5-test-plugin,
                qtdeclarative5-qtquick2-plugin,

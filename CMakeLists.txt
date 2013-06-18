@@ -40,61 +40,64 @@ if(${build_tools})
   add_subdirectory(tools)
 endif()
 
-find_program(qmltestrunner_exe qmltestrunner)
+# Disabled this until trunks of both Unity and notifications
+# have been updated to work together.
 
-if(NOT qmltestrunner_exe)
-  message(FATAL_ERROR "Could not locate qmltestrunner.")
-endif()
-
-macro(add_qml_test COMPONENT_NAME)
-    set(options NO_ADD_TEST NO_TARGETS)
-
-    cmake_parse_arguments(qmltest "${options}" "IMPORT_PATH" "TARGETS" ${ARGN})
-
-    set(qmltest_TARGET test${COMPONENT_NAME})
-    set(qmltest_FILE tst_${COMPONENT_NAME})
-
-    if("${qmltest_IMPORT_PATH}" STREQUAL "")
-        add_custom_target(${qmltest_TARGET}
-            ${qmltestrunner_exe}  -input ${CMAKE_CURRENT_SOURCE_DIR}/${qmltest_FILE}.qml
-                          -o ${CMAKE_BINARY_DIR}/${qmltest_TARGET}.xml,xunitxml
-                          -o -,txt)
-    else()
-        add_custom_target(${qmltest_TARGET}
-            ${qmltestrunner_exe} -input ${CMAKE_CURRENT_SOURCE_DIR}/${qmltest_FILE}.qml
-                          -import ${qmltest_IMPORT_PATH}
-                          -o ${CMAKE_BINARY_DIR}/${qmltest_TARGET}.xml,xunitxml
-                          -o -,txt)
-    endif()
-
-    if(NOT "${qmltest_UNPARSED_ARGUMENTS}" STREQUAL "")
-        set_target_properties(${qmltest_TARGET} ${qmltest_PROPERTIES})
-    elseif(NOT "${qmltest_DEFAULT_PROPERTIES}" STREQUAL "")
-        set_target_properties(${qmltest_TARGET} ${qmltest_DEFAULT_PROPERTIES})
-    endif()
-
-    if("${qmltest_NO_ADD_TEST}" STREQUAL FALSE AND NOT "${qmltest_DEFAULT_NO_ADD_TEST}" STREQUAL "TRUE")
-        add_test(${qmltest_TARGET} make ${qmltest_TARGET})
-
-        if(NOT "${qmltest_UNPARSED_ARGUMENTS}" STREQUAL "")
-            set_tests_properties(${qmltest_TARGET} ${qmltest_PROPERTIES})
-        elseif(NOT "${qmltest_DEFAULT_PROPERTIES}" STREQUAL "")
-            set_tests_properties(${qmltest_TARGET} ${qmltest_DEFAULT_PROPERTIES})
-        endif()
-    endif("${qmltest_NO_ADD_TEST}" STREQUAL FALSE AND NOT "${qmltest_DEFAULT_NO_ADD_TEST}" STREQUAL "TRUE")
-
-    if("${qmltest_NO_TARGETS}" STREQUAL "FALSE")
-        if(NOT "${qmltest_TARGETS}" STREQUAL "")
-            foreach(TARGET ${qmltest_TARGETS})
-                add_dependencies(${TARGET} ${qmltest_TARGET})
-            endforeach(TARGET)
-        elseif(NOT "${qmltest_DEFAULT_TARGETS}" STREQUAL "")
-            foreach(TARGET ${qmltest_DEFAULT_TARGETS})
-                add_dependencies(${TARGET} ${qmltest_TARGET})
-            endforeach(TARGET)
-        endif()
-    endif("${qmltest_NO_TARGETS}" STREQUAL "FALSE")
-endmacro(add_qml_test)
+##find_program(qmltestrunner_exe qmltestrunner)
+##
+##if(NOT qmltestrunner_exe)
+##  message(FATAL_ERROR "Could not locate qmltestrunner.")
+##endif()
+##
+##macro(add_qml_test COMPONENT_NAME)
+##    set(options NO_ADD_TEST NO_TARGETS)
+##
+##    cmake_parse_arguments(qmltest "${options}" "IMPORT_PATH" "TARGETS" ${ARGN})
+##
+##    set(qmltest_TARGET test${COMPONENT_NAME})
+##    set(qmltest_FILE tst_${COMPONENT_NAME})
+##
+##    if("${qmltest_IMPORT_PATH}" STREQUAL "")
+##        add_custom_target(${qmltest_TARGET}
+##            ${qmltestrunner_exe}  -input ${CMAKE_CURRENT_SOURCE_DIR}/${qmltest_FILE}.qml
+##                          -o ${CMAKE_BINARY_DIR}/${qmltest_TARGET}.xml,xunitxml
+##                          -o -,txt)
+##    else()
+##        add_custom_target(${qmltest_TARGET}
+##            ${qmltestrunner_exe} -input ${CMAKE_CURRENT_SOURCE_DIR}/${qmltest_FILE}.qml
+##                          -import ${qmltest_IMPORT_PATH}
+##                          -o ${CMAKE_BINARY_DIR}/${qmltest_TARGET}.xml,xunitxml
+##                          -o -,txt)
+##    endif()
+##
+##    if(NOT "${qmltest_UNPARSED_ARGUMENTS}" STREQUAL "")
+##        set_target_properties(${qmltest_TARGET} ${qmltest_PROPERTIES})
+##    elseif(NOT "${qmltest_DEFAULT_PROPERTIES}" STREQUAL "")
+##        set_target_properties(${qmltest_TARGET} ${qmltest_DEFAULT_PROPERTIES})
+##    endif()
+##
+##    if("${qmltest_NO_ADD_TEST}" STREQUAL FALSE AND NOT "${qmltest_DEFAULT_NO_ADD_TEST}" STREQUAL "TRUE")
+##        add_test(${qmltest_TARGET} make ${qmltest_TARGET})
+##
+##        if(NOT "${qmltest_UNPARSED_ARGUMENTS}" STREQUAL "")
+##            set_tests_properties(${qmltest_TARGET} ${qmltest_PROPERTIES})
+##        elseif(NOT "${qmltest_DEFAULT_PROPERTIES}" STREQUAL "")
+##            set_tests_properties(${qmltest_TARGET} ${qmltest_DEFAULT_PROPERTIES})
+##        endif()
+##    endif("${qmltest_NO_ADD_TEST}" STREQUAL FALSE AND NOT "${qmltest_DEFAULT_NO_ADD_TEST}" STREQUAL "TRUE")
+##
+##    if("${qmltest_NO_TARGETS}" STREQUAL "FALSE")
+##        if(NOT "${qmltest_TARGETS}" STREQUAL "")
+##            foreach(TARGET ${qmltest_TARGETS})
+##                add_dependencies(${TARGET} ${qmltest_TARGET})
+##            endforeach(TARGET)
+##        elseif(NOT "${qmltest_DEFAULT_TARGETS}" STREQUAL "")
+##            foreach(TARGET ${qmltest_DEFAULT_TARGETS})
+##                add_dependencies(${TARGET} ${qmltest_TARGET})
+##            endforeach(TARGET)
+##        endif()
+##    endif("${qmltest_NO_TARGETS}" STREQUAL "FALSE")
+##endmacro()
 
 enable_testing()
 add_subdirectory(test)
