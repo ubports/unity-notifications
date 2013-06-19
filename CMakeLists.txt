@@ -13,6 +13,7 @@ option(basic_warnings "Basic compiler warnings." ON)
 option(build_tools "Build developer tools." OFF)
 option(private_dbus "Use private dbus namespace to prevent clashes during development." OFF)
 
+include(cmake/coverage.cmake)
 include(FindPkgConfig)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++0x")
