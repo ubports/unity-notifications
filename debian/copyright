@@ -1,6 +1,6 @@
-Format: http://dep.debian.net/deps/dep5
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: unity-notifications
-#Source: https://launchpad.net/
+Source: https://launchpad.net/unity-notifications
 
 Files: *
 Copyright: 2013 Canonical ltd
