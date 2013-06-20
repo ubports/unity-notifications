@@ -1,5 +1,175 @@
-unity-notifications (0.1.0-0ubuntu1) UNRELEASED; urgency=low
+unity-notifications (0.1.0daily13.06.20-0ubuntu1) saucy; urgency=low
 
+  [ Jussi Pakkanen ]
   * Initial release.
+  * Started work on the notification backend.
+  * Skeleton classes for the system.
+  * Private structs for objects.
+  * Some work in the renderer.
+  * Can insert notifications.
+  * Can delete notifications from the store.
+  * One header for common definitions.
+  * Added ID number to Notification.
+  * Keep notifications in order in the stack.
+  * Check that renderer is called.
+  * Removed check by pointer.
+  * CMake harness for Qt5.
+  * Can display string list. Hoo ray.
+  * Created own model.
+  * Model works, even.
+  * Data flows between model and view.
+  * Insert and delete operations.
+  * Can add and remove items from the model and the view is updated.
+  * Insert at the beginning.
+  * Can instantiate a window from a ui file.
+  * Generate UI files properly.
+  * Moved to multiple inheritance model.
+  * Can connect signals.
+  * Button can be used to invoke segfaults. Which is a problem because
+    it should invoke data insertion.
+  * Notifications have identifying strings in them.
+  * Added type to Notification class.
+  * Insert notification objects into model.
+  * Notifications expire on timeouts.
+  * Non-visible notifications are queued.
+  * Can send synchronous notifications and they take precedence.
+  * Switched to smart pointers for great non-memory-leaking justice!
+  * Interactive notifications are queued and dequeued properly.
+  * Can send snap decisions.
+  * Snap decisions are put in and queued properly.
+  * Can send notifications of different type.
+  * Take display time from Notification objects.
+  * Track time already spent showing each notification.
+  * Confucious say: one bad comparison operator cause massive bughunt.
+  * Keep input queues sorted according to importance.
+  * Changed header suffix to .h.
+  * Added two files that I accidentally moved with "mv <filename>
+    <filename>" instead of "bzr mv <filename> <filename>".
+  * Function renaming.
+  * Priority for async notifications.
+  * Interactive notifications have priorities.
+  * Proper compare function for qStableSort.
+  * Snap decisions have priority too.
+  * Find proper place to put snap decisions, since there may be several
+    of them.
+  * Made Notification a QObject so it can be exposed to QML.
+  * Default constructor for QML.
+  * Can create a Qml view.
+  * Can expose Notification objects to Qml.
+  * Make Notification owned by a shared pointer.
+  * Snap decisions override everything else.
+  * Added function to remove notifications from the model.
+  * Expose notificationmodel to Qml.
+  * Started work on DBus service.
+  * Start work on dbus service tool.
+  * Register service name. Also not crash.
+  * Added capabilities.
+  * Renamed dbus server.
+  * Added client test application.
+  * Tried to make the dbus communication work. Unsuccessfully.
+  * It workses!
+  * Capabilities travel through dbus.
+  * More interface exposing.
+  * Reply signals.
+  * Expose the entire DBus API in correct form.
+  * Started work on proper notification client test app.
+  * Added slots for signal invocation.
+  * (Try to) connect to dbus signal.
+  * Working to get the signals going. Thus far unsuccessfully.
+  * Try to connect ActionInvoked.
+  * Tried to make InfoStruct work but Qt refuses to parse it.
+  * Finally got signals running.
+  * Add a main window for the dbus server.
+  * Main window for the client app too.
+  * Try to call notifications over dbus. Not working yet.
+  * Hack to get dbus working.
+  * More work on getting notifications to travel through dbus.
+  * Can put event text into textview.
+  * Delete replies finally traverse back.
+  * Guard against rollover.
+  * Add urgency to capabilities.
+  * Can call over dbus with the complete notification spec.
+  * Convert notification types into the wire protocol.
+  * Send all different notification types.
+  * Extract urgency from wire protocol.
+  * Demarshall more stuff out of wire protocol.
+  * Renamed functions.
+  * Added id property.
+  * Added icon property.
+  * Added summary property.
+  * Made Urgency a property.
+  * Made type a property.
+  * Now with icons and summaries.
+  * Icon is now a QImage.
+  * Store actions and expose them as a property.
+  * Text clarification.
+  * Can invoke actions.
+  * Merged enum reorganisation patch from macslow.
+  * Function to get a notification with a given ID from the model.
+  * Only emit change signals if the new value is different from the old.
+  * Store displaytime in private struct.
+  * Updating notifications works.
+  * Made timeout a proper input argument.
+  * Merge.
+  * Notification sender works with existing system notification daemon.
+  * Merged macslow's branch.
+  * Text cleanup.
+  * Removed remnants of first exploratory attempt.
+  * Made notification test pass again.
+  * Can append body text to an existing notification.
+  * Be consistently unsigned.
+  * Error is zero. Maybe.
+  * Test for message priorities.
+  * Do not lose restart status.
+  * Test that notifications are properly priority sorted and queued.
+  * Removed some debug print statements.
+  * Changed default type of Notification to Ephemeral.
+  * Better error logging.
+  * Check num of actions is even.
+  * Test hasNotification function.
+  * When a notification is updated, zero out the time it has already
+    been shown.
+  * Merged macslow's branch.
+  * Comment.
+  * Pluginisation as originally done by saviq.
+  * Can append text to existing notifications.
+  * Clients can receive event signals.
+  * Made notification client a proper plugin.
+  * Added basic Debian packaging.
+  * Removed vestigial line.
+  * Added copyright file to debian subdir.
+  * Can use private dbus name for testing to prevent clashes.
+  * Use nullptr instead of 0.
+  * Renamed package to conform to naming conventions.
+  * Merged Mirco's integration branch.
+  * Renamed config bile back to .h.in because it is being written to
+    now.
+  * Fix names and install dirs.
+  * More correcter qmldir.
+  * Add missing add_subdirectory.
+  * Removed trailing space.
+  * Added lost CMakeLists.txt.
+  * Made all qmlRegisterTypes version numbers 1.0.
+  * Added Qml test packages to build-deps.
+  * Removed log file that was added by accident.
+  * Make source and model singletons.
+  * Do not expose NotificationServer.
+  * Register Notification class to Qml.
+  * Merged QML invokeAction fixes.
+  * Remove FIXME because it was already fixed.
+  * Disabled Qml test for now.
+  * Wrote a simple readme.
+  * Readme clarification.
+  * Reformatted constructor with lots of parameters for clarity.
+  * Print error message to stderr.
+  * Even more clarification.
+  * Removed commented out code.
+  * Made file names CamelCase.
+  * Build and test fixes.
+  * Do not try to find qmltestrunner, because we do not use it
+    currently.
 
- -- Jussi Pakkanen <jussi.pakkanen@ubuntu.com>  Mon, 03 Jun 2013 13:59:21 +0300
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 161
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 20 Jun 2013 06:28:17 +0000
