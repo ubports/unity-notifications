@@ -10,5 +10,8 @@ export DPKG_GENSYMBOLS_CHECK_LEVEL=4
 	dh $@ --parallel --fail-missing
 
 override_dh_auto_configure:
+	# we already defines the flags through dpkg-buildflags, we don't need
+	# thus to use relwithdebinfo, which is defining -DNDEBUG which are
+	# breaking the tests
 	dh_auto_configure -- -DCMAKE_BUILD_TYPE=''
 
