@@ -14,6 +14,7 @@ option(build_tools "Build developer tools." OFF)
 option(private_dbus "Use private dbus namespace to prevent clashes during development." OFF)
 
 include(FindPkgConfig)
+include (GNUInstallDirs)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++0x")
 add_definitions(-DQT_NO_KEYWORDS)
@@ -23,14 +24,12 @@ if(${basic_warnings})
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic")
 endif()
 
-set(LIBDIR "lib" CACHE PATH "Destination install dir for the library")
-
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5Widgets REQUIRED)
 # Workaround for https://bugreports.qt-project.org/browse/QTBUG-29987
-set(QT_IMPORTS_DIR "${LIBDIR}/qt5/qml")
+set(QT_IMPORTS_DIR "${CMAKE_INSTALL_LIBDIR}/qt5/qml")
 
 include_directories(include)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
