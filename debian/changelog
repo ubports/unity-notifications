@@ -1,3 +1,9 @@
+unity-notifications (0.1.0+13.10.20130627ubuntu.unity.next-0ubuntu1) saucy; urgency=low
+
+  * Automatic snapshot from revision 162 (ubuntu-unity/next)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 27 Jun 2013 09:48:55 +0000
+
 unity-notifications (0.1.0daily13.06.20-0ubuntu1) saucy; urgency=low
 
   [ Jussi Pakkanen ]
