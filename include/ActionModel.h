@@ -36,7 +36,6 @@ public:
     virtual int rowCount(const QModelIndex &index) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual QHash<int, QByteArray> roleNames() const;
-    Q_INVOKABLE QString actionId(int index) const;
 
     void insertAction(QString id, QString label);
 
