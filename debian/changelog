@@ -1,3 +1,14 @@
+unity-notifications (0.1.0+13.10.20130702ubuntu.unity.next-0ubuntu1) saucy; urgency=low
+
+  [ Mirco Müller ]
+  * The frontend no longer needs ActionModel::actionId(), so to keep the
+    backend's API cleaner actionId() was removed.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 166 (ubuntu-unity/next)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 02 Jul 2013 02:31:06 +0000
+
 unity-notifications (0.1.0+13.10.20130628ubuntu.unity.next-0ubuntu1) saucy; urgency=low
 
   [ Didier Roche ]
