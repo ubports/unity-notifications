@@ -1,3 +1,13 @@
+unity-notifications (0.1.0+13.10.20130703ubuntu.unity.next-0ubuntu1) saucy; urgency=low
+
+  [ Francis Ginther ]
+  * Added coverage targets.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 168 (ubuntu-unity/next)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 03 Jul 2013 02:35:04 +0000
+
 unity-notifications (0.1.0+13.10.20130702ubuntu.unity.next-0ubuntu1) saucy; urgency=low
 
   [ Mirco Müller ]
