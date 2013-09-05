@@ -1,3 +1,13 @@
+unity-notifications (0.1.0+13.10.20130905.2-0ubuntu1) saucy; urgency=low
+
+  [ Jussi Pakkanen ]
+  * Remove stray "lesser" qualifiers from license link text.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 171
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 05 Sep 2013 10:47:48 +0000
+
 unity-notifications (0.1.0+13.10.20130801-0ubuntu1) saucy; urgency=low
 
   * Automatic snapshot from revision 169
