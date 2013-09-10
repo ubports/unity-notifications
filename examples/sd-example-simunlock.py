@@ -40,7 +40,7 @@ SIM_UNLOCK_MENU_PATH = '/com/canonical/indicator/network/unlocksim'
 SIM_UNLOCK_ACTION_PATH = '/com/canonical/indicator/network/unlocksim'
 
 def quit_callback(notification, loop):
-    loop.quit()
+	loop.quit()
 
 def action_decline_1 (notification, action, data):
 	if action == "action_decline_1":
@@ -62,22 +62,23 @@ def pushNotification (title, body, icon):
 	n.add_action ("action_accept",    "Accept", action_accept, None);
 	n.add_action ("action_decline_1", "Decline", action_decline_1, None);
 
-        # create the menu-model
+	# create the menu-model
 	menu_model_actions = GLib.VariantBuilder.new (GLib.VariantType.new ("a{sv}")); 
-        entry = GLib.Variant.new_dict_entry(GLib.Variant.new_string("notifications"),
-		GLib.Variant.new_variant(GLib.Variant.new_string(SIM_UNLOCK_ACTION_PATH)));
+	entry = GLib.Variant.new_dict_entry(GLib.Variant.new_string("notifications"),
+			GLib.Variant.new_variant(GLib.Variant.new_string(SIM_UNLOCK_ACTION_PATH)));
 	menu_model_actions.add_value (entry);
 
 	# indicate to the notification-daemon, that we want to use snap-decisions
 	n.set_hint_string ("x-canonical-snap-decisions", "true");
-        n.set_hint_string ("x-canonical-dbus-name", APPLICATION_ID);
-        n.set_hint ("x-canonical-actions-path", menu_model_actions.end());
-        n.set_hint_string ("x-canonical-menu-path", SIM_UNLOCK_MENU_PATH);
+	n.set_hint_string ("x-canonical-private-button-tint", "true");
+	n.set_hint_string ("x-canonical-dbus-name", APPLICATION_ID);
+	n.set_hint ("x-canonical-actions-path", menu_model_actions.end());
+	n.set_hint_string ("x-canonical-menu-path", SIM_UNLOCK_MENU_PATH);
 
 	return n
 
 if __name__ == '__main__':
-        if not Notify.init("sd-example-simunlock"):
+	if not Notify.init("sd-example-simunlock"):
 		sys.exit (1)
 
 	loop = GLib.MainLoop()
@@ -86,4 +87,3 @@ if __name__ == '__main__':
 	n.show ()
 
 	loop.run()
-
