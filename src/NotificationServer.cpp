@@ -180,6 +180,12 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     notification->setIcon(app_icon);
     notification->setSummary(summary);
 
+    QVariantMap notifyHints;
+    for (Hints::const_iterator iter = hints.constBegin(), end = hints.constEnd(); iter != end; ++iter) {
+        notifyHints[iter.key()] = iter.value().variant();
+    }
+    notification->setHints(notifyHints);
+
     QVariant secondaryIcon = hints[SECONDARY_ICON_HINT].variant();
     notification->setSecondaryIcon(secondaryIcon.toString());
 

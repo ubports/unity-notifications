@@ -74,12 +74,13 @@ def pushNotification (title, body, icon):
 	# always comes first!
 	n.add_action ("action_accept",    "Accept",                         action_accept);
 	n.add_action ("action_decline_1", "Decline",                        action_decline_1);
-	#n.add_action ("action_decline_2", "\"Can't talk now, what's up?\"", action_decline_2);
-	#n.add_action ("action_decline_3", "\"I call you back.\"",           action_decline_3);
-	#n.add_action ("action_decline_4", "Send custom message...",         action_decline_4);
+	n.add_action ("action_decline_2", "\"Can't talk now, what's up?\"", action_decline_2);
+	n.add_action ("action_decline_3", "\"I call you back.\"",           action_decline_3);
+	n.add_action ("action_decline_4", "Send custom message...",         action_decline_4);
 
 	# indicate to the notification-daemon, that we want to use snap-decisions
 	n.set_hint_string ("x-canonical-snap-decisions", "true");
+	n.set_hint_string ("x-canonical-private-button-tint", "true");
 	n.set_hint_string ("x-canonical-secondary-icon", os.getcwd() + "/assets/icon_phone.png");
 
 	n.show ()
