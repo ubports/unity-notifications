@@ -34,23 +34,25 @@
 import pynotify
 
 # even in Python this is globally nasty :), do something nicer in your own code
-capabilities = {'actions':						False,
-				'body':					False,
-				'body-hyperlinks':			False,
-				'body-images':				False,
-				'body-markup':				False,
-				'icon-multi':				False,
-				'icon-static':				False,
-				'sound':				False,
-				'image/svg+xml':			False,
-				'x-canonical-private-synchronous':	False,
-				'x-canonical-append':			False,
-				'x-canonical-private-icon-only':	False,
-				'x-canonical-truncation':		False,
-				'x-canonical-snap-decisions':		False,
-				'x-canonical-switch-to-application':	False,
-				'x-canonical-secondary-icon':		False,
-				'x-canonical-private-button-tint':	False}
+capabilities = {'actions':                           False,
+				'body':                              False,
+				'body-hyperlinks':                   False,
+				'body-images':                       False,
+				'body-markup':                       False,
+				'icon-multi':                        False,
+				'icon-static':                       False,
+				'sound':                             False,
+				'image/svg+xml':                     False,
+				'urgency':                           False,
+				'x-canonical-private-synchronous':   False,
+				'x-canonical-append':                False,
+				'x-canonical-private-icon-only':     False,
+				'x-canonical-truncation':            False,
+				'x-canonical-snap-decisions':        False,
+				'x-canonical-switch-to-application': False,
+				'x-canonical-secondary-icon':        False,
+				'x-canonical-private-button-tint':   False,
+				'x-canonical-private-menu-model':    False}
 
 def initCaps ():
 	caps = pynotify.get_server_caps ()
@@ -90,6 +92,8 @@ def printCaps ():
 		print "\ticon-static"
 	if capabilities['sound']:
 		print "\tsound"
+	if capabilities['urgency']:
+		print "\turgency"
 	if capabilities['image/svg+xml']:
 		print "\timage/svg+xml"
 	if capabilities['x-canonical-private-synchronous']:
@@ -108,6 +112,8 @@ def printCaps ():
 		print "\tx-canonical-secondary-icon"
 	if capabilities['x-canonical-private-button-tint']:
 		print "\tx-canonical-private-button-tint"
+	if capabilities['x-canonical-private-menu-model']:
+		print "\tx-canonical-private-menu-model"
 
 	print "Notes:"
 	if info["name"] == "notify-osd":
