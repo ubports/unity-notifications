@@ -8,8 +8,8 @@
 ##    Example of how to use libnotify correctly
 ##
 ## Run:
-##    chmod +x sd-example-simunlock.py
-##    ./sd-example-simunlock.py
+##    chmod +x sd-example-password-entry.py
+##    ./sd-example-password-entry.py
 ##
 ## Copyright 2013 Canonical Ltd.
 ##
@@ -35,9 +35,9 @@ import sys
 
 from gi.repository import Gio, GLib, Notify
 
-APPLICATION_ID = 'com.canonical.indicator.network'
-SIM_UNLOCK_MENU_PATH = '/com/canonical/indicator/network/unlocksim'
-SIM_UNLOCK_ACTION_PATH = '/com/canonical/indicator/network/unlocksim'
+APPLICATION_ID = 'com.canonical.snapdecisions'
+PASSWORD_MENU_PATH = '/com/canonical/snapdecisions/password'
+PASSWORD_ACTION_PATH = '/com/canonical/snapdecisions/password'
 
 def quit_callback(notification, loop):
 	global connection
@@ -57,36 +57,38 @@ def cancel (notification, action, data):
 
 def accept (notification, action, data):
 	if action == "accept":
-		global pin
-		print "PIN entered: " + pin
+		global password
+		print "password entered: " + password
 	else:
 		print "That should not have happened (accept)!"
 
-def simpin_changed (action, variant):
-	global pin
-	pin = variant.get_string();
+def password_changed (action, variant):
+	global password
+	password = variant.get_string();
 
 def bus_acquired(bus, name):
 	# menu
-	unlock_menu = Gio.Menu();
-	pin_unlock = Gio.MenuItem.new ("", "notifications.simunlock");
-	pin_unlock.set_attribute_value ("x-canonical-type", GLib.Variant.new_string("com.canonical.snapdecision.pinlock"));
-	unlock_menu.append_item (pin_unlock);
+	menu = Gio.Menu();
+
+	password_item = Gio.MenuItem.new ("Password:", "notifications.password");
+	password_item.set_attribute_value ("x-canonical-type", GLib.Variant.new_string("com.canonical.snapdecision.textfield"));
+	password_item.set_attribute_value ('x-echo-mode-password', GLib.Variant.new_boolean(True))
+	menu.append_item (password_item);
 
 	# actions
-	unlock_actions = Gio.SimpleActionGroup.new();
-	action = Gio.SimpleAction.new_stateful("simunlock", GLib.VariantType.new("s"), GLib.Variant.new_string(""));
-	action.connect ("change-state", simpin_changed);
-	unlock_actions.insert (action);
+	actions = Gio.SimpleActionGroup.new();
+	password_action = Gio.SimpleAction.new_stateful("password", GLib.VariantType.new("s"), GLib.Variant.new_string(""));
+	password_action.connect ("change-state", password_changed);
+	actions.insert (password_action);
 
 	global connection
 	connection = bus
 
 	global exported_action_group_id
-	exported_action_group_id = connection.export_action_group(SIM_UNLOCK_ACTION_PATH, unlock_actions)
+	exported_action_group_id = connection.export_action_group(PASSWORD_ACTION_PATH, actions)
 
 	global exported_menu_model_id
-	exported_menu_model_id = connection.export_menu_model(SIM_UNLOCK_MENU_PATH, unlock_menu)
+	exported_menu_model_id = connection.export_menu_model(PASSWORD_MENU_PATH, menu)
 
 def pushNotification (title, body, icon):
 	n = Notify.Notification.new(title, body, icon);
@@ -99,7 +101,7 @@ def pushNotification (title, body, icon):
 	# create the menu-model
 	menu_model_actions = GLib.VariantBuilder.new (GLib.VariantType.new ("a{sv}")); 
 	entry = GLib.Variant.new_dict_entry(GLib.Variant.new_string("notifications"),
-			GLib.Variant.new_variant(GLib.Variant.new_string(SIM_UNLOCK_ACTION_PATH)));
+			GLib.Variant.new_variant(GLib.Variant.new_string(PASSWORD_ACTION_PATH)));
 	menu_model_actions.add_value (entry);
 
 	menu_model_paths = GLib.VariantBuilder.new (GLib.VariantType.new ("a{sv}"));
@@ -107,7 +109,7 @@ def pushNotification (title, body, icon):
 			GLib.Variant.new_variant(GLib.Variant.new_string(APPLICATION_ID)));
 	menu_model_paths.add_value (entry);
 	entry = GLib.Variant.new_dict_entry(GLib.Variant.new_string("menuPath"),
-			GLib.Variant.new_variant(GLib.Variant.new_string(SIM_UNLOCK_MENU_PATH)));
+			GLib.Variant.new_variant(GLib.Variant.new_string(PASSWORD_MENU_PATH)));
 	menu_model_paths.add_value (entry);
 	entry = GLib.Variant.new_dict_entry(GLib.Variant.new_string("actions"),
 			GLib.Variant.new_variant(menu_model_actions.end()));
@@ -119,25 +121,22 @@ def pushNotification (title, body, icon):
 	n.set_hint_string ("x-canonical-snap-decisions", "true");
 	n.set_hint_string ("x-canonical-ext-snap-decisions", "true");
 	n.set_hint_string ("x-canonical-private-button-tint", "true");
-	#n.set_hint_string ("x-canonical-dbus-name", APPLICATION_ID);
-	#n.set_hint ("x-canonical-actions-path", menu_model_actions.end());
-	#n.set_hint_string ("x-canonical-menu-path", SIM_UNLOCK_MENU_PATH);
 
 	Gio.bus_own_name(Gio.BusType.SESSION, APPLICATION_ID, 0, bus_acquired, None, None)
 
 	return n
 
 if __name__ == '__main__':
-	if not Notify.init("sd-example-simunlock"):
+	if not Notify.init("sd-example-password-entry"):
 		sys.exit (1)
 
 	connection = None
 	exported_menu_model_id = 0
 	exported_action_group_id = 0
-	pin = "0000"
+	password = ""
 
 	loop = GLib.MainLoop()
-	n = pushNotification ("Unlock SIM-card", "", "")
+	n = pushNotification ("Enter password", "", "")
 	n.connect('closed', quit_callback, loop)
 	n.show ()
 
