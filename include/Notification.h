@@ -52,7 +52,7 @@ private:
 
 public:
     enum Urgency { Low, Normal, Critical };
-    enum Type { Confirmation, Ephemeral, Interactive, SnapDecision, PlaceHolder };
+    enum Type { Confirmation, Ephemeral, Interactive, SnapDecision, ExtSnapDecision, PlaceHolder };
 
 Q_SIGNALS:
     void bodyChanged(QString text);
@@ -63,7 +63,7 @@ Q_SIGNALS:
     void urgencyChanged(Urgency urg);
     void typeChanged(Type type);
     void actionsChanged(QStringList actions);
-    void hintsChanged(QVariantMap hints);
+    void hintsChanged(const QVariantMap& hints);
 
     void dataChanged(unsigned int id);
 

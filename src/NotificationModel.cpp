@@ -82,7 +82,7 @@ QVariant NotificationModel::data(const QModelIndex &index, int role) const {
         case RoleSecondaryIcon:
             return QVariant(p->displayedNotifications[index.row()]->getSecondaryIcon());
 
-        case RoleActions: 
+        case RoleActions:
             return QVariant::fromValue(p->displayedNotifications[index.row()]->getActions());
 
         case RoleHints:
@@ -108,6 +108,7 @@ void NotificationModel::insertNotification(QSharedPointer<Notification> n) {
     case Notification::Type::Confirmation : insertConfirmation(n); break;
     case Notification::Type::Interactive : insertInteractive(n); break;
     case Notification::Type::SnapDecision : insertSnap(n); break;
+    case Notification::Type::ExtSnapDecision : insertExtSnap(n); break;
     default:
         printf("Unknown notification type, I should probably throw an exception here.\n");
         break;
@@ -293,6 +294,7 @@ void NotificationModel::removeNonSnap() {
         QSharedPointer<Notification> n = p->displayedNotifications[i];
         switch(n->getType()) {
         case Notification::Type::SnapDecision : break;
+        case Notification::Type::ExtSnapDecision : break;
         case Notification::Type::Confirmation : deleteFromVisible(i); break;
         case Notification::Type::Ephemeral : deleteFromVisible(i); p->ephemeralQueue.push_front(n); queueSizeChanged(queued()); break;
         case Notification::Type::Interactive : deleteFromVisible(i); p->interactiveQueue.push_front(n); queueSizeChanged(queued()); break;
@@ -408,6 +410,36 @@ void NotificationModel::insertSnap(QSharedPointer<Notification> n) {
         insertToVisible(n, loc);
     }
 }
+
+
+void NotificationModel::insertExtSnap(QSharedPointer<Notification> n) {
+    Q_ASSERT(n->getType() == Notification::Type::ExtSnapDecision);
+    removeNonSnap();
+    int showing = countShowing(n->getType());
+    if(showing >= maxSnapsShown) {
+        int loc = findFirst(Notification::Type::SnapDecision);
+        bool replaced = false;
+        for(int i=0; i<showing; i++) {
+            if(p->displayedNotifications[loc+i]->getUrgency() < n->getUrgency()) {
+                QSharedPointer<Notification> lastShowing = p->displayedNotifications[loc+showing-1];
+                deleteFromVisible(loc+showing-1);
+                insertToVisible(n, loc+i);
+                p->snapQueue.push_front(lastShowing);
+                replaced = true;
+                break;
+            }
+        }
+        if(!replaced) {
+            p->snapQueue.push_back(n);
+        }
+        qStableSort(p->snapQueue.begin(), p->snapQueue.end(), notificationCompare);
+        Q_EMIT queueSizeChanged(queued());
+    } else {
+        int loc = insertionPoint(n);
+        insertToVisible(n, loc);
+    }
+}
+
 
 int NotificationModel::insertionPoint(const QSharedPointer<Notification> n) const {
     int i=0;

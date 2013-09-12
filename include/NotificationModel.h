@@ -64,7 +64,7 @@ public:
     bool hasNotification(NotificationID id) const;
 
     // getRaw() is only meant to be used from QML, since QML cannot handle
-    // QSharedPointers... on C++-side only use getNotification() 
+    // QSharedPointers... on C++-side only use getNotification()
     Q_INVOKABLE Notification* getRaw(const unsigned int notificationId) const;
 
     Q_INVOKABLE int queued() const;
@@ -97,6 +97,7 @@ private:
     void insertConfirmation(QSharedPointer<Notification> n);
     void insertInteractive(QSharedPointer<Notification> n);
     void insertSnap(QSharedPointer<Notification> n);
+    void insertExtSnap(QSharedPointer<Notification> n);
     void insertToVisible(QSharedPointer<Notification> n, int location=-1);
     void deleteFromVisible(int loc);
     void deleteFirst();
