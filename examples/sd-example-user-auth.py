@@ -151,7 +151,7 @@ if __name__ == '__main__':
 	password = ""
 
 	loop = GLib.MainLoop()
-	n = pushNotification ("Enter password", "", "")
+	n = pushNotification ("Authenticate yourself", "", "")
 	n.connect('closed', quit_callback, loop)
 	n.show ()
 
