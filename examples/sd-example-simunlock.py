@@ -119,9 +119,6 @@ def pushNotification (title, body, icon):
 	n.set_hint_string ("x-canonical-snap-decisions", "true");
 	n.set_hint_string ("x-canonical-ext-snap-decisions", "true");
 	n.set_hint_string ("x-canonical-private-button-tint", "true");
-	#n.set_hint_string ("x-canonical-dbus-name", APPLICATION_ID);
-	#n.set_hint ("x-canonical-actions-path", menu_model_actions.end());
-	#n.set_hint_string ("x-canonical-menu-path", SIM_UNLOCK_MENU_PATH);
 
 	Gio.bus_own_name(Gio.BusType.SESSION, APPLICATION_ID, 0, bus_acquired, None, None)
 
