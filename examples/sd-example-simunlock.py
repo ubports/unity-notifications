@@ -35,9 +35,9 @@ import sys
 
 from gi.repository import Gio, GLib, Notify
 
-APPLICATION_ID = 'com.canonical.indicator.network'
-SIM_UNLOCK_MENU_PATH = '/com/canonical/indicator/network/unlocksim'
-SIM_UNLOCK_ACTION_PATH = '/com/canonical/indicator/network/unlocksim'
+APPLICATION_ID = 'com.canonical.indicator.network.example'
+SIM_UNLOCK_MENU_PATH = '/com/canonical/indicator/network/example/unlocksim'
+SIM_UNLOCK_ACTION_PATH = '/com/canonical/indicator/network/example/unlocksim'
 
 def quit_callback(notification, loop):
 	global connection
