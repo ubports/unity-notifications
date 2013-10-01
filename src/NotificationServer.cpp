@@ -82,10 +82,7 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
         expireTimeout = 3000;
         ntype = Notification::Type::Confirmation;
     } else if (hints.find(SNAP_HINT) != hints.end()) {
-        expireTimeout = 30000;
-        if (hints.find(MENU_MODEL_HINT) != hints.end()) {
-            expireTimeout = 60000;
-        }
+        expireTimeout = 60000;
         ntype = Notification::Type::SnapDecision;
     } else if(hints.find(INTERACTIVE_HINT) != hints.end()) {
         ntype = Notification::Type::Interactive;
