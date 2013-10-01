@@ -293,7 +293,6 @@ void NotificationModel::removeNonSnap() {
         QSharedPointer<Notification> n = p->displayedNotifications[i];
         switch(n->getType()) {
         case Notification::Type::SnapDecision : break;
-        case Notification::Type::ExtSnapDecision : break;
         case Notification::Type::Confirmation : deleteFromVisible(i); break;
         case Notification::Type::Ephemeral : deleteFromVisible(i); p->ephemeralQueue.push_front(n); queueSizeChanged(queued()); break;
         case Notification::Type::Interactive : deleteFromVisible(i); p->interactiveQueue.push_front(n); queueSizeChanged(queued()); break;
