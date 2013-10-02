@@ -36,7 +36,6 @@ class Notification : public QObject {
     Q_OBJECT
     Q_ENUMS(Urgency)
     Q_ENUMS(Type)
-    Q_ENUMS(Hint)
     Q_PROPERTY(QString summary READ getSummary WRITE setSummary NOTIFY summaryChanged)
     Q_PROPERTY(QString body READ getBody WRITE setBody NOTIFY bodyChanged)
     Q_PROPERTY(NotificationID id READ getID)
@@ -46,7 +45,7 @@ class Notification : public QObject {
     Q_PROPERTY(Urgency urgency READ getUrgency WRITE setUrgency NOTIFY urgencyChanged)
     Q_PROPERTY(Type type READ getType WRITE setType NOTIFY typeChanged)
     Q_PROPERTY(ActionModel* actions READ getActions NOTIFY actionsChanged)
-    Q_PROPERTY(int hints READ getHints WRITE setHints NOTIFY hintsChanged)
+    Q_PROPERTY(QVariantMap hints READ getHints WRITE setHints NOTIFY hintsChanged)
 
 private:
     QScopedPointer<NotificationPrivate> p;
@@ -54,7 +53,6 @@ private:
 public:
     enum Urgency { Low, Normal, Critical };
     enum Type { Confirmation, Ephemeral, Interactive, SnapDecision, PlaceHolder };
-    enum Hint { None = 0, ButtonTint = 1 << 1, IconOnly = 1 << 2 };
 
 Q_SIGNALS:
     void bodyChanged(QString text);
@@ -65,7 +63,7 @@ Q_SIGNALS:
     void urgencyChanged(Urgency urg);
     void typeChanged(Type type);
     void actionsChanged(QStringList actions);
-    void hintsChanged(int hints);
+    void hintsChanged(const QVariantMap& hints);
 
     void dataChanged(unsigned int id);
 
@@ -112,8 +110,8 @@ public:
     ActionModel* getActions() const;
     void setActions(QStringList actions);
 
-    int getHints() const;
-    void setHints(int hints);
+    QVariantMap getHints() const;
+    void setHints(const QVariantMap& hints);
 
     Q_INVOKABLE void invokeAction(const QString action);
 

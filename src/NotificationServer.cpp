@@ -59,6 +59,8 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back(TRUNCATION_HINT);
     capabilities.push_back(SNAP_HINT);
     capabilities.push_back(SECONDARY_ICON_HINT);
+    capabilities.push_back(MENU_MODEL_HINT);
+    capabilities.push_back(INTERACTIVE_HINT);
 
     return capabilities;
 }
@@ -80,7 +82,7 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
         expireTimeout = 3000;
         ntype = Notification::Type::Confirmation;
     } else if (hints.find(SNAP_HINT) != hints.end()) {
-        expireTimeout = 30000;
+        expireTimeout = 60000;
         ntype = Notification::Type::SnapDecision;
     } else if(hints.find(INTERACTIVE_HINT) != hints.end()) {
         ntype = Notification::Type::Interactive;
@@ -133,7 +135,7 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
                 QString newBody = QString(notification->getBody() + "\n" + body);
                 notification->setBody(newBody);
                 model.notificationUpdated(notification->getID());
-                return notification->getID();                
+                return notification->getID();
             }
         }
 
@@ -179,6 +181,12 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     notification->setBody(body);
     notification->setIcon(app_icon);
     notification->setSummary(summary);
+
+    QVariantMap notifyHints;
+    for (Hints::const_iterator iter = hints.constBegin(), end = hints.constEnd(); iter != end; ++iter) {
+        notifyHints[iter.key()] = iter.value().variant();
+    }
+    notification->setHints(notifyHints);
 
     QVariant secondaryIcon = hints[SECONDARY_ICON_HINT].variant();
     notification->setSecondaryIcon(secondaryIcon.toString());

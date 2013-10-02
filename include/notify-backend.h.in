@@ -58,6 +58,7 @@ class Notification;
 #define URGENCY_HINT "urgency"
 #define SYNCH_HINT "x-canonical-private-synchronous"
 #define SNAP_HINT "x-canonical-snap-decisions"
+#define MENU_MODEL_HINT "x-canonical-private-menu-model"
 #define INTERACTIVE_HINT "x-canonical-switch-to-application"
 #define SECONDARY_ICON_HINT "x-canonical-secondary-icon"
 #define ICON_ONLY_HINT "x-canonical-private-icon-only"

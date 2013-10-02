@@ -36,7 +36,7 @@ struct NotificationPrivate {
     QString secondaryIcon;
     QStringList actions;
     ActionModel* actionsModel;
-    int hints;
+    QVariantMap hints;
     int displayTime;
 };
 
@@ -51,7 +51,6 @@ Notification::Notification(QObject *parent) : QObject(parent), p(new Notificatio
     p->body = "default text";
     p->server = nullptr;
     p->value = -2;
-    p->hints = Notification::Hint::None;
     p->actionsModel = new ActionModel();
 }
 
@@ -63,7 +62,6 @@ Notification::Notification(NotificationID id, int displayTime, const Urgency ur,
     p->type = type;
     p->server = srv;
     p->value = -2;
-    p->hints = Notification::Hint::None;
     p->displayTime = displayTime;
     p->actionsModel = new ActionModel();
 }
@@ -199,13 +197,15 @@ void Notification::setActions(QStringList actions) {
     }
 }
 
-int Notification::getHints() const {
+QVariantMap Notification::getHints() const {
     return p->hints;
 }
 
-void Notification::setHints(int hints) {
-    p->hints = hints;
-    Q_EMIT hintsChanged(p->hints);
+void Notification::setHints(const QVariantMap& hints) {
+    if (p->hints != hints) {
+        p->hints = hints;
+        Q_EMIT hintsChanged(p->hints);
+    }
 }
 
 void Notification::onHovered() {
