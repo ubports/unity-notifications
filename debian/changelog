@@ -1,3 +1,9 @@
+unity-notifications (0.1.1) UNRELEASED; urgency=low
+
+  * Bump version to indicate support for passing hints through.
+
+ -- Michał Sawicz <michal.sawicz@canonical.com>  Thu, 03 Oct 2013 14:17:55 +0200
+
 unity-notifications (0.1.0+13.10.20130905.2-0ubuntu1) saucy; urgency=low
 
   [ Jussi Pakkanen ]
