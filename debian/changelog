@@ -1,8 +1,19 @@
-unity-notifications (0.1.1) UNRELEASED; urgency=low
+unity-notifications (0.1.1+13.10.20131004.1-0ubuntu1) saucy; urgency=low
 
+  [ Michał Sawicz ]
   * Bump version to indicate support for passing hints through.
+  * Look for *any* slashes, not just a leading one, to support URLs.
+    Also drop an outdated FIXME. (LP: #1224095)
 
- -- Michał Sawicz <michal.sawicz@canonical.com>  Thu, 03 Oct 2013 14:17:55 +0200
+  [ Mirco Müller ]
+  * Added support for new hints "x-canonical-private-menu-model" and "x-
+    canonical-ext-snap-decisions" allowing to pass in UnityMenuModel UI-
+    descriptions and enable extended snap-decisions.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 175
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 04 Oct 2013 06:55:02 +0000
 
 unity-notifications (0.1.0+13.10.20130905.2-0ubuntu1) saucy; urgency=low
 
