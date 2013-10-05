@@ -1,3 +1,17 @@
+unity-notifications (0.1.1+13.10.20131005-0ubuntu1) saucy; urgency=low
+
+  * Revert the revert now that unity8 is fixed!  This puts on back to what was
+    in 0.1.1+13.10.20131004.1-0ubuntu1.
+
+ -- Loïc Minier <loic.minier@ubuntu.com>  Sat, 05 Oct 2013 11:52:45 +0200
+
+unity-notifications (0.1.1+13.10.20131004.2-0ubuntu1) saucy; urgency=low
+
+  * Revert 0.1.1+13.10.20131004.1-0ubuntu1 to 0.1.0+13.10.20130905.2-0ubuntu1
+    as unity8 is getting revert due to a CPU hogging bug.
+
+ -- Loïc Minier <loic.minier@ubuntu.com>  Fri, 04 Oct 2013 21:25:48 +0200
+
 unity-notifications (0.1.1+13.10.20131004.1-0ubuntu1) saucy; urgency=low
 
   [ Michał Sawicz ]
