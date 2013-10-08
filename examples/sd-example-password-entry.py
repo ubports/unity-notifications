@@ -55,12 +55,12 @@ def cancel (notification, action, data):
 	else:
 		print "That should not have happened (cancel)!"
 
-def accept (notification, action, data):
-	if action == "accept":
+def connect (notification, action, data):
+	if action == "connect":
 		global password
 		print "password entered: " + password
 	else:
-		print "That should not have happened (accept)!"
+		print "That should not have happened (connect)!"
 
 def password_changed (action, variant):
 	global password
@@ -95,7 +95,7 @@ def pushNotification (title, body, icon):
 
 	# NOTE: the order in which actions are added is important... positive
 	# always comes first!
-	n.add_action ("accept", "Accept", accept, None, None);
+	n.add_action ("connect", "Connect", connect, None, None);
 	n.add_action ("cancel", "Cancel", cancel, None, None);
 
 	# create the menu-model
@@ -135,7 +135,7 @@ if __name__ == '__main__':
 	password = ""
 
 	loop = GLib.MainLoop()
-	n = pushNotification ("Enter password", "", "")
+	n = pushNotification ("Connect to \"linksys\"", "", "image://theme/nm-signal-100")
 	n.connect('closed', quit_callback, loop)
 	n.show ()
 
