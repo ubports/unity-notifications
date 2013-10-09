@@ -165,8 +165,10 @@ unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces
     if(notification->getType() == Notification::Type::SnapDecision) {
         int numActions = actions.size();
         if(numActions < minActions) {
-            fprintf(stderr, "Too few strings for Snap Decisions. Has %d, requires %d.\n", numActions, minActions);
-            return FAILURE;
+            if (hints.find(MENU_MODEL_HINT) == hints.end()) {
+                fprintf(stderr, "Too few strings for Snap Decisions. Has %d, requires %d.\n", numActions, minActions);
+                return FAILURE;
+            }
         }
         if(numActions > maxActions) {
             fprintf(stderr, "Too many strings for Snap Decisions. Has %d, maximum %d.\n", numActions, maxActions);
