@@ -134,6 +134,7 @@ def pushNotification (title, body, icon):
 	# indicate to the notification-daemon, that we want to use snap-decisions
 	n.set_hint_string ("x-canonical-snap-decisions", "true");
 	n.set_hint_string ("x-canonical-private-button-tint", "true");
+	n.set_hint_string ("x-canonical-noshape-icon", "true");
 
 	Gio.bus_own_name(Gio.BusType.SESSION, APPLICATION_ID, 0, bus_acquired, None, None)
 
