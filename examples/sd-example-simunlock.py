@@ -4,7 +4,7 @@
 ##3456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789
 ##      10        20        30        40        50        60        70        80
 ##
-## Info: 
+## Info:
 ##    Example of how to use libnotify correctly
 ##
 ## Run:
@@ -49,34 +49,33 @@ def quit_callback(notification, loop):
 
 	loop.quit()
 
-def cancel (notification, action, data):
-	if action == "cancel":
-		print "Cancel"
-	else:
-		print "That should not have happened (cancel)!"
+def activate (action, variant):
+	global n
 
-def accept (notification, action, data):
-	if action == "accept":
-		global pin
-		print "PIN entered: " + pin
-	else:
-		print "That should not have happened (accept)!"
+	if not variant.get_boolean():
+		print "Cancel"
+		n.close()
 
 def simpin_changed (action, variant):
-	global pin
+	global n
 	pin = variant.get_string();
+	print "PIN entered: " + pin
+	n.close()
 
 def bus_acquired(bus, name):
 	# menu
 	unlock_menu = Gio.Menu();
 	pin_unlock = Gio.MenuItem.new ("", "notifications.simunlock");
 	pin_unlock.set_attribute_value ("x-canonical-type", GLib.Variant.new_string("com.canonical.snapdecision.pinlock"));
+	pin_unlock.set_attribute_value ("x-canonical-type", GLib.Variant.new_string("com.canonical.snapdecision.pinlock"));
+	pin_unlock.set_attribute_value ("x-canonical-pin-length", GLib.Variant('i', 4));
 	unlock_menu.append_item (pin_unlock);
 
 	# actions
 	unlock_actions = Gio.SimpleActionGroup.new();
-	action = Gio.SimpleAction.new_stateful("simunlock", GLib.VariantType.new("s"), GLib.Variant.new_string(""));
+	action = Gio.SimpleAction.new_stateful("simunlock", GLib.VariantType.new("b"), GLib.Variant.new_string(""));
 	action.connect ("change-state", simpin_changed);
+	action.connect ("activate", activate)
 	unlock_actions.insert (action);
 
 	global connection
@@ -89,15 +88,10 @@ def bus_acquired(bus, name):
 	exported_menu_model_id = connection.export_menu_model(SIM_UNLOCK_MENU_PATH, unlock_menu)
 
 def pushNotification (title, body, icon):
-	n = Notify.Notification.new(title, body, icon);
-
-	# NOTE: the order in which actions are added is important... positive
-	# always comes first!
-	n.add_action ("accept", "Accept", accept, None, None);
-	n.add_action ("cancel", "Cancel", cancel, None, None);
+	simNotification = Notify.Notification.new(title, body, icon);
 
 	# create the menu-model
-	menu_model_actions = GLib.VariantBuilder.new (GLib.VariantType.new ("a{sv}")); 
+	menu_model_actions = GLib.VariantBuilder.new (GLib.VariantType.new ("a{sv}"));
 	entry = GLib.Variant.new_dict_entry(GLib.Variant.new_string("notifications"),
 			GLib.Variant.new_variant(GLib.Variant.new_string(SIM_UNLOCK_ACTION_PATH)));
 	menu_model_actions.add_value (entry);
@@ -113,15 +107,15 @@ def pushNotification (title, body, icon):
 			GLib.Variant.new_variant(menu_model_actions.end()));
 	menu_model_paths.add_value (entry);
 
-	n.set_hint ("x-canonical-private-menu-model", menu_model_paths.end ());
+	simNotification.set_hint ("x-canonical-private-menu-model", menu_model_paths.end ());
 
 	# indicate to the notification-daemon, that we want to use snap-decisions
-	n.set_hint_string ("x-canonical-snap-decisions", "true");
-	n.set_hint_string ("x-canonical-private-button-tint", "true");
+	simNotification.set_hint_string ("x-canonical-snap-decisions", "true");
+	simNotification.set_hint_string ("x-canonical-private-button-tint", "true");
 
 	Gio.bus_own_name(Gio.BusType.SESSION, APPLICATION_ID, 0, bus_acquired, None, None)
 
-	return n
+	return simNotification
 
 if __name__ == '__main__':
 	if not Notify.init("sd-example-simunlock"):
@@ -133,6 +127,7 @@ if __name__ == '__main__':
 	pin = "0000"
 
 	loop = GLib.MainLoop()
+	global n
 	n = pushNotification ("Unlock SIM-card", "", "")
 	n.connect('closed', quit_callback, loop)
 	n.show ()
