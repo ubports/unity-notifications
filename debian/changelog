@@ -1,3 +1,17 @@
+unity-notifications (0.1.1+13.10.20131011.2-0ubuntu1) saucy; urgency=low
+
+  [ Nick Dedekind ]
+  * Action-less snap decision support.
+
+  [ Mirco Müller ]
+  * Made password-entry- and user-authentication-examples look more like
+    the mockups in the Design-specs.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 179
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 11 Oct 2013 17:26:15 +0000
+
 unity-notifications (0.1.1+13.10.20131005-0ubuntu1) saucy; urgency=low
 
   * Revert the revert now that unity8 is fixed!  This puts on back to what was
