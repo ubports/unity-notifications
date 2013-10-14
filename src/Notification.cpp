@@ -192,6 +192,10 @@ void Notification::setActions(QStringList actions) {
     }
 }
 
+void Notification::detachFromServer() {
+    p->server = nullptr;
+}
+
 QVariantMap Notification::getHints() const {
     return p->hints;
 }

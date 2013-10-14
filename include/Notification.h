@@ -109,6 +109,7 @@ public:
     void setType(Type type);
     ActionModel* getActions() const;
     void setActions(QStringList actions);
+    void detachFromServer();
 
     QVariantMap getHints() const;
     void setHints(const QVariantMap& hints);
