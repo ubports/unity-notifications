@@ -45,6 +45,18 @@ NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(paren
 }
 
 NotificationModel::~NotificationModel() {
+    for(int i=0; i<p->ephemeralQueue.size(); i++) {
+        p->ephemeralQueue[i]->detachFromServer();
+    }
+    for(int i=0; i<p->interactiveQueue.size(); i++) {
+        p->interactiveQueue[i]->detachFromServer();
+    }
+    for(int i=0; i<p->snapQueue.size(); i++) {
+        p->snapQueue[i]->detachFromServer();
+    }
+    for(int i=0; i<p->displayedNotifications.size(); i++) {
+        p->displayedNotifications[i]->detachFromServer();
+    }
 }
 
 int NotificationModel::rowCount(const QModelIndex &parent) const {
