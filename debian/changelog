@@ -1,3 +1,14 @@
+unity-notifications (0.1.1+13.10.20131015-0ubuntu1) saucy; urgency=low
+
+  [ Jussi Pakkanen ]
+  * Don't call into deleted objects in destructors. (LP: #1239415,
+    #1239411, #1239407)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 181
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 15 Oct 2013 13:18:59 +0000
+
 unity-notifications (0.1.1+13.10.20131011.2-0ubuntu1) saucy; urgency=low
 
   [ Nick Dedekind ]
