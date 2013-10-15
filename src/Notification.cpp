@@ -193,6 +193,15 @@ void Notification::setActions(QStringList actions) {
 }
 
 void Notification::detachFromServer() {
+    /*
+     * FIXME. This function should not exist. In fact
+     * a notification should not need to know the server
+     * it is connected to. Instead the way p->server
+     * is used needs to be converted into a proper
+     * Qt signal. Unfortunately, due to deadlines,
+     * we did not have time. The next time this is worked
+     * on, fix this properly.
+     */
     p->server = nullptr;
 }
 
