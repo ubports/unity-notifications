@@ -10,11 +10,11 @@ void testSimpleInsertion() {
     QSharedPointer<Notification> n(new Notification(42, timeout, Notification::Low, "this is text"));
     NotificationModel m;
 
-    assert(m.numNotifications() == 0);
-    m.insertNotification(n);
     assert(m.numNotifications() == 1);
+    m.insertNotification(n);
+    assert(m.numNotifications() == 2);
     m.removeNotification(n->getID());
-    assert(m.numNotifications() == 0);
+    assert(m.numNotifications() == 1);
 }
 
 void testTypeSimple() {
