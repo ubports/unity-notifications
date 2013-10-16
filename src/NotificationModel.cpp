@@ -40,6 +40,7 @@ bool notificationCompare(const QSharedPointer<Notification> &first, const QShare
 }
 
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent), p(new NotificationModelPrivate) {
+    p->displayedNotifications.append(QSharedPointer<Notification>(new Notification(0, -1, Notification::Normal, QString(), Notification::PlaceHolder)));
     connect(&(p->timer), SIGNAL(timeout()), this, SLOT(timeout()));
     p->timer.setSingleShot(true);
 }
@@ -60,7 +61,7 @@ NotificationModel::~NotificationModel() {
 }
 
 int NotificationModel::rowCount(const QModelIndex &parent) const {
-    //printf("Count %d\n", displayedNotifications.size());
+    //printf("Count %d\n", p->displayedNotifications.size());
     return p->displayedNotifications.size();
 }
 
@@ -294,7 +295,8 @@ void NotificationModel::pruneExpired() {
     for(int i=p->displayedNotifications.size()-1; i>=0; i--) {
         QSharedPointer<Notification> n = p->displayedNotifications[i];
         int shownTime = p->displayTimes[n->getID()];
-        if(shownTime >= n->getDisplayTime()) {
+        int totalTime = n->getDisplayTime();
+        if(totalTime >= 0 && shownTime >= totalTime) {
             deleteFromVisible(i);
         }
     }
@@ -323,12 +325,14 @@ int NotificationModel::nextTimeout() const {
     for(int i=0; i<p->displayedNotifications.size(); i++) {
         QSharedPointer<Notification> n = p->displayedNotifications[i];
         int totalTime = n->getDisplayTime();
-        int shownTime = p->displayTimes[n->getID()];
-        int remainingTime = totalTime - shownTime;
-        if(remainingTime < 0)
-            remainingTime = 0;
-        if(remainingTime < mintime)
-            mintime = remainingTime;
+        if (totalTime >= 0) {
+            int shownTime = p->displayTimes[n->getID()];
+            int remainingTime = totalTime - shownTime;
+            if(remainingTime < 0)
+                remainingTime = 0;
+            if(remainingTime < mintime)
+                mintime = remainingTime;
+        }
     }
     return mintime;
 }
@@ -422,7 +426,6 @@ void NotificationModel::insertSnap(QSharedPointer<Notification> n) {
 }
 
 int NotificationModel::insertionPoint(const QSharedPointer<Notification> n) const {
-    int i=0;
     if(n->getType() == Notification::Type::SnapDecision) {
         int loc = findFirst(Notification::Type::SnapDecision);
         int numSnaps = countShowing(Notification::Type::SnapDecision);
@@ -433,6 +436,7 @@ int NotificationModel::insertionPoint(const QSharedPointer<Notification> n) cons
         }
         return loc+numSnaps;
     } else {
+        int i=0;
         for(; i<p->displayedNotifications.size(); i++) {
             if(p->displayedNotifications[i]->getType() > n->getType()) {
                 break;
@@ -452,7 +456,7 @@ void NotificationModel::insertToVisible(QSharedPointer<Notification> n, int loca
     //QModelIndex insertionPoint = QAbstractItemModel::createIndex(location, 0);
     //beginInsertRows(insertionPoint, location, location);
     QModelIndex insertionPoint = QModelIndex();
-    beginInsertRows(insertionPoint, rowCount(insertionPoint), rowCount(insertionPoint));
+    beginInsertRows(insertionPoint, location, location);
     p->displayedNotifications.insert(location, n);
     endInsertRows();
     p->displayTimes[n->getID()] = 0;
