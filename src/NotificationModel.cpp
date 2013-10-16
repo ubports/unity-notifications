@@ -550,8 +550,10 @@ void NotificationModel::notificationUpdated(const NotificationID id) {
 }
 
 void NotificationModel::onDataChanged(unsigned int id) {
-    // FIXME: not really the right way to do it by assuming
-    // it's always the first notification being displayed
-    // that's affected by a potential data-change
-    Q_EMIT dataChanged(index(0, 0), index(0, 0));
+    for(int i=0; i<p->displayedNotifications.size(); i++) {
+        if(p->displayedNotifications[i]->getID() == id) {
+            Q_EMIT dataChanged(index(i, 0), index(i, 0));
+            break;
+        }
+    }
 }
