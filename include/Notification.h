@@ -55,14 +55,14 @@ public:
     enum Type { PlaceHolder, Confirmation, Ephemeral, Interactive, SnapDecision };
 
 Q_SIGNALS:
-    void bodyChanged(QString text);
-    void iconChanged(QString icon);
-    void secondaryIconChanged(QString secondaryIcon);
-    void summaryChanged(QString summary);
+    void bodyChanged(const QString &text);
+    void iconChanged(const QString &icon);
+    void secondaryIconChanged(const QString &secondaryIcon);
+    void summaryChanged(const QString &summary);
     void valueChanged(int value);
     void urgencyChanged(Urgency urg);
     void typeChanged(Type type);
-    void actionsChanged(QStringList actions);
+    void actionsChanged(const QStringList &actions);
     void hintsChanged(const QVariantMap& hints);
 
     void dataChanged(unsigned int id);
@@ -79,7 +79,7 @@ public:
     Notification(NotificationID id,
             int displayTime,
             const Urgency ur,
-            QString text, Type type=Ephemeral,
+            const QString &text, Type type=Ephemeral,
             NotificationServer *srv=nullptr,
             QObject *parent=nullptr);
     Notification(NotificationID id,
@@ -94,13 +94,13 @@ public:
     int getDisplayTime() const;
 
     QString getIcon() const;
-    void setIcon(QString icon);
+    void setIcon(const QString &icon);
     QString getSecondaryIcon() const;
-    void setSecondaryIcon(QString secondaryIcon);
+    void setSecondaryIcon(const QString &secondaryIcon);
     QString getBody() const;
-    void setBody(const QString text);
+    void setBody(const QString &text);
     QString getSummary() const;
-    void setSummary(QString summary);
+    void setSummary(const QString &summary);
     int getValue() const;
     void setValue(int value);
     Urgency getUrgency() const;
@@ -108,13 +108,13 @@ public:
     Type getType() const;
     void setType(Type type);
     ActionModel* getActions() const;
-    void setActions(QStringList actions);
+    void setActions(const QStringList &actions);
     void detachFromServer();
 
     QVariantMap getHints() const;
     void setHints(const QVariantMap& hints);
 
-    Q_INVOKABLE void invokeAction(const QString action);
+    Q_INVOKABLE void invokeAction(const QString &action);
 
     bool operator<(const Notification &n) const; // Order by "interestingness".
 };

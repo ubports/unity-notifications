@@ -33,21 +33,21 @@ class NotificationClient : public QObject {
 public:
     NotificationClient(QObject *parent=nullptr);
     ~NotificationClient();
-    NotificationID sendNotification(Notification::Type ntype, Notification::Urgency urg, QString summary, QString body);
-    NotificationID appendText(NotificationID id, QString text);
+    NotificationID sendNotification(Notification::Type ntype, Notification::Urgency urg, const QString &summary, const QString &body);
+    NotificationID appendText(NotificationID id, const QString &text);
 
 public Q_SLOTS:
     /* These slots are needed to catch the incoming DBus messages. */
     void NotificationClosed(NotificationID id, unsigned int reason);
-    void ActionInvoked(NotificationID id, QString key);
+    void ActionInvoked(NotificationID id, const QString &key);
 
 Q_SIGNALS:
     /* These signals are for client applications to bind to. */
     void closed(NotificationID id, unsigned int reason);
-    void invoked(NotificationID id, QString key);
+    void invoked(NotificationID id, const QString &key);
 
     /* This is a temporary for development purposes. */
-    void eventHappened(QString text);
+    void eventHappened(const QString &text);
 
 private:
     QDBusInterface service;

@@ -34,7 +34,7 @@ NotificationServer::~NotificationServer() {
 
 }
 
-void NotificationServer::invokeAction(unsigned int id, QString action) {
+void NotificationServer::invokeAction(unsigned int id, const QString &action) {
     Q_EMIT ActionInvoked(id, action);
 }
 
@@ -96,9 +96,9 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
     return n;
 }
 
-unsigned int NotificationServer::Notify (QString app_name, unsigned int replaces_id, QString app_icon,
-        QString summary, QString body,
-        QStringList actions, Hints hints, int expire_timeout) {
+unsigned int NotificationServer::Notify (const QString &app_name, unsigned int replaces_id, const QString &app_icon,
+        const QString &summary, const QString &body,
+        const QStringList &actions, const Hints &hints, int expire_timeout) {
     const unsigned int FAILURE = 0; // Is this correct?
     const int minActions = 4;
     const int maxActions = 12;

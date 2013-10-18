@@ -27,7 +27,7 @@
 #include <QQmlContext>
 
 void NotificationClientPlugin::registerTypes(const char *uri) {
-    qmlRegisterUncreatableType<NotificationClient>(uri, 1, 0, "NotificationClient", "");
+    qmlRegisterUncreatableType<NotificationClient>(uri, 1, 0, "NotificationClient", QString());
 }
 
 void NotificationClientPlugin::initializeEngine(QQmlEngine *engine, const char *uri) {

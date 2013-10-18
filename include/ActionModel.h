@@ -37,7 +37,7 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual QHash<int, QByteArray> roleNames() const;
 
-    void insertAction(QString id, QString label);
+    void insertAction(const QString &id, const QString &label);
 
 private:
     QScopedPointer<ActionModelPrivate> p;

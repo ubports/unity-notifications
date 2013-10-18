@@ -54,7 +54,7 @@ Notification::Notification(QObject *parent) : QObject(parent), p(new Notificatio
     p->actionsModel = new ActionModel();
 }
 
-Notification::Notification(NotificationID id, int displayTime, const Urgency ur, QString text, Type type, NotificationServer *srv, QObject *parent) :
+Notification::Notification(NotificationID id, int displayTime, const Urgency ur, const QString &text, Type type, NotificationServer *srv, QObject *parent) :
                 QObject(parent), p(new NotificationPrivate()) {
     p->id = id;
     p->urg = ur;
@@ -67,7 +67,7 @@ Notification::Notification(NotificationID id, int displayTime, const Urgency ur,
 }
 
 Notification::Notification(NotificationID id, int displayTime, const Urgency ur, Type type, NotificationServer *srv, QObject *parent) :
-    Notification(id, displayTime, ur, "", type, srv, parent){
+    Notification(id, displayTime, ur, QString(), type, srv, parent){
     p->actionsModel = new ActionModel();
 }
 
@@ -80,7 +80,7 @@ QString Notification::getBody() const {
     return p->body;
 }
 
-void Notification::setBody(const QString text) {
+void Notification::setBody(const QString &text) {
     if(p->body != text) {
         p->body = text;
         Q_EMIT bodyChanged(text);
@@ -112,7 +112,7 @@ QString Notification::getIcon() const {
     return p->icon;
 }
 
-void Notification::setIcon(QString icon) {
+void Notification::setIcon(const QString &icon) {
     if (icon.startsWith(" ") || icon.size() == 0) {
         p->icon = nullptr;
     }
@@ -132,7 +132,7 @@ QString Notification::getSecondaryIcon() const {
     return p->secondaryIcon;
 }
 
-void Notification::setSecondaryIcon(QString secondaryIcon) {
+void Notification::setSecondaryIcon(const QString &secondaryIcon) {
     p->secondaryIcon = secondaryIcon;
     Q_EMIT secondaryIconChanged(p->secondaryIcon);
     Q_EMIT dataChanged(p->id);
@@ -142,7 +142,7 @@ QString Notification::getSummary() const {
     return p->summary;
 }
 
-void Notification::setSummary(QString summary) {
+void Notification::setSummary(const QString &summary) {
     if(p->summary != summary) {
         p->summary = summary;
         Q_EMIT summaryChanged(p->summary);
@@ -181,7 +181,7 @@ ActionModel* Notification::getActions() const {
     return p->actionsModel;
 }
 
-void Notification::setActions(QStringList actions) {
+void Notification::setActions(const QStringList &actions) {
     if(p->actions != actions) {
         p->actions = actions;
         Q_EMIT actionsChanged(p->actions);
@@ -224,7 +224,7 @@ void Notification::onDisplayed() {
 
 }
 
-void Notification::invokeAction(const QString action) {
+void Notification::invokeAction(const QString &action) {
     for(int i=0; i<p->actions.size(); i++) {
         if(p->actions[i] == action) {
             p->server->invokeAction(p->id, action);

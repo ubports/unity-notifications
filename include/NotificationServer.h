@@ -56,20 +56,20 @@ class NotificationServer : public QDBusAbstractAdaptor {
 public:
     NotificationServer(NotificationModel &m, QObject *parent=nullptr);
     ~NotificationServer();
-    void invokeAction(unsigned int id, QString action);
+    void invokeAction(unsigned int id, const QString &action);
 
 public Q_SLOTS:
     void CloseNotification (unsigned int id);
     void GetServerInformation (QString &name, QString &vendor, QString &version, QString &specVersion) const;
     QStringList GetCapabilities() const;
-    unsigned int Notify (QString app_name, unsigned int replaces_id, QString app_icon, QString summary, QString body,
-            QStringList actions, Hints hints, int expire_timeout);
+    unsigned int Notify (const QString &app_name, unsigned int replaces_id, const QString &app_icon, const QString &summary, const QString &body,
+            const QStringList &actions, const Hints &hints, int expire_timeout);
     void onDataChanged(unsigned int id);
     void onCompleted(unsigned int id);
 
 Q_SIGNALS:
     void NotificationClosed(unsigned int id, unsigned int reason);
-    void ActionInvoked(unsigned int id, QString action_key);
+    void ActionInvoked(unsigned int id, const QString &action_key);
     void dataChanged(unsigned int id);
 
 private:

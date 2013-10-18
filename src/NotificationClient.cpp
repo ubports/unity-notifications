@@ -31,7 +31,7 @@ NotificationClient::~NotificationClient() {
 
 }
 
-NotificationID NotificationClient::sendNotification(Notification::Type ntype, Notification::Urgency urg, QString summary, QString body) {
+NotificationID NotificationClient::sendNotification(Notification::Type ntype, Notification::Urgency urg, const QString &summary, const QString &body) {
     QString app_name("client test");
     unsigned int replaces_id = 0;
     QString app_icon("/usr/share/icons/unity-icon-theme/search/16/search_field.png");
@@ -62,10 +62,10 @@ NotificationID NotificationClient::sendNotification(Notification::Type ntype, No
     return result.value();
 }
 
-NotificationID NotificationClient::appendText(NotificationID id, QString text) {
+NotificationID NotificationClient::appendText(NotificationID id, const QString &text) {
     QString app_name("append");
-    QString app_icon("");
-    QString summary("");
+    QString app_icon;
+    QString summary;
     QStringList actions;
     QMap<QString, QVariant> hints;
     hints[APPEND_HINT] = QVariant(true);
@@ -87,7 +87,7 @@ void NotificationClient::NotificationClosed(NotificationID id, unsigned int reas
     Q_EMIT eventHappened(msg);
 }
 
-void NotificationClient::ActionInvoked(NotificationID id, QString key) {
+void NotificationClient::ActionInvoked(NotificationID id, const QString &key) {
     Q_EMIT invoked(id, key);
     QString msg("Got ActionInvoked signal for notification ");
     msg += QString::number(id, 10);
