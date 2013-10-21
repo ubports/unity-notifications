@@ -58,9 +58,9 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual QHash<int, QByteArray> roleNames() const;
 
-    void insertNotification(QSharedPointer<Notification> n);
+    void insertNotification(const QSharedPointer<Notification> &n);
     QSharedPointer<Notification> getNotification(NotificationID id) const;
-    QSharedPointer<Notification> getNotification(QString summary) const;
+    QSharedPointer<Notification> getNotification(const QString &summary) const;
     bool hasNotification(NotificationID id) const;
 
     // getRaw() is only meant to be used from QML, since QML cannot handle
@@ -92,13 +92,13 @@ private:
     void pruneExpired();
     void removeNonSnap();
 
-    int insertionPoint(const QSharedPointer<Notification> n) const;
-    void insertEphemeral(QSharedPointer<Notification> n);
-    void insertConfirmation(QSharedPointer<Notification> n);
-    void insertInteractive(QSharedPointer<Notification> n);
-    void insertSnap(QSharedPointer<Notification> n);
-    void insertExtSnap(QSharedPointer<Notification> n);
-    void insertToVisible(QSharedPointer<Notification> n, int location=-1);
+    int insertionPoint(const QSharedPointer<Notification> &n) const;
+    void insertEphemeral(const QSharedPointer<Notification> &n);
+    void insertConfirmation(const QSharedPointer<Notification> &n);
+    void insertInteractive(const QSharedPointer<Notification> &n);
+    void insertSnap(const QSharedPointer<Notification> &n);
+    void insertExtSnap(const QSharedPointer<Notification> &n);
+    void insertToVisible(const QSharedPointer<Notification> &n, int location=-1);
     void deleteFromVisible(int loc);
     void deleteFirst();
     int findFirst(const Notification::Type type) const;

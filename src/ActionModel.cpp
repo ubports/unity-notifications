@@ -56,7 +56,7 @@ QHash<int, QByteArray> ActionModel::roleNames() const {
     return roles;
 }
 
-void ActionModel::insertAction(QString id, QString label) {
+void ActionModel::insertAction(const QString &id, const QString &label) {
     p->ids.push_back(id);
     p->labels.push_back(label);
 }
