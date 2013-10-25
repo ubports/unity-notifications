@@ -129,7 +129,7 @@ if __name__ == '__main__':
 
 	loop = GLib.MainLoop()
 	global n
-	n = pushNotification ("Unlock SIM-card", "", "")
+	n = pushNotification ("", "", "")
 	n.connect('closed', quit_callback, loop)
 	n.show ()
 
