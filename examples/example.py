@@ -52,7 +52,8 @@ capabilities = {'actions':                           False,
 				'x-canonical-switch-to-application': False,
 				'x-canonical-secondary-icon':        False,
 				'x-canonical-private-button-tint':   False,
-				'x-canonical-private-menu-model':    False}
+				'x-canonical-private-menu-model':    False,
+				'x-canonical-private-fullscreen':    False}
 
 def initCaps ():
 	caps = pynotify.get_server_caps ()
@@ -114,6 +115,8 @@ def printCaps ():
 		print "\tx-canonical-private-button-tint"
 	if capabilities['x-canonical-private-menu-model']:
 		print "\tx-canonical-private-menu-model"
+	if capabilities['x-canonical-private-fullscreen']:
+		print "\tx-canonical-private-fullscreen"
 
 	print "Notes:"
 	if info["name"] == "notify-osd":
