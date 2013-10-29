@@ -49,7 +49,10 @@ void NotificationPlugin::initializeEngine(QQmlEngine *engine, const char *uri) {
     m = new NotificationModel();
     s = new NotificationServer(*m, engine);
 
-    if(!QDBusConnection::sessionBus().registerService(DBUS_SERVICE_NAME)) {
+    QDBusConnectionInterface *iface = QDBusConnection::sessionBus().interface();
+    auto reply = iface->registerService(DBUS_SERVICE_NAME, QDBusConnectionInterface::ReplaceExistingService,
+                                        QDBusConnectionInterface::AllowReplacement);
+    if(!reply.isValid() || reply.value() != QDBusConnectionInterface::ServiceRegistered) {
         fprintf(stderr, "Service name already taken.\n");
     }
     if(!QDBusConnection::sessionBus().registerObject(DBUS_PATH, engine)) {
