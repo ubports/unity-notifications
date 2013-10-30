@@ -1,3 +1,19 @@
+unity-notifications (0.1.1+14.04.20131030.1-0ubuntu1) trusty; urgency=low
+
+  [ Albert Astals ]
+  * Minor optimizations Pass some values by const & instead of by copy
+    Don't initialize QStrings with "", the default constructor does the
+    same with less code.
+
+  [ Lars Uebernickel ]
+  * Try to replace an existing notification service when registering the
+    name.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 186
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 30 Oct 2013 11:05:51 +0000
+
 unity-notifications (0.1.1+13.10.20131016-0ubuntu1) saucy; urgency=low
 
   [ Albert Astals ]
