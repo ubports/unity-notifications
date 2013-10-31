@@ -38,12 +38,6 @@ void NotificationServer::invokeAction(unsigned int id, QString action) {
     Q_EMIT ActionInvoked(id, action);
 }
 
-
-#define INTERACTIVE_HINT "x-canonical-switch-to-application"
-
-
-
-
 QStringList NotificationServer::GetCapabilities() const {
     QStringList capabilities;
     capabilities.push_back("actions");
@@ -59,7 +53,7 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back(TRUNCATION_HINT);
     capabilities.push_back(SNAP_HINT);
     capabilities.push_back(SECONDARY_ICON_HINT);
-    capabilities.push_back(NOSHAPE_ICON_HINT);
+    capabilities.push_back(NON_SHAPED_ICON_HINT);
     capabilities.push_back(MENU_MODEL_HINT);
     capabilities.push_back(INTERACTIVE_HINT);
 
