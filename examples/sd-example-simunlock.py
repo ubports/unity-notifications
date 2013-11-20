@@ -67,7 +67,6 @@ def bus_acquired(bus, name):
 	unlock_menu = Gio.Menu();
 	pin_unlock = Gio.MenuItem.new ("", "notifications.simunlock");
 	pin_unlock.set_attribute_value ("x-canonical-type", GLib.Variant.new_string("com.canonical.snapdecision.pinlock"));
-	pin_unlock.set_attribute_value ("x-canonical-type", GLib.Variant.new_string("com.canonical.snapdecision.pinlock"));
 	unlock_menu.append_item (pin_unlock);
 
 	# actions
