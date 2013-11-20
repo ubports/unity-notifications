@@ -51,7 +51,6 @@ capabilities = {'actions':                           False,
 				'x-canonical-snap-decisions':        False,
 				'x-canonical-switch-to-application': False,
 				'x-canonical-secondary-icon':        False,
-				'x-canonical-noshape-icon':          False,
 				'x-canonical-private-button-tint':   False,
 				'x-canonical-private-menu-model':    False,
 				'x-canonical-non-shaped-icon':       False}
@@ -112,8 +111,6 @@ def printCaps ():
 		print "\tx-canonical-switch-to-application"
 	if capabilities['x-canonical-secondary-icon']:
 		print "\tx-canonical-secondary-icon"
-	if capabilities['x-canonical-noshape-icon']:
-		print "\tx-canonical-noshape-icon"
 	if capabilities['x-canonical-private-button-tint']:
 		print "\tx-canonical-private-button-tint"
 	if capabilities['x-canonical-private-menu-model']:
