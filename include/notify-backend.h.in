@@ -62,6 +62,7 @@ class Notification;
 #define FULLSCREEN_HINT "x-canonical-private-fullscreen"
 #define INTERACTIVE_HINT "x-canonical-switch-to-application"
 #define SECONDARY_ICON_HINT "x-canonical-secondary-icon"
+#define NON_SHAPED_ICON_HINT "x-canonical-non-shaped-icon"
 #define ICON_ONLY_HINT "x-canonical-private-icon-only"
 #define BUTTON_TINT_HINT "x-canonical-private-button-tint"
 #define TRUNCATION_HINT "x-canonical-truncation"

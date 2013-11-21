@@ -53,6 +53,7 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back(TRUNCATION_HINT);
     capabilities.push_back(SNAP_HINT);
     capabilities.push_back(SECONDARY_ICON_HINT);
+    capabilities.push_back(NON_SHAPED_ICON_HINT);
     capabilities.push_back(MENU_MODEL_HINT);
     capabilities.push_back(INTERACTIVE_HINT);
     capabilities.push_back(FULLSCREEN_HINT);
