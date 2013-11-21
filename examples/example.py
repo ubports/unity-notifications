@@ -53,6 +53,7 @@ capabilities = {'actions':                           False,
 				'x-canonical-secondary-icon':        False,
 				'x-canonical-private-button-tint':   False,
 				'x-canonical-private-menu-model':    False,
+				'x-canonical-private-fullscreen':    False}
 				'x-canonical-non-shaped-icon':       False}
 
 def initCaps ():
@@ -115,6 +116,8 @@ def printCaps ():
 		print "\tx-canonical-private-button-tint"
 	if capabilities['x-canonical-private-menu-model']:
 		print "\tx-canonical-private-menu-model"
+	if capabilities['x-canonical-private-fullscreen']:
+		print "\tx-canonical-private-fullscreen"
 	if capabilities['x-canonical-non-shaped-icon']:
 		print "\tx-canonical-non-shaped-icon"
 

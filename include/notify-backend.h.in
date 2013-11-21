@@ -59,6 +59,7 @@ class Notification;
 #define SYNCH_HINT "x-canonical-private-synchronous"
 #define SNAP_HINT "x-canonical-snap-decisions"
 #define MENU_MODEL_HINT "x-canonical-private-menu-model"
+#define FULLSCREEN_HINT "x-canonical-private-fullscreen"
 #define INTERACTIVE_HINT "x-canonical-switch-to-application"
 #define SECONDARY_ICON_HINT "x-canonical-secondary-icon"
 #define NON_SHAPED_ICON_HINT "x-canonical-non-shaped-icon"

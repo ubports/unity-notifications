@@ -67,8 +67,6 @@ def bus_acquired(bus, name):
 	unlock_menu = Gio.Menu();
 	pin_unlock = Gio.MenuItem.new ("", "notifications.simunlock");
 	pin_unlock.set_attribute_value ("x-canonical-type", GLib.Variant.new_string("com.canonical.snapdecision.pinlock"));
-	pin_unlock.set_attribute_value ("x-canonical-type", GLib.Variant.new_string("com.canonical.snapdecision.pinlock"));
-	pin_unlock.set_attribute_value ("x-canonical-pin-length", GLib.Variant('i', 4));
 	unlock_menu.append_item (pin_unlock);
 
 	# actions
@@ -112,6 +110,7 @@ def pushNotification (title, body, icon):
 	# indicate to the notification-daemon, that we want to use snap-decisions
 	simNotification.set_hint_string ("x-canonical-snap-decisions", "true");
 	simNotification.set_hint_string ("x-canonical-private-button-tint", "true");
+	simNotification.set_hint_string ("x-canonical-private-fullscreen", "true");
 
 	Gio.bus_own_name(Gio.BusType.SESSION, APPLICATION_ID, 0, bus_acquired, None, None)
 
@@ -128,7 +127,7 @@ if __name__ == '__main__':
 
 	loop = GLib.MainLoop()
 	global n
-	n = pushNotification ("Unlock SIM-card", "", "")
+	n = pushNotification ("", "", "")
 	n.connect('closed', quit_callback, loop)
 	n.show ()
 
