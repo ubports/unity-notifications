@@ -47,12 +47,22 @@ qt5_use_modules(notifybackend Widgets DBus Qml)
 qt5_use_modules(notifyplugin Widgets DBus Qml)
 qt5_use_modules(notifyclientplugin Widgets DBus Qml)
 
+execute_process(COMMAND ${PKG_CONFIG_EXECUTABLE} --variable=plugindir_suffix unity-shell-api OUTPUT_VARIABLE SHELL_INSTALL_QML OUTPUT_STRIP_TRAILING_WHITESPACE)
+if(SHELL_INSTALL_QML STREQUAL "")
+    message(FATAL_ERROR "Could not determine plugin installation dir.")
+endif()
+ 
+execute_process(COMMAND ${PKG_CONFIG_EXECUTABLE} --variable=plugindir unity-shell-api OUTPUT_VARIABLE SHELL_PLUGINDIR OUTPUT_STRIP_TRAILING_WHITESPACE)
+if(SHELL_PLUGINDIR STREQUAL "")
+    message(FATAL_ERROR "Could not determine plugin import dir.")
+endif()
+
 install(
   TARGETS notifyplugin notifyclientplugin
-  ARCHIVE DESTINATION ${QT_IMPORTS_DIR}/Unity/Notifications.${SONAME}
-  LIBRARY DESTINATION ${QT_IMPORTS_DIR}/Unity/Notifications.${SONAME}
+  ARCHIVE DESTINATION ${SHELL_PLUGINDIR}/Unity/Notifications
+  LIBRARY DESTINATION ${SHELL_PLUGINDIR}/Unity/Notifications
 )
 
 install(FILES qmldir
-  DESTINATION ${QT_IMPORTS_DIR}/Unity/Notifications.${SONAME}
+  DESTINATION ${SHELL_INSTALL_QML}/Unity/Notifications
 )
