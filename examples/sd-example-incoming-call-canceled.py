@@ -92,6 +92,7 @@ def pushNotification (title, body, icon):
 	# set the button-tint hint so that the right/positive button is tinted and
 	# not using the stock clear-color
 	n.set_hint_string ("x-canonical-private-button-tint", "true");
+	n.set_urgency (pynotify.URGENCY_CRITICAL)
 
 	n.show ()
 	return n

@@ -414,14 +414,26 @@ void NotificationModel::insertSnap(const QSharedPointer<Notification> &n) {
                 break;
             }
         }
+
         if(!replaced) {
             p->snapQueue.push_back(n);
         }
         qStableSort(p->snapQueue.begin(), p->snapQueue.end(), notificationCompare);
         Q_EMIT queueSizeChanged(queued());
     } else {
-        int loc = insertionPoint(n);
-        insertToVisible(n, loc);
+        bool inserted = false;
+        int loc = findFirst(Notification::Type::SnapDecision);
+        for(int i=0; i<showing; i++) {
+            if(p->displayedNotifications[loc+i]->getUrgency() > n->getUrgency()) {
+                insertToVisible(n, loc+i+1);
+                inserted = true;
+                break;
+            }
+        }
+
+        if (!inserted) {
+            insertToVisible(n, 0);
+        }
     }
 }
 

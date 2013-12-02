@@ -53,7 +53,7 @@ capabilities = {'actions':                           False,
 				'x-canonical-secondary-icon':        False,
 				'x-canonical-private-button-tint':   False,
 				'x-canonical-private-menu-model':    False,
-				'x-canonical-private-fullscreen':    False}
+				'x-canonical-private-fullscreen':    False,
 				'x-canonical-non-shaped-icon':       False}
 
 def initCaps ():
