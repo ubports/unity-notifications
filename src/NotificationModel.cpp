@@ -405,10 +405,10 @@ void NotificationModel::insertSnap(const QSharedPointer<Notification> &n) {
         int loc = findFirst(Notification::Type::SnapDecision);
         bool replaced = false;
         for(int i=0; i<showing; i++) {
-            if(p->displayedNotifications[loc+i]->getUrgency() < n->getUrgency()) {
+            if(p->displayedNotifications[loc+i]->getUrgency() > n->getUrgency()) {
                 QSharedPointer<Notification> lastShowing = p->displayedNotifications[loc+showing-1];
                 deleteFromVisible(loc+showing-1);
-                insertToVisible(n, loc+i);
+                insertToVisible(n, loc+i+1);
                 p->snapQueue.push_front(lastShowing);
                 replaced = true;
                 break;
