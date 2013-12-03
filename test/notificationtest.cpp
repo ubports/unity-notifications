@@ -114,6 +114,59 @@ void testFullQueue() {
     assert((unsigned int)m.numNotifications() == MAX_NOTIFICATIONS);
 }
 
+void testVisualSDQueueMax() {
+    const int timeout = 60000;
+    NotificationModel m;
+
+    for(unsigned int i = 0; i < NotificationModel::maxSnapsShown + 1; i++) {
+        QSharedPointer<Notification> n(new Notification(i, timeout, Notification::Low, "snap-decision", Notification::SnapDecision));
+        m.insertNotification(n);
+    }
+
+    for(unsigned int i = 0; i < NotificationModel::maxSnapsShown; i++) {
+        assert(m.showingNotification(i));
+    }
+
+    assert(!m.showingNotification(NotificationModel::maxSnapsShown+1));
+}
+
+void testVisualSDQueueWithCritical() {
+    const int timeout = 60000;
+    NotificationModel m;
+
+    QSharedPointer<Notification> n1(new Notification(1, timeout, Notification::Low, "snap-decision", Notification::SnapDecision));
+    QSharedPointer<Notification> n2(new Notification(2, timeout, Notification::Low, "snap-decision", Notification::SnapDecision));
+    QSharedPointer<Notification> n3(new Notification(3, timeout, Notification::Critical, "snap-decision-critical", Notification::SnapDecision));
+    QSharedPointer<Notification> n4(new Notification(4, timeout, Notification::Low, "snap-decision", Notification::SnapDecision));
+
+    m.insertNotification(n1);
+    m.insertNotification(n2);
+    m.insertNotification(n3);
+    m.insertNotification(n4);
+
+    assert(!strcmp(m.getDisplayedNotification(0)->getBody().toStdString().c_str(), "snap-decision-critical"));
+}
+
+void testVisualSDQueueWithoutCritical() {
+    const int timeout = 60000;
+    NotificationModel m;
+
+    QSharedPointer<Notification> n1(new Notification(1, timeout, Notification::Low, "snap-decision-1", Notification::SnapDecision));
+    QSharedPointer<Notification> n2(new Notification(2, timeout, Notification::Low, "snap-decision-2", Notification::SnapDecision));
+    QSharedPointer<Notification> n3(new Notification(3, timeout, Notification::Low, "snap-decision-3", Notification::SnapDecision));
+    QSharedPointer<Notification> n4(new Notification(4, timeout, Notification::Low, "snap-decision-4", Notification::SnapDecision));
+
+    m.insertNotification(n1);
+    m.insertNotification(n2);
+    m.insertNotification(n3);
+    m.insertNotification(n4);
+
+    assert(!strcmp(m.getDisplayedNotification(3)->getBody().toStdString().c_str(), "snap-decision-1"));
+    assert(!strcmp(m.getDisplayedNotification(2)->getBody().toStdString().c_str(), "snap-decision-2"));
+    assert(!strcmp(m.getDisplayedNotification(1)->getBody().toStdString().c_str(), "snap-decision-3"));
+    assert(!strcmp(m.getDisplayedNotification(0)->getBody().toStdString().c_str(), "snap-decision-4"));
+}
+
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
 #ifdef NDEBUG
@@ -125,6 +178,9 @@ int main(int argc, char **argv) {
     testFullQueue();
     testOrder();
     testHas();
+    testVisualSDQueueMax();
+    testVisualSDQueueWithCritical();
+    testVisualSDQueueWithoutCritical();
     return 0;
 #endif
 }

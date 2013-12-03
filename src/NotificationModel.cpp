@@ -183,6 +183,16 @@ QSharedPointer<Notification> NotificationModel::getNotification(const QString &s
     return empty;
 }
 
+QSharedPointer<Notification> NotificationModel::getDisplayedNotification(unsigned int index) const {
+    if (index < p->displayedNotifications.size()) {
+        return p->displayedNotifications[index];
+    }
+    else {
+        QSharedPointer<Notification> empty;
+        return empty;
+    }
+}
+
 bool NotificationModel::hasNotification(NotificationID id) const {
     return !(getNotification(id).isNull());
 }
