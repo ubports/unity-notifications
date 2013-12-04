@@ -82,6 +82,7 @@ def pushNotification (title, body, icon):
 	n.set_hint_string ("x-canonical-snap-decisions", "true");
 	n.set_hint_string ("x-canonical-private-button-tint", "true");
 	n.set_hint_string ("x-canonical-secondary-icon", os.getcwd() + "/assets/icon_phone.png");
+	n.set_urgency (pynotify.URGENCY_CRITICAL)
 
 	n.show ()
 	return n
