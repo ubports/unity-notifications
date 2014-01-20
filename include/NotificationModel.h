@@ -61,6 +61,7 @@ public:
     void insertNotification(const QSharedPointer<Notification> &n);
     QSharedPointer<Notification> getNotification(NotificationID id) const;
     QSharedPointer<Notification> getNotification(const QString &summary) const;
+    QSharedPointer<Notification> getDisplayedNotification(int index) const;
     bool hasNotification(NotificationID id) const;
 
     // getRaw() is only meant to be used from QML, since QML cannot handle

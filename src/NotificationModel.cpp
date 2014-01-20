@@ -183,6 +183,15 @@ QSharedPointer<Notification> NotificationModel::getNotification(const QString &s
     return empty;
 }
 
+QSharedPointer<Notification> NotificationModel::getDisplayedNotification(int index) const {
+    if (index < p->displayedNotifications.size()) {
+        return p->displayedNotifications[index];
+    } else {
+        QSharedPointer<Notification> empty;
+        return empty;
+    }
+}
+
 bool NotificationModel::hasNotification(NotificationID id) const {
     return !(getNotification(id).isNull());
 }
@@ -405,23 +414,35 @@ void NotificationModel::insertSnap(const QSharedPointer<Notification> &n) {
         int loc = findFirst(Notification::Type::SnapDecision);
         bool replaced = false;
         for(int i=0; i<showing; i++) {
-            if(p->displayedNotifications[loc+i]->getUrgency() < n->getUrgency()) {
+            if(p->displayedNotifications[loc+i]->getUrgency() > n->getUrgency()) {
                 QSharedPointer<Notification> lastShowing = p->displayedNotifications[loc+showing-1];
                 deleteFromVisible(loc+showing-1);
-                insertToVisible(n, loc+i);
+                insertToVisible(n, loc+i+1);
                 p->snapQueue.push_front(lastShowing);
                 replaced = true;
                 break;
             }
         }
+
         if(!replaced) {
             p->snapQueue.push_back(n);
         }
         qStableSort(p->snapQueue.begin(), p->snapQueue.end(), notificationCompare);
         Q_EMIT queueSizeChanged(queued());
     } else {
-        int loc = insertionPoint(n);
-        insertToVisible(n, loc);
+        bool inserted = false;
+        int loc = findFirst(Notification::Type::SnapDecision);
+        for(int i=0; i<showing; i++) {
+            if(p->displayedNotifications[loc+i]->getUrgency() > n->getUrgency()) {
+                insertToVisible(n, loc+i+1);
+                inserted = true;
+                break;
+            }
+        }
+
+        if (!inserted) {
+            insertToVisible(n, 0);
+        }
     }
 }
 
