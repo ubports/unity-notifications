@@ -23,11 +23,11 @@ void TestNotifications::testSimpleInsertion() {
     QSharedPointer<Notification> n(new Notification(42, timeout, Notification::Low, "this is text"));
     NotificationModel m;
 
-    QVERIFY(m.numNotifications() == 1);
+    QCOMPARE(m.numNotifications(), 1);
     m.insertNotification(n);
-    QVERIFY(m.numNotifications() == 2);
+    QCOMPARE(m.numNotifications(), 2);
     m.removeNotification(n->getID());
-    QVERIFY(m.numNotifications() == 1);
+    QCOMPARE(m.numNotifications(), 1);
 }
 
 void TestNotifications::testTypeSimple() {
@@ -65,25 +65,25 @@ void TestNotifications::testOrder() {
     QVERIFY(!m.showingNotification(n1->getID()));
     QVERIFY(!m.showingNotification(n2->getID()));
     QVERIFY(m.showingNotification(n3->getID()));
-    QVERIFY(m.queued() == 2);
+    QCOMPARE(m.queued(), 2);
 
     m.removeNotification(n3->getID());
     QVERIFY(!m.showingNotification(n1->getID()));
     QVERIFY(m.showingNotification(n2->getID()));
     QVERIFY(!m.showingNotification(n3->getID()));
-    QVERIFY(m.queued() == 1);
+    QCOMPARE(m.queued(), 1);
 
     m.removeNotification(n2->getID());
     QVERIFY(m.showingNotification(n1->getID()));
     QVERIFY(!m.showingNotification(n2->getID()));
     QVERIFY(!m.showingNotification(n3->getID()));
-    QVERIFY(m.queued() == 0);
+    QCOMPARE(m.queued(), 0);
 
     m.removeNotification(n1->getID());
     QVERIFY(!m.showingNotification(n1->getID()));
     QVERIFY(!m.showingNotification(n2->getID()));
     QVERIFY(!m.showingNotification(n3->getID()));
-    QVERIFY(m.queued() == 0);
+    QCOMPARE(m.queued(), 0);
 }
 
 void TestNotifications::testHas() {
@@ -120,10 +120,10 @@ void TestNotifications::testFullQueue() {
         QSharedPointer<Notification> n(new Notification(i, timeout, Notification::Low, "text", Notification::Ephemeral));
         m.insertNotification(n);
     }
-    QVERIFY((unsigned int)m.numNotifications() == MAX_NOTIFICATIONS);
+    QCOMPARE((unsigned int)m.numNotifications(), MAX_NOTIFICATIONS);
     QSharedPointer<Notification> wontFit(new Notification(1111, timeout, Notification::Critical, "foo"));
     m.insertNotification(wontFit);
-    QVERIFY((unsigned int)m.numNotifications() == MAX_NOTIFICATIONS);
+    QCOMPARE((unsigned int)m.numNotifications(), MAX_NOTIFICATIONS);
 }
 
 void TestNotifications::testVisualSDQueueMax() {
@@ -156,7 +156,7 @@ void TestNotifications::testVisualSDQueueWithCritical() {
     m.insertNotification(n3);
     m.insertNotification(n4);
 
-    QVERIFY(!strcmp(m.getDisplayedNotification(0)->getBody().toStdString().c_str(), "snap-decision-critical"));
+    QCOMPARE(m.getDisplayedNotification(0)->getBody(), QString("snap-decision-critical"));
 }
 
 void TestNotifications::testVisualSDQueueWithoutCritical() {
@@ -173,10 +173,10 @@ void TestNotifications::testVisualSDQueueWithoutCritical() {
     m.insertNotification(n3);
     m.insertNotification(n4);
 
-    QVERIFY(!strcmp(m.getDisplayedNotification(3)->getBody().toStdString().c_str(), "snap-decision-1"));
-    QVERIFY(!strcmp(m.getDisplayedNotification(2)->getBody().toStdString().c_str(), "snap-decision-2"));
-    QVERIFY(!strcmp(m.getDisplayedNotification(1)->getBody().toStdString().c_str(), "snap-decision-3"));
-    QVERIFY(!strcmp(m.getDisplayedNotification(0)->getBody().toStdString().c_str(), "snap-decision-4"));
+    QCOMPARE(m.getDisplayedNotification(3)->getBody(), QString("snap-decision-1"));
+    QCOMPARE(m.getDisplayedNotification(2)->getBody(), QString("snap-decision-2"));
+    QCOMPARE(m.getDisplayedNotification(1)->getBody(), QString("snap-decision-3"));
+    QCOMPARE(m.getDisplayedNotification(0)->getBody(), QString("snap-decision-4"));
 }
 
 QTEST_MAIN(TestNotifications)
