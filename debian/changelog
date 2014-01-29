@@ -1,3 +1,28 @@
+unity-notifications (0.1.1+14.04.20140129-0ubuntu1) trusty; urgency=low
+
+  [ Michał Sawicz ]
+  * Flush trunk through Train CI.
+
+  [ Albert Astals ]
+  * Use QCOMPARE instead of QVERIFY Because it is what we want to do and
+    also because it gives us much better failure messages when tests
+    fail.
+
+  [ Mirco Müller ]
+  * Fixes bug #1200569. (LP: #1200569)
+  * Added reporting-support for x-canonical-private-fullscreen hint.
+  * Don't use the fullscreen-hint. Fullscreen is meant to be implicitly
+    used only by the pinpad-notification.
+  * Use new plugin-path provided by pkgconfig of libunity-api-dev, thus
+    fixing LP #1256011. (LP: #1256011)
+  * Make notification unit-test Q-ified in order to allow nicer ouput in
+    case of failures.
+  * Change the order of visually stacked snap-decisions to comply with
+    the Design-spec for UbuntuTouch notifications. Also updated test to
+    verify the new required behaviour.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 29 Jan 2014 17:34:33 +0000
+
 unity-notifications (0.1.1+14.04.20131030.1-0ubuntu1) trusty; urgency=low
 
   [ Albert Astals ]
