@@ -85,7 +85,7 @@ if __name__ == '__main__':
 	loop = gobject.MainLoop ()
 	n = pushNotification ("Question",
                           "Would you say Ok or Cancel?",
-						  "info")
+						  "search")
 	n.connect ("closed", example.closedHandler, loop)
 
 	loop.run ()
