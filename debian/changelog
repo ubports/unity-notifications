@@ -1,3 +1,13 @@
+unity-notifications (0.1.1+14.04.20140305-0ubuntu1) trusty; urgency=low
+
+  [ CI bot ]
+  * No change rebuild against Qt 5.2.1.
+
+  [ Ubuntu daily release ]
+  * New rebuild forced
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 05 Mar 2014 09:31:45 +0000
+
 unity-notifications (0.1.1+14.04.20140129-0ubuntu1) trusty; urgency=low
 
   [ Michał Sawicz ]
