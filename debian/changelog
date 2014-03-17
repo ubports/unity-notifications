@@ -1,3 +1,11 @@
+unity-notifications (0.1.1+14.04.20140317.2-0ubuntu1) trusty; urgency=low
+
+  [ Mirco Müller ]
+  * Updated NotificationModel and its unit-test to not ignore the
+    permanent PlaceHolder notification in the queue.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 17 Mar 2014 16:00:53 +0000
+
 unity-notifications (0.1.1+14.04.20140305-0ubuntu1) trusty; urgency=low
 
   [ CI bot ]
