@@ -81,7 +81,7 @@ if __name__ == '__main__':
 	loop = gobject.MainLoop ()
 	n = pushNotification ("Incoming file",
                           "Frank would like to send you the file: essay.pdf",
-                          "document")
+                          "sync-idle")
 	n.connect ("closed", example.closedHandler, loop)
 
 	loop.run ()

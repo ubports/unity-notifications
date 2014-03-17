@@ -156,7 +156,7 @@ void TestNotifications::testVisualSDQueueWithCritical() {
     m.insertNotification(n3);
     m.insertNotification(n4);
 
-    QCOMPARE(m.getDisplayedNotification(0)->getBody(), QString("snap-decision-critical"));
+    QCOMPARE(m.getDisplayedNotification(1)->getBody(), QString("snap-decision-critical"));
 }
 
 void TestNotifications::testVisualSDQueueWithoutCritical() {
@@ -173,10 +173,10 @@ void TestNotifications::testVisualSDQueueWithoutCritical() {
     m.insertNotification(n3);
     m.insertNotification(n4);
 
-    QCOMPARE(m.getDisplayedNotification(3)->getBody(), QString("snap-decision-1"));
-    QCOMPARE(m.getDisplayedNotification(2)->getBody(), QString("snap-decision-2"));
-    QCOMPARE(m.getDisplayedNotification(1)->getBody(), QString("snap-decision-3"));
-    QCOMPARE(m.getDisplayedNotification(0)->getBody(), QString("snap-decision-4"));
+    QCOMPARE(m.getDisplayedNotification(4)->getBody(), QString("snap-decision-1"));
+    QCOMPARE(m.getDisplayedNotification(3)->getBody(), QString("snap-decision-2"));
+    QCOMPARE(m.getDisplayedNotification(2)->getBody(), QString("snap-decision-3"));
+    QCOMPARE(m.getDisplayedNotification(1)->getBody(), QString("snap-decision-4"));
 }
 
 QTEST_MAIN(TestNotifications)

@@ -441,7 +441,7 @@ void NotificationModel::insertSnap(const QSharedPointer<Notification> &n) {
         }
 
         if (!inserted) {
-            insertToVisible(n, 0);
+            insertToVisible(n, 1);
         }
     }
 }
