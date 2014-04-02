@@ -1,3 +1,12 @@
+unity-notifications (0.1.1+14.04.20140402-0ubuntu1) trusty; urgency=low
+
+  [ Mirco Müller ]
+  * To avoid false expectations the examples, using not yet re-
+    implemented hints or features, were moved to the unsupported
+    directory.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 02 Apr 2014 17:53:10 +0000
+
 unity-notifications (0.1.1+14.04.20140317.2-0ubuntu1) trusty; urgency=low
 
   [ Mirco Müller ]
