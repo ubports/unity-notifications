@@ -1,5 +1,5 @@
 include(FindPkgConfig)
-pkg_check_modules(NOTIFICATIONS_API REQUIRED unity-shell-launcher=3)
+pkg_check_modules(NOTIFICATIONS_API REQUIRED unity-shell-notifications=1)
 
 set(CORE_SRCS
 ActionModel.cpp
