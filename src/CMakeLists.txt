@@ -1,3 +1,6 @@
+include(FindPkgConfig)
+pkg_check_modules(NOTIFICATIONS_API REQUIRED unity-shell-notifications=1)
+
 set(CORE_SRCS
 ActionModel.cpp
 ../include/ActionModel.h
@@ -9,6 +12,7 @@ NotificationServer.cpp
 ../include/NotificationServer.h
 NotificationClient.cpp
 ../include/NotificationClient.h
+${NOTIFICATIONS_API_INCLUDEDIR}/unity/shell/notifications/ModelInterface.h
 )
 
 # Build everything twice. Since we have only a few
