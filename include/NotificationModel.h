@@ -32,7 +32,6 @@ struct NotificationModelPrivate;
 
 class NotificationModel : public QAbstractListModel {
     Q_OBJECT
-    Q_ENUMS(Roles)
 
 public:
     static const int maxNotifications = MAX_NOTIFICATIONS;
