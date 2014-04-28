@@ -20,15 +20,6 @@
 #include "NotificationModel.h"
 #include "Notification.h"
 
-/* check if unity-api >= 0.1.3 */
-#include <unity/api/Version.h>
-#if UNITY_API_VERSION_MAJOR > 0 || \
-    (UNITY_API_VERSION_MAJOR == 0 && (UNITY_API_VERSION_MINOR > 1 || \
-                                      (UNITY_API_VERSION_MINOR == 1 && \
-                                       UNITY_API_VERSION_MICRO < 3)))
-    #error Unity-API needs to be at least 0.1.3
-#endif
-
 #include <unity/shell/notifications/ModelInterface.h>
 
 #include <QTimer>
