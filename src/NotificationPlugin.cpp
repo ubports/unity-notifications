@@ -22,6 +22,8 @@
 #include "NotificationModel.h"
 #include "NotificationServer.h"
 
+#include <unity/shell/notifications/ModelInterface.h>
+
 #include <qqml.h>
 
 #include <QtDBus>
@@ -33,6 +35,7 @@
 static NotificationModel *m = NULL;
 static NotificationServer *s = NULL;
 
+using namespace unity::shell::notifications;
 
 static QObject* modelProvider(QQmlEngine* /* engine */, QJSEngine* /* scriptEngine */)
 {
@@ -41,6 +44,7 @@ static QObject* modelProvider(QQmlEngine* /* engine */, QJSEngine* /* scriptEngi
 
 void NotificationPlugin::registerTypes(const char *uri) {
     // @uri Unity.Notifications
+    qmlRegisterUncreatableType<ModelInterface>(uri, 1, 0, "ModelInterface", "Abstract Interface. Cannot be instantiated.");
     qmlRegisterSingletonType<NotificationModel>(uri, 1, 0, "Model", modelProvider);
     qmlRegisterUncreatableType<Notification>(uri, 1, 0, "Notification", "Notification objects can only be created by the plugin");
 }

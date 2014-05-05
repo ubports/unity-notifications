@@ -19,12 +19,17 @@
 
 #include "NotificationModel.h"
 #include "Notification.h"
+
+#include <unity/shell/notifications/ModelInterface.h>
+
 #include <QTimer>
 #include <QList>
 #include <QVector>
 #include <QMap>
 #include <QStringListModel>
 #include <QQmlEngine>
+
+using namespace unity::shell::notifications;
 
 struct NotificationModelPrivate {
     QList<QSharedPointer<Notification> > displayedNotifications;
@@ -71,37 +76,37 @@ QVariant NotificationModel::data(const QModelIndex &index, int role) const {
             return QVariant();
 
     switch(role) {
-        case RoleType:
+        case ModelInterface::RoleType:
             return QVariant(p->displayedNotifications[index.row()]->getType());
 
-        case RoleUrgency:
+        case ModelInterface::RoleUrgency:
             return QVariant(p->displayedNotifications[index.row()]->getUrgency());
 
-        case RoleId:
+        case ModelInterface::RoleId:
             return QVariant(p->displayedNotifications[index.row()]->getID());
 
-        case RoleSummary:
+        case ModelInterface::RoleSummary:
             return QVariant(p->displayedNotifications[index.row()]->getSummary());
 
-        case RoleBody:
+        case ModelInterface::RoleBody:
             return QVariant(p->displayedNotifications[index.row()]->getBody());
 
-        case RoleValue:
+        case ModelInterface::RoleValue:
             return QVariant(p->displayedNotifications[index.row()]->getValue());
 
-        case RoleIcon:
+        case ModelInterface::RoleIcon:
             return QVariant(p->displayedNotifications[index.row()]->getIcon());
 
-        case RoleSecondaryIcon:
+        case ModelInterface::RoleSecondaryIcon:
             return QVariant(p->displayedNotifications[index.row()]->getSecondaryIcon());
 
-        case RoleActions:
+        case ModelInterface::RoleActions:
             return QVariant::fromValue(p->displayedNotifications[index.row()]->getActions());
 
-        case RoleHints:
+        case ModelInterface::RoleHints:
             return QVariant(p->displayedNotifications[index.row()]->getHints());
 
-        case RoleNotification:
+        case ModelInterface::RoleNotification:
             return QVariant(p->displayedNotifications[index.row()]);
 
         default:
@@ -543,17 +548,17 @@ int NotificationModel::findFirst(const Notification::Type type) const {
 QHash<int, QByteArray> NotificationModel::roleNames() const {
     QHash<int, QByteArray> roles;
 
-    roles.insert(RoleType, "type");
-    roles.insert(RoleUrgency, "urgency");
-    roles.insert(RoleId, "id");
-    roles.insert(RoleSummary, "summary");
-    roles.insert(RoleBody, "body");
-    roles.insert(RoleValue, "value");
-    roles.insert(RoleIcon, "icon");
-    roles.insert(RoleSecondaryIcon, "secondaryIcon");
-    roles.insert(RoleActions, "actions");
-    roles.insert(RoleHints, "hints");
-    roles.insert(RoleNotification, "notification");
+    roles.insert(ModelInterface::RoleType, "type");
+    roles.insert(ModelInterface::RoleUrgency, "urgency");
+    roles.insert(ModelInterface::RoleId, "id");
+    roles.insert(ModelInterface::RoleSummary, "summary");
+    roles.insert(ModelInterface::RoleBody, "body");
+    roles.insert(ModelInterface::RoleValue, "value");
+    roles.insert(ModelInterface::RoleIcon, "icon");
+    roles.insert(ModelInterface::RoleSecondaryIcon, "secondaryIcon");
+    roles.insert(ModelInterface::RoleActions, "actions");
+    roles.insert(ModelInterface::RoleHints, "hints");
+    roles.insert(ModelInterface::RoleNotification, "notification");
 
     return roles;
 }
