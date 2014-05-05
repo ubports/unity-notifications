@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 9~),
                pkg-config,
                qtdeclarative5-dev,
                qtbase5-dev-tools,
-               libunity-api-dev >= 7.80.7,
+               libunity-api-dev (>= 7.80.7),
 # For Qml tests
                qtchooser,
                qt5-default,
