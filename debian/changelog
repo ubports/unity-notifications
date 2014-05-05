@@ -1,3 +1,10 @@
+unity-notifications (0.1.1+14.10.20140505-0ubuntu1) utopic; urgency=low
+
+  [ Mirco Müller ]
+  * Make the Roles enum available to QML. (LP: #1285712)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 05 May 2014 12:25:31 +0000
+
 unity-notifications (0.1.1+14.04.20140402-0ubuntu1) trusty; urgency=low
 
   [ Mirco Müller ]
