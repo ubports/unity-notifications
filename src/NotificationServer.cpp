@@ -46,6 +46,8 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back("icon-static");
     capabilities.push_back("image/svg+xml");
     capabilities.push_back(URGENCY_HINT);
+    capabilities.push_back(SOUND_HINT);
+    capabilities.push_back(SUPPRESS_SOUND_HINT);
     capabilities.push_back(SYNCH_HINT);
     capabilities.push_back(APPEND_HINT);
     capabilities.push_back(ICON_ONLY_HINT);

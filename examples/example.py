@@ -42,6 +42,8 @@ capabilities = {'actions':                           False,
 				'icon-multi':                        False,
 				'icon-static':                       False,
 				'sound':                             False,
+				'sound-file':                        False,
+				'suppress-sound':                    False,
 				'image/svg+xml':                     False,
 				'urgency':                           False,
 				'x-canonical-private-synchronous':   False,
@@ -93,6 +95,10 @@ def printCaps ():
 		print "\ticon-static"
 	if capabilities['sound']:
 		print "\tsound"
+	if capabilities['sound-file']:
+		print "\tsound-file"
+	if capabilities['suppress-sound']:
+		print "\tsuppress-sound"
 	if capabilities['urgency']:
 		print "\turgency"
 	if capabilities['image/svg+xml']:
