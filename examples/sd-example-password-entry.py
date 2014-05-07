@@ -118,9 +118,10 @@ def pushNotification (title, body, icon):
 	n.set_hint ("x-canonical-private-menu-model", menu_model_paths.end ());
 
 	# indicate to the notification-daemon, that we want to use snap-decisions
-	n.set_hint_string ("x-canonical-snap-decisions", "true");
-	n.set_hint_string ("x-canonical-private-button-tint", "true");
-	n.set_hint_string ("x-canonical-non-shaped-icon", "true");
+	n.set_hint ("x-canonical-snap-decisions", GLib.Variant.new_string("true"));
+	n.set_hint ("x-canonical-snap-decisions-timeout", GLib.Variant.new_int32(90000));
+	n.set_hint ("x-canonical-private-button-tint", GLib.Variant.new_string("true"));
+	n.set_hint ("x-canonical-non-shaped-icon", GLib.Variant.new_string("true"));
 
 	Gio.bus_own_name(Gio.BusType.SESSION, APPLICATION_ID, 0, bus_acquired, None, None)
 
