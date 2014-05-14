@@ -1,3 +1,10 @@
+unity-notifications (0.1.1+14.10.20140514.1-0ubuntu1) utopic; urgency=low
+
+  [ Antti Kaijanmäki ]
+  * Call model.notificationUpdated() when notification updates.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 14 May 2014 11:31:06 +0000
+
 unity-notifications (0.1.1+14.10.20140505-0ubuntu1) utopic; urgency=low
 
   [ Mirco Müller ]
