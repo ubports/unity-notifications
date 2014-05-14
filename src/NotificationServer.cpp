@@ -21,6 +21,7 @@
 #include "NotificationServer.h"
 #include "Notification.h"
 #include <QDBusMetaType>
+#include <QDebug>
 #include <QSharedPointer>
 
 NotificationServer::NotificationServer(NotificationModel &m, QObject *parent) :
@@ -145,6 +146,7 @@ unsigned int NotificationServer::Notify (const QString &app_name, unsigned int r
             idCounter = 1;
     }
 
+    Q_ASSERT(notification);
     if(notification->getType() == Notification::Type::Interactive) {
         int numActions = actions.size();
         if(numActions != 2) {
@@ -188,7 +190,9 @@ unsigned int NotificationServer::Notify (const QString &app_name, unsigned int r
     QVariant secondaryIcon = hints[SECONDARY_ICON_HINT].variant();
     notification->setSecondaryIcon(secondaryIcon.toString());
 
-    if(replaces_id == 0) {
+    if(replaces_id) {
+        model.notificationUpdated(currentId);
+    } else {
         model.insertNotification(notification);
     }
     return currentId;
