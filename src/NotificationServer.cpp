@@ -97,7 +97,7 @@ unsigned int NotificationServer::Notify (const QString &app_name, unsigned int r
         const QStringList &actions, const Hints &hints, int expire_timeout) {
     const unsigned int FAILURE = 0; // Is this correct?
     const int minActions = 4;
-    const int maxActions = 12;
+    const int maxActions = 14;
     //QImage icon(app_icon);
     int currentId = idCounter;
     QSharedPointer<Notification> notification;
