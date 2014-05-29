@@ -45,27 +45,33 @@ def action_decline_1 (notification, action):
 
 def action_decline_2 (notification, action):
 	if action == "action_decline_2":
-		print "\"Dude, my wife is here!\""
+		print "Reject with SMS"
 	else:
 		print "That should not have happened (action_decline_2)!"
 
 def action_decline_3 (notification, action):
 	if action == "action_decline_3":
-		print "\"I'm sleeping.\""
+		print "Dude, my wife is here!"
 	else:
 		print "That should not have happened (action_decline_3)!"
 
 def action_decline_4 (notification, action):
 	if action == "action_decline_4":
-		print "\"No time... I'm riding!\""
+		print "I'm sleeping."
 	else:
 		print "That should not have happened (action_decline_4)!"
 
 def action_decline_5 (notification, action):
 	if action == "action_decline_5":
-		print "Send SMS..."
+		print "No time... I'm riding!"
 	else:
 		print "That should not have happened (action_decline_5)!"
+
+def action_decline_6 (notification, action):
+	if action == "action_decline_6":
+		print "Send SMS..."
+	else:
+		print "That should not have happened (action_decline_6)!"
 
 def action_accept (notification, action):
 	if action == "action_accept":
@@ -78,12 +84,13 @@ def pushNotification (title, body, icon):
 
 	# NOTE: the order in which actions are added is important... positive
 	# always comes first!
-	n.add_action ("action_accept",    "Pick up",                    action_accept);
-	n.add_action ("action_decline_1", "Hang up",                    action_decline_1);
-	#n.add_action ("action_decline_2", "\"Dude, my wife is here!\"", action_decline_2);
-	#n.add_action ("action_decline_3", "\"I'm sleeping.\"",          action_decline_3);
-	#n.add_action ("action_decline_4", "\"No time... I'm riding!\"", action_decline_4);
-	#n.add_action ("action_decline_5", "Send SMS...",                action_decline_5);
+	n.add_action ("action_accept",    "Pick up", action_accept);
+	n.add_action ("action_decline_1", "Hang up", action_decline_1);
+	n.add_action ("action_decline_2", "Reject with SMS", action_decline_2);
+	n.add_action ("action_decline_3", "messages:Dude, my wife is here!", action_decline_3);
+	n.add_action ("action_decline_4", "messages:I'm sleeping.", action_decline_4);
+	n.add_action ("action_decline_5", "messages:No time... I'm riding!", action_decline_5);
+	n.add_action ("action_decline_6", "edit:Send SMS...", action_decline_6);
 
 	# indicate to the notification-daemon, that we want to use snap-decisions
 	n.set_hint_string ("x-canonical-snap-decisions", "true");

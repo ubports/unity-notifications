@@ -87,10 +87,10 @@ def pushNotification (title, body, icon):
 	n.add_action ("action_accept", "Hold + Answer", action_accept);
 	n.add_action ("action_decline_1", "End + Answer", action_decline_1);
 	n.add_action ("action_decline_2", "Decline", action_decline_2);
-	n.add_action ("action_decline_3", "I missed your call - can you call me now?", action_decline_3);
-	n.add_action ("action_decline_4", "I'm running late. I'm on my way.", action_decline_4);
-	n.add_action ("action_decline_5", "I'm busy at the moment. I'll call later.", action_decline_5);
-	n.add_action ("action_decline_6", "Custom", action_decline_6);
+	n.add_action ("action_decline_3", "messages:I missed your call - can you call me now?", action_decline_3);
+	n.add_action ("action_decline_4", "messages:I'm running late. I'm on my way.", action_decline_4);
+	n.add_action ("action_decline_5", "messages:I'm busy at the moment. I'll call later.", action_decline_5);
+	n.add_action ("action_decline_6", "edit:Custom", action_decline_6);
 
 	# indicate to the notification-daemon, that we want to use snap-decisions
 	n.set_hint_string ("x-canonical-snap-decisions", "true");
