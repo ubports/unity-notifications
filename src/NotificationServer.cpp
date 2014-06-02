@@ -57,6 +57,7 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back(NON_SHAPED_ICON_HINT);
     capabilities.push_back(MENU_MODEL_HINT);
     capabilities.push_back(INTERACTIVE_HINT);
+    capabilities.push_back(TIMEOUT_HINT);
 
     return capabilities;
 }
@@ -78,7 +79,13 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
         expireTimeout = 3000;
         ntype = Notification::Type::Confirmation;
     } else if (hints.find(SNAP_HINT) != hints.end()) {
-        expireTimeout = 60000;
+        QVariant u = hints[TIMEOUT_HINT].variant();
+        if(!u.canConvert(QVariant::Int)) {
+            expireTimeout = 60000;
+        } else {
+            expireTimeout = u.toInt();
+        }
+
         ntype = Notification::Type::SnapDecision;
     } else if(hints.find(INTERACTIVE_HINT) != hints.end()) {
         ntype = Notification::Type::Interactive;
