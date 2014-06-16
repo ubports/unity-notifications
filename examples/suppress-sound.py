@@ -49,6 +49,6 @@ if __name__ == '__main__':
 	n = pynotify.Notification ("Lotsof N. Oise",
 				   "With the popping up of this notification, you should NOT hear a sound being played.",
 				   os.getcwd() + "/assets/avatar2.jpg")
-        n.set_hint_string ("sound-file", "/usr/share/sounds/ubuntu/stereo/desktop-login.ogg")
-        n.set_hint_string ("suppress-sound", "true")
+	n.set_hint_string ("sound-file", "/usr/share/sounds/ubuntu/stereo/desktop-login.ogg")
+	n.set_hint_string ("suppress-sound", "true")
 	n.show ()
