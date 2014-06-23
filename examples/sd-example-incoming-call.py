@@ -39,31 +39,43 @@ import example
 
 def action_decline_1 (notification, action):
 	if action == "action_decline_1":
-		print "Decline"
+		print "End + Answer"
 	else:
 		print "That should not have happened (action_decline_1)!"
 
 def action_decline_2 (notification, action):
 	if action == "action_decline_2":
-		print "\"Can't talk now, what's up?\""
+		print "Decline"
 	else:
 		print "That should not have happened (action_decline_2)!"
 
 def action_decline_3 (notification, action):
 	if action == "action_decline_3":
-		print "\"I call you back.\""
+		print "I missed your call - can you call me now?"
 	else:
 		print "That should not have happened (action_decline_3)!"
 
 def action_decline_4 (notification, action):
 	if action == "action_decline_4":
-		print "Send custom message..."
+		print "I'm running late. I'm on my way."
 	else:
 		print "That should not have happened (action_decline_4)!"
 
+def action_decline_5 (notification, action):
+	if action == "action_decline_5":
+		print "I'm busy at the moment. I'll call later."
+	else:
+		print "That should not have happened (action_decline_5)!"
+
+def action_decline_6 (notification, action):
+	if action == "action_decline_6":
+		print "Custom"
+	else:
+		print "That should not have happened (action_decline_6)!"
+
 def action_accept (notification, action):
 	if action == "action_accept":
-		print "Accepting call"
+		print "Hold + Answer"
 	else:
 		print "That should not have happened (action_accept)!"
 
@@ -72,11 +84,13 @@ def pushNotification (title, body, icon):
 
 	# NOTE: the order in which actions are added is important... positive
 	# always comes first!
-	n.add_action ("action_accept",    "Accept",                         action_accept);
-	n.add_action ("action_decline_1", "Decline",                        action_decline_1);
-	n.add_action ("action_decline_2", "\"Can't talk now, what's up?\"", action_decline_2);
-	n.add_action ("action_decline_3", "\"I call you back.\"",           action_decline_3);
-	n.add_action ("action_decline_4", "Send custom message...",         action_decline_4);
+	n.add_action ("action_accept", "Hold + Answer", action_accept);
+	n.add_action ("action_decline_1", "End + Answer", action_decline_1);
+	n.add_action ("action_decline_2", "Decline", action_decline_2);
+	n.add_action ("action_decline_3", "messages:I missed your call - can you call me now?", action_decline_3);
+	n.add_action ("action_decline_4", "messages:I'm running late. I'm on my way.", action_decline_4);
+	n.add_action ("action_decline_5", "messages:I'm busy at the moment. I'll call later.", action_decline_5);
+	n.add_action ("action_decline_6", "edit:Custom", action_decline_6);
 
 	# indicate to the notification-daemon, that we want to use snap-decisions
 	n.set_hint_string ("x-canonical-snap-decisions", "true");
