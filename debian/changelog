@@ -1,10 +1,14 @@
-unity-notifications (0.1.2-0ubuntu1) UNRELEASED; urgency=low
+unity-notifications (0.1.2+14.10.20140623-0ubuntu1) utopic; urgency=low
 
   [ Mirco Müller ]
   * Changed maximum number of allowed actions to be 7. Updated related examples accordingly. 
   * Bump version to indicate support for maximum of 7 actions.
+  * Added a handy example to more easily demonstrate the visual snap-
+    decision queue of the notification-frontend.
+  * Added the backend-part of sound-hint support with two additional
+    examples demonstrating its use.
 
- -- Mirco Müller <mirco.mueller@ubuntu.com>  Mon, 16 Jun 2014 15:59:37 +0200
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 23 Jun 2014 09:32:14 +0000
 
 unity-notifications (0.1.1+14.10.20140602-0ubuntu1) utopic; urgency=low
 
