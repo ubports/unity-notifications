@@ -56,6 +56,8 @@ class Notification;
 #endif
 
 #define URGENCY_HINT "urgency"
+#define SOUND_HINT "sound-file"
+#define SUPPRESS_SOUND_HINT "suppress-sound"
 #define SYNCH_HINT "x-canonical-private-synchronous"
 #define SNAP_HINT "x-canonical-snap-decisions"
 #define MENU_MODEL_HINT "x-canonical-private-menu-model"
