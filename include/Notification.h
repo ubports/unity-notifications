@@ -115,6 +115,7 @@ public:
     void setHints(const QVariantMap& hints);
 
     Q_INVOKABLE void invokeAction(const QString &action);
+    Q_INVOKABLE void close();
 
     bool operator<(const Notification &n) const; // Order by "interestingness".
 };

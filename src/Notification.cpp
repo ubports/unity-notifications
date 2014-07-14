@@ -234,3 +234,7 @@ void Notification::invokeAction(const QString &action) {
     }
     fprintf(stderr, "Error: tried to invoke action not in actionList.\n");
 }
+
+void Notification::close() {
+    Q_EMIT completed(p->id);
+}
