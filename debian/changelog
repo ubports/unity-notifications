@@ -1,3 +1,12 @@
+unity-notifications (0.1.2+14.10.20140717-0ubuntu1) utopic; urgency=low
+
+  [ Mirco Müller ]
+  * Added close() q_invokable to allow notifications to be closed from
+    the renderer (unity8) side. This facilitates fixing LP:1308011 (LP:
+    #1308011)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 17 Jul 2014 02:14:19 +0000
+
 unity-notifications (0.1.2+14.10.20140623-0ubuntu1) utopic; urgency=low
 
   [ Mirco Müller ]
