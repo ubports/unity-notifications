@@ -3,6 +3,11 @@
 
 #include <QtTest/QtTest>
 
+typedef struct {
+    const char* before;
+    const char* expected;
+} TextComparisons;
+
 class TestNotifications: public QObject
 {
     Q_OBJECT
@@ -16,6 +21,7 @@ class TestNotifications: public QObject
         void testVisualSDQueueWithoutCritical();
         void testVisualSDQueueWithCritical();
         void testVisualSDQueueMax();
+        void testTextFilter();
 };
 
 void TestNotifications::testSimpleInsertion() {
@@ -177,6 +183,58 @@ void TestNotifications::testVisualSDQueueWithoutCritical() {
     QCOMPARE(m.getDisplayedNotification(3)->getBody(), QString("snap-decision-2"));
     QCOMPARE(m.getDisplayedNotification(2)->getBody(), QString("snap-decision-3"));
     QCOMPARE(m.getDisplayedNotification(1)->getBody(), QString("snap-decision-4"));
+}
+
+void TestNotifications::testTextFilter() {
+    static const TextComparisons tests[] = {
+        { "<a href=\"http://www.ubuntu.com/\">Ubuntu</a>", "Ubuntu"                                  },
+        { "Don't rock the boat",                           "Don't rock the boat"                     },
+        { "<img src=\"foobar.png\" />Nothing to see",      "Nothing to see"                          },
+        { "<i>Not italic</i>",                             "Not italic"                              },
+        { "<u>Test</u>",                                   "Test"                                    },
+        { "<b>Bold</b>",                                   "Bold"                                    },
+        { "<span>Span</span>",                             "Span"                                    },
+        { "<s>E-flat</s>",                                 "E-flat"                                  },
+        { "<sub>Sandwich</sub>",                           "Sandwich",                               },
+        { "<small>Fry</small>",                            "Fry"                                     },
+        { "<tt>Testing tag</tt>",                          "Testing tag"                             },
+        { "<html>Surrounded by html</html>",               "Surrounded by html"                      },
+        { "<qt>Surrounded by qt</qt>",                     "Surrounded by qt"                        },
+        { "><",                                            "><"                                      },
+        { "<>",                                            "<>"                                      },
+        { "< this is not a tag >",                         "< this is not a tag >"                   },
+        { NULL, NULL },
+
+        { "<b>So broken</i>",                              "<b>So broken</i>"                        },
+        { "Kick him while he&apos;s down",                 "Kick him while he's down"                },
+        { "\"Film spectators are quiet vampires.\"",       "\"Film spectators are quiet vampires.\"" },
+        { "Peace &amp; Love",                              "Peace & Love"                            },
+        { "War & Peace",                                   "War & Peace"                             },
+        { "Law &#38; Order",                               "Law & Order"                             },
+        { "Love &#x26; War",                               "Love & War"                              },
+        { "7 > 3",                                         "7 > 3"                                   },
+        { "7 &gt; 3",                                      "7 > 3"                                   },
+        { "7 &#62; 3",                                     "7 > 3"                                   },
+        { "7 &#x3e; 3",                                    "7 > 3"                                   },
+        { "14 < 42",                                       "14 < 42"                                 },
+        { "14 &lt; 42",                                    "14 < 42"                                 },
+        { "14 &#60; 42",                                   "14 < 42"                                 },
+        { "14 &#x3c; 42",                                  "14 < 42"                                 },
+        { "First line  <br dumb> \r \n Second line",       "First line\nSecond line"                 },
+        { "First line\n<br /> <br>\n2nd line\r\n3rd line", "First line\n2nd line\n3rd line"          },
+        { NULL, NULL }
+    };
+
+    const int timeout = 1000;
+
+    Notification n(new Notification(1, timeout, Notification::Low, "notification", Notification::Ephemeral));
+
+    for (int i = 0; tests[i].before != NULL; i++) {
+        n.setSummary(tests[i].before);
+        QCOMPARE(n.getSummary(), QString(tests[i].expected));
+        n.setBody(tests[i].before);
+        QCOMPARE(n.getBody(), QString(tests[i].expected));
+    }
 }
 
 QTEST_MAIN(TestNotifications)

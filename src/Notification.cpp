@@ -21,6 +21,7 @@
 #include "NotificationServer.h"
 #include "Notification.h"
 #include <string>
+#include <QRegularExpression>
 
 using namespace std;
 
@@ -81,9 +82,10 @@ QString Notification::getBody() const {
 }
 
 void Notification::setBody(const QString &text) {
-    if(p->body != text) {
-        p->body = text;
-        Q_EMIT bodyChanged(text);
+    QString filtered = filterText(text);
+    if(p->body != filtered) {
+        p->body = filtered;
+        Q_EMIT bodyChanged(p->body);
         Q_EMIT dataChanged(p->id);
     }
 }
@@ -143,8 +145,9 @@ QString Notification::getSummary() const {
 }
 
 void Notification::setSummary(const QString &summary) {
-    if(p->summary != summary) {
-        p->summary = summary;
+    QString filtered = filterText(summary);
+    if(p->summary != filtered) {
+        p->summary = filtered;
         Q_EMIT summaryChanged(p->summary);
         Q_EMIT dataChanged(p->id);
     }
@@ -233,4 +236,11 @@ void Notification::invokeAction(const QString &action) {
         }
     }
     fprintf(stderr, "Error: tried to invoke action not in actionList.\n");
+}
+
+#define TAG_REPLACE_REG_EXP "<(b|i|u|big|a|img|span|s|sub|small|tt|html|qt)\\b[^>]*>|</(b|i|u|big|a|img|span|s|sub|small|tt|html|qt)>"
+
+QString Notification::filterText(const QString& text) {
+    QString filtered = text;
+    return filtered.replace(QRegularExpression(TAG_REPLACE_REG_EXP), QString(""));
 }
