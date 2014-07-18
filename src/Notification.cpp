@@ -238,6 +238,10 @@ void Notification::invokeAction(const QString &action) {
     fprintf(stderr, "Error: tried to invoke action not in actionList.\n");
 }
 
+void Notification::close() {
+    Q_EMIT completed(p->id);
+}
+
 #define TAG_REPLACE_REGEX "<(b|i|u|big|a|img|span|s|sub|small|tt|html|qt)\\b[^>]*>|</(b|i|u|big|a|img|span|s|sub|small|tt|html|qt)>"
 #define CHARACTER_LT_REGEX "&(lt;|#60;|#x3c;)"
 #define CHARACTER_GT_REGEX "&(gt;|#62;|#x3e;)"
