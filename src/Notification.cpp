@@ -238,9 +238,37 @@ void Notification::invokeAction(const QString &action) {
     fprintf(stderr, "Error: tried to invoke action not in actionList.\n");
 }
 
-#define TAG_REPLACE_REG_EXP "<(b|i|u|big|a|img|span|s|sub|small|tt|html|qt)\\b[^>]*>|</(b|i|u|big|a|img|span|s|sub|small|tt|html|qt)>"
+#define TAG_REPLACE_REGEX "<(b|i|u|big|a|img|span|s|sub|small|tt|html|qt)\\b[^>]*>|</(b|i|u|big|a|img|span|s|sub|small|tt|html|qt)>"
+#define CHARACTER_LT_REGEX "&(lt;|#60;|#x3c;)"
+#define CHARACTER_GT_REGEX "&(gt;|#62;|#x3e;)"
+#define CHARACTER_AMP_REGEX "&(amp;|#38;|#x26;)"
+#define CHARACTER_APOS_REGEX "&apos;"
+#define CHARACTER_QUOT_REGEX "&quot;"
+#define CHARACTER_NEWLINE_REGEX " *((<br[^/>]*/?>|\r|\n)+ *)+"
+
+typedef struct {
+    const char* regex;
+    const char* replacement;
+} ReplaceMarkupData;
 
 QString Notification::filterText(const QString& text) {
     QString filtered = text;
-    return filtered.replace(QRegularExpression(TAG_REPLACE_REG_EXP), QString(""));
+    filtered = filtered.replace(QRegularExpression(TAG_REPLACE_REGEX), QString(""));
+
+    static ReplaceMarkupData data[] = {
+        { CHARACTER_AMP_REGEX, "&" },
+        { CHARACTER_LT_REGEX, "<" },
+        { CHARACTER_GT_REGEX, ">" },
+        { CHARACTER_APOS_REGEX, "'" },
+        { CHARACTER_QUOT_REGEX, "\"" },
+        { CHARACTER_NEWLINE_REGEX, "\n" },
+        { NULL, NULL }
+    };
+
+    for (int i = 0; data[i].regex != NULL; i++) {
+        filtered = filtered.replace(QRegularExpression(data[i].regex), QString(data[i].replacement));
+
+    }
+
+    return filtered;
 }
