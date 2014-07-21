@@ -81,7 +81,7 @@ if __name__ == '__main__':
 	loop = gobject.MainLoop ()
 	n = pushNotification ("Morning alarm",
                           "It's 6:30... time to get up!",
-                          os.getcwd() + "/assets/notification-weekday-alarm.svg")
+                          "alarm-clock")
 	n.connect ("closed", example.closedHandler, loop)
 	
 	loop.run ()

@@ -94,7 +94,7 @@ def pushNotification (title, body, icon):
 
 	# indicate to the notification-daemon, that we want to use snap-decisions
 	n.set_hint_string ("x-canonical-snap-decisions", "true");
-	n.set_hint_string ("x-canonical-secondary-icon", os.getcwd() + "/assets/icon_phone.png");
+	n.set_hint_string ("x-canonical-secondary-icon", "incoming-call");
 
 	# set the button-tint hint so that the right/positive button is tinted and
 	# not using the stock clear-color

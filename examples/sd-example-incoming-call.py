@@ -95,7 +95,7 @@ def pushNotification (title, body, icon):
 	# indicate to the notification-daemon, that we want to use snap-decisions
 	n.set_hint_string ("x-canonical-snap-decisions", "true");
 	n.set_hint_string ("x-canonical-private-button-tint", "true");
-	n.set_hint_string ("x-canonical-secondary-icon", os.getcwd() + "/assets/icon_phone.png");
+	n.set_hint_string ("x-canonical-secondary-icon", "incoming-call");
 	n.set_urgency (pynotify.URGENCY_CRITICAL)
 
 	n.show ()

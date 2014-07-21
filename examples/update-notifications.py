@@ -66,7 +66,7 @@ if __name__ == '__main__':
 			"Initial layout (2. notification)",
 			"This bubble uses the icon-title-body layout with a secondary icon.",
 			os.getcwd() + "/assets/avatar3.jpg")
-        n.set_hint_string ("x-canonical-secondary-icon", os.getcwd() + "/assets/icon_message.png");
+        n.set_hint_string ("x-canonical-secondary-icon", "message");
 	n.show ()
 	time.sleep (2); # simulate app activity
 
