@@ -52,7 +52,8 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back(SYNCH_HINT);
     capabilities.push_back(APPEND_HINT);
     capabilities.push_back(ICON_ONLY_HINT);
-    capabilities.push_back(BUTTON_TINT_HINT);
+    capabilities.push_back(AFFIRMATIVE_TINT_HINT);
+    capabilities.push_back(REJECTION_TINT_HINT);
     capabilities.push_back(TRUNCATION_HINT);
     capabilities.push_back(SNAP_HINT);
     capabilities.push_back(SECONDARY_ICON_HINT);

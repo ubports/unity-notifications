@@ -87,14 +87,15 @@ def pushNotification (title, body, icon):
 	n.add_action ("action_accept", "Hold + Answer", action_accept);
 	n.add_action ("action_decline_1", "End + Answer", action_decline_1);
 	n.add_action ("action_decline_2", "Decline", action_decline_2);
-	n.add_action ("action_decline_3", "messages:I missed your call - can you call me now?", action_decline_3);
-	n.add_action ("action_decline_4", "messages:I'm running late. I'm on my way.", action_decline_4);
-	n.add_action ("action_decline_5", "messages:I'm busy at the moment. I'll call later.", action_decline_5);
+	n.add_action ("action_decline_3", "message:I missed your call - can you call me now?", action_decline_3);
+	n.add_action ("action_decline_4", "message:I'm running late. I'm on my way.", action_decline_4);
+	n.add_action ("action_decline_5", "message:I'm busy at the moment. I'll call later.", action_decline_5);
 	n.add_action ("action_decline_6", "edit:Custom", action_decline_6);
 
 	# indicate to the notification-daemon, that we want to use snap-decisions
 	n.set_hint_string ("x-canonical-snap-decisions", "true");
-	n.set_hint_string ("x-canonical-private-button-tint", "true");
+	n.set_hint_string ("x-canonical-private-affirmative-tint", "true");
+	n.set_hint_string ("x-canonical-private-rejection-tint", "true");
 	n.set_hint_string ("x-canonical-secondary-icon", "incoming-call");
 	n.set_urgency (pynotify.URGENCY_CRITICAL)
 

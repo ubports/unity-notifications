@@ -87,9 +87,9 @@ def pushNotification (title, body, icon):
 	n.add_action ("action_accept",    "Pick up", action_accept);
 	n.add_action ("action_decline_1", "Hang up", action_decline_1);
 	n.add_action ("action_decline_2", "Reject with SMS", action_decline_2);
-	n.add_action ("action_decline_3", "messages:Dude, my wife is here!", action_decline_3);
-	n.add_action ("action_decline_4", "messages:I'm sleeping.", action_decline_4);
-	n.add_action ("action_decline_5", "messages:No time... I'm riding!", action_decline_5);
+	n.add_action ("action_decline_3", "message:Dude, my wife is here!", action_decline_3);
+	n.add_action ("action_decline_4", "message:I'm sleeping.", action_decline_4);
+	n.add_action ("action_decline_5", "message:No time... I'm riding!", action_decline_5);
 	n.add_action ("action_decline_6", "edit:Send SMS...", action_decline_6);
 
 	# indicate to the notification-daemon, that we want to use snap-decisions
@@ -98,7 +98,8 @@ def pushNotification (title, body, icon):
 
 	# set the button-tint hint so that the right/positive button is tinted and
 	# not using the stock clear-color
-	n.set_hint_string ("x-canonical-private-button-tint", "true");
+	n.set_hint_string ("x-canonical-private-affirmative-tint", "true");
+	n.set_hint_string ("x-canonical-private-rejection-tint", "true");
 	n.set_urgency (pynotify.URGENCY_CRITICAL)
 
 	n.show ()
