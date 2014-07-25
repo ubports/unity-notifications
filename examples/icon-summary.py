@@ -48,6 +48,7 @@ if __name__ == '__main__':
 	# try the icon-summary case
 	n = pynotify.Notification ("Upload of image completed",
 				   "",
-				   "")
-        n.set_hint_string ("x-canonical-secondary-icon", os.getcwd() + "/assets/icon_facebook.png")
+				   os.getcwd() + "/assets/icon_facebook.png")
+        n.set_hint_string ("x-canonical-non-shaped-icon", "true")
+
 	n.show ()
