@@ -22,6 +22,7 @@ class TestNotifications: public QObject
         void testVisualSDQueueWithCritical();
         void testVisualSDQueueMax();
         void testTextFilter();
+        void testTextFilter_data();
 };
 
 void TestNotifications::testSimpleInsertion() {
@@ -185,47 +186,49 @@ void TestNotifications::testVisualSDQueueWithoutCritical() {
     QCOMPARE(m.getDisplayedNotification(1)->getBody(), QString("snap-decision-4"));
 }
 
-void TestNotifications::testTextFilter() {
-    static const TextComparisons tests[] = {
-        { "<a href=\"http://www.ubuntu.com/\">Ubuntu</a>", "Ubuntu" },
-        { "Don't rock the boat",                           "Don't rock the boat" },
-        { "<i>Not italic</i>",                             "Not italic" },
-        { "<u>Test</u>",                                   "Test" },
-        { "<b>Bold</b>",                                   "Bold" },
-        { "<span>Span</span>",                             "Span" },
-        { "<s>E-flat</s>",                                 "E-flat" },
-        { "<sub>Sandwich</sub>",                           "Sandwich" },
-        { "<small>Fry</small>",                            "Fry" },
-        { "<tt>Testing tag</tt>",                          "Testing tag" },
-        { "<html>Surrounded by html</html>",               "Surrounded by html" },
-        { "<qt>Surrounded by qt</qt>",                     "Surrounded by qt" },
-        { "\"Film spectators are quiet vampires.\"",       "\"Film spectators are quiet vampires.\"" },
-        { "7 > 3",                                         "7 > 3" },
-        { "7 &gt; 3",                                      "7 > 3" },
-        { "7 &#62; 3",                                     "7 > 3" },
-        { "7 &#x3e; 3",                                    "7 > 3" },
-        { "14 &lt; 42",                                    "14 < 42" },
-        { "14 &#60; 42",                                   "14 < 42" },
-        { "14 &#x3c; 42",                                  "14 < 42" },
-        { "War & Peace",                                   "War & Peace" },
-        { "Law &#38; Order",                               "Law & Order" },
-        { "Love &#x26; War",                               "Love & War" },
-        { "Kick him while he&apos;s down",                 "Kick him while he's down" },
-        { "Peace &amp; Love",                              "Peace & Love" },
-        { "<b>So broken</i>",                              "So broken" },
-        { NULL, NULL }
-    };
+void TestNotifications::testTextFilter_data() {
+    QTest::addColumn<QString>("string");
+    QTest::addColumn<QString>("result");
 
+    QTest::newRow("") << "<a href=\"http://www.ubuntu.com/\">Ubuntu</a>" << "Ubuntu";
+    QTest::newRow("") << "Don't rock the boat" <<                           "Don't rock the boat";
+    QTest::newRow("") << "<i>Not italic</i>" <<                             "Not italic";
+    QTest::newRow("") << "<u>Test</u>" <<                                   "Test";
+    QTest::newRow("") << "<b>Bold</b>" <<                                   "Bold";
+    QTest::newRow("") << "<span>Span</span>" <<                             "Span";
+    QTest::newRow("") << "<s>E-flat</s>" <<                                 "E-flat";
+    QTest::newRow("") << "<sub>Sandwich</sub>" <<                           "Sandwich";
+    QTest::newRow("") << "<small>Fry</small>" <<                            "Fry";
+    QTest::newRow("") << "<tt>Testing tag</tt>" <<                          "Testing tag";
+    QTest::newRow("") << "<html>Surrounded by html</html>" <<               "Surrounded by html";
+    QTest::newRow("") << "<qt>Surrounded by qt</qt>" <<                     "Surrounded by qt";
+    QTest::newRow("") << "\"Film spectators are quiet vampires.\"" <<       "\"Film spectators are quiet vampires.\"";
+    QTest::newRow("") << "7 > 3" <<                                         "7 > 3";
+    QTest::newRow("") << "7 &gt; 3" <<                                      "7 > 3";
+    QTest::newRow("") << "7 &#62; 3" <<                                     "7 > 3";
+    QTest::newRow("") << "7 &#x3e; 3" <<                                    "7 > 3";
+    QTest::newRow("") << "14 &lt; 42" <<                                    "14 < 42";
+    QTest::newRow("") << "14 &#60; 42" <<                                   "14 < 42";
+    QTest::newRow("") << "14 &#x3c; 42" <<                                  "14 < 42";
+    QTest::newRow("") << "War & Peace" <<                                   "War & Peace";
+    QTest::newRow("") << "Law &#38; Order" <<                               "Law & Order";
+    QTest::newRow("") << "Love &#x26; War" <<                               "Love & War";
+    QTest::newRow("") << "Kick him while he&apos;s down" <<                 "Kick him while he's down";
+    QTest::newRow("") << "Peace &amp; Love" <<                              "Peace & Love";
+    QTest::newRow("") << "<b>So broken</i>" <<                              "So broken";
+}
+
+void TestNotifications::testTextFilter() {
     const int timeout = 1000;
 
     Notification n(new Notification(1, timeout, Notification::Low, "notification", Notification::Ephemeral));
 
-    for (int i = 0; tests[i].before != NULL; i++) {
-        n.setSummary(tests[i].before);
-        QCOMPARE(n.getSummary(), QString(tests[i].expected));
-        n.setBody(tests[i].before);
-        QCOMPARE(n.getBody(), QString(tests[i].expected));
-    }
+    QFETCH(QString, string);
+    QFETCH(QString, result);
+    n.setSummary(string);
+    QCOMPARE(n.getSummary(), result);
+    n.setBody(string);
+    QCOMPARE(n.getBody(), result);
 }
 
 QTEST_MAIN(TestNotifications)
