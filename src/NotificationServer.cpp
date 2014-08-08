@@ -50,7 +50,6 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back(SOUND_HINT);
     capabilities.push_back(SUPPRESS_SOUND_HINT);
     capabilities.push_back(SYNCH_HINT);
-    capabilities.push_back(APPEND_HINT);
     capabilities.push_back(ICON_ONLY_HINT);
     capabilities.push_back(AFFIRMATIVE_TINT_HINT);
     capabilities.push_back(REJECTION_TINT_HINT);
@@ -118,33 +117,7 @@ unsigned int NotificationServer::Notify (const QString &app_name, unsigned int r
         }
         currentId = replaces_id;
         notification = model.getNotification(replaces_id);
-        // Appending text is a special case. This is the new update-behaviour
-        // for the append-hint and expects the client-app to use libnotify's
-        // call notify_notification_update()
-        if (hints.find(APPEND_HINT) != hints.end()) {
-            QString newBody = QString(notification->getBody() + "\n" + body);
-            notification->setBody(newBody);
-            model.notificationUpdated(currentId);
-            return notification->getID();
-        }
-        // Otherwise we let the code below update the fields.
     } else {
-
-        // support append-hint also for a new notification using just the
-        // summary-text as "identifier"... this is legacy behaviour and
-        // only kept for compatibility-reasons... developer-docs have to
-        // be updated and extended with a remark that this will be dropped
-        // by the next cycle
-        if (hints.find(APPEND_HINT) != hints.end()) {
-            notification = model.getNotification(summary);
-            if (notification) {
-                QString newBody = QString(notification->getBody() + "\n" + body);
-                notification->setBody(newBody);
-                model.notificationUpdated(notification->getID());
-                return notification->getID();
-            }
-        }
-
         Notification *n = buildNotification(currentId, hints);
         if(!n) {
             fprintf(stderr, "Could not build notification object.\n");

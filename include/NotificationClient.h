@@ -34,7 +34,6 @@ public:
     NotificationClient(QObject *parent=nullptr);
     ~NotificationClient();
     NotificationID sendNotification(Notification::Type ntype, Notification::Urgency urg, const QString &summary, const QString &body);
-    NotificationID appendText(NotificationID id, const QString &text);
 
 public Q_SLOTS:
     /* These slots are needed to catch the incoming DBus messages. */

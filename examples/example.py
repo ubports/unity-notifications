@@ -47,7 +47,6 @@ capabilities = {'actions':                              False,
 		'image/svg+xml':                        False,
 		'urgency':                              False,
 		'x-canonical-private-synchronous':      False,
-		'x-canonical-append':                   False,
 		'x-canonical-private-icon-only':        False,
 		'x-canonical-truncation':               False,
 		'x-canonical-snap-decisions':           False,
@@ -107,8 +106,6 @@ def printCaps ():
 		print "\timage/svg+xml"
 	if capabilities['x-canonical-private-synchronous']:
 		print "\tx-canonical-private-synchronous"
-	if capabilities['x-canonical-append']:
-		print "\tx-canonical-append"
 	if capabilities['x-canonical-private-icon-only']:
 		print "\tx-canonical-private-icon-only"
 	if capabilities['x-canonical-truncation']:
