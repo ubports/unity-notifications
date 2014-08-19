@@ -60,9 +60,9 @@ def pushNotification (title, body, icon):
 
 	# NOTE: the order in which actions are added is important... positive
 	# always comes first!
-	n.add_action ("ok",     "Ok",     action_ok);
+	n.add_action ("ok", "Ok", action_ok);
 	n.add_action ("snooze", "Snooze", action_snooze);
-	n.add_action ("view",   "View",   action_view);
+	n.add_action ("view", "View", action_view);
 
 	# indicate to the notification-daemon, that we want to use snap-decisions
 	n.set_hint_string ("x-canonical-snap-decisions", "true");
@@ -83,13 +83,12 @@ if __name__ == '__main__':
 	example.printCaps ()
 
 	# be nice and check for required capabilities
-	if not example.capabilities['x-canonical-snap-decisions'] and example.capabilities['x-canonical-non-shaped-icon'] and example.capabilities['x-canonical-private-affirmative-tint']:
+	if not example.capabilities['x-canonical-snap-decisions'] \
+		and example.capabilities['x-canonical-non-shaped-icon'] \
+		and example.capabilities['x-canonical-private-affirmative-tint']:
 		sys.exit (2)
 
 	loop = gobject.MainLoop ()
-	n = pushNotification ("Theatre at Ferria Stadium",
-                          "at Ferria Stadium in Bilbao, Spain\n07578545317",
-                          "")
+	n = pushNotification ("Theatre at Ferria Stadium", "at Ferria Stadium in Bilbao, Spain\n07578545317", "")
 	n.connect ("closed", example.closedHandler, loop)
-	
 	loop.run ()

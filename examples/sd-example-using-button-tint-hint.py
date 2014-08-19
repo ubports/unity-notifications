@@ -80,13 +80,12 @@ if __name__ == '__main__':
 	example.printCaps ()
 
 	# be nice and check for required capabilities
-	if not example.capabilities['x-canonical-private-affirmative-tint'] and not example.capabilities['x-canonical-private-rejection-tint'] and not example.capabilities['x-canonical-snap-decisions']:
+	if not example.capabilities['x-canonical-private-affirmative-tint'] \
+		and not example.capabilities['x-canonical-private-rejection-tint'] \
+		and not example.capabilities['x-canonical-snap-decisions']:
 		sys.exit (2)
 
 	loop = gobject.MainLoop ()
-	n = pushNotification ("Question",
-                          "Would you say Ok or Cancel?",
-						  "search")
+	n = pushNotification ("Question", "Would you say Ok or Cancel?", "search")
 	n.connect ("closed", example.closedHandler, loop)
-
 	loop.run ()
