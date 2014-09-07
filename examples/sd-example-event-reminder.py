@@ -5,14 +5,13 @@
 ##      10        20        30        40        50        60        70        80
 ##
 ## Info: 
-##    Example of how to use libnotify correctly and at the same time comply to
-##    the new jaunty notification spec (read: visual guidelines)
+##    Example of how to use libnotify correctly
 ##
 ## Run:
-##    chmod +x sd-example-using-button-tint-hint.py
-##    ./sd-example-using-button-tint-hint.py
+##    chmod +x sd-example-event-reminder.py
+##    ./sd-example-event-reminder.py
 ##
-## Copyright 2012 Canonical Ltd.
+## Copyright 2014 Canonical Ltd.
 ##
 ## Author:
 ##    Mirco "MacSlow" Mueller <mirco.mueller@canonical.com>
@@ -31,21 +30,28 @@
 ##
 ################################################################################
 
+import os
 import sys
 import time
 import pynotify
 import gobject
 import example
 
-def action_decline (notification, action):
-	if action == "decline_id":
-		print "Declined"
+def action_view (notification, action):
+	if action == "view":
+		print "Viewing the thing."
 	else:
-		print "That should not have happened (action_decline)!"
+		print "That should not have happened (action_view)!"
+
+def action_snooze (notification, action):
+	if action == "snooze":
+		print "You want to snooze some more you lazy bastard!"
+	else:
+		print "That should not have happened (action_snooze)!"
 
 def action_ok (notification, action):
-	if action == "ok_id":
-		print "Ok"
+	if action == "ok":
+		print "Getting up is the right thing to do... good for you!"
 	else:
 		print "That should not have happened (action_ok)!"
 
@@ -54,23 +60,20 @@ def pushNotification (title, body, icon):
 
 	# NOTE: the order in which actions are added is important... positive
 	# always comes first!
-	n.add_action ("ok_id",      "Ok",     action_ok);
-	n.add_action ("decline_id", "Cancel", action_decline);
+	n.add_action ("ok", "Ok", action_ok);
+	n.add_action ("snooze", "Snooze", action_snooze);
+	n.add_action ("view", "View", action_view);
 
 	# indicate to the notification-daemon, that we want to use snap-decisions
 	n.set_hint_string ("x-canonical-snap-decisions", "true");
-
-	# set the button-tint hint so that the right/positive button is tinted and
-	# not using the stock clear-color
-	n.set_hint_string ("x-canonical-private-affirmative-tint", "true");
-	n.set_hint_string ("x-canonical-private-rejection-tint", "true");
 	n.set_hint_string ("x-canonical-non-shaped-icon", "true");
+	n.set_hint_string ("x-canonical-private-affirmative-tint", "true");
 
 	n.show ()
 	return n
 
 if __name__ == '__main__':
-	if not pynotify.init ("sd-example-using-button-tint-hint"):
+	if not pynotify.init ("sd-example-event-reminder"):
 		sys.exit (1)
 
 	# call this so we can savely use capabilities dictionary later
@@ -80,12 +83,12 @@ if __name__ == '__main__':
 	example.printCaps ()
 
 	# be nice and check for required capabilities
-	if not example.capabilities['x-canonical-private-affirmative-tint'] \
-		and not example.capabilities['x-canonical-private-rejection-tint'] \
-		and not example.capabilities['x-canonical-snap-decisions']:
+	if not example.capabilities['x-canonical-snap-decisions'] \
+		and example.capabilities['x-canonical-non-shaped-icon'] \
+		and example.capabilities['x-canonical-private-affirmative-tint']:
 		sys.exit (2)
 
 	loop = gobject.MainLoop ()
-	n = pushNotification ("Question", "Would you say Ok or Cancel?", "search")
+	n = pushNotification ("Theatre at Ferria Stadium", "at Ferria Stadium in Bilbao, Spain\n07578545317", "")
 	n.connect ("closed", example.closedHandler, loop)
 	loop.run ()

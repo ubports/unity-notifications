@@ -133,7 +133,17 @@ QString Notification::getSecondaryIcon() const {
 }
 
 void Notification::setSecondaryIcon(const QString &secondaryIcon) {
-    p->secondaryIcon = secondaryIcon;
+    if (secondaryIcon.startsWith(" ") || secondaryIcon.size() == 0) {
+        p->secondaryIcon = nullptr;
+    }
+    else {
+        p->secondaryIcon = secondaryIcon;
+
+        if (secondaryIcon.indexOf("/") == -1) {
+            p->secondaryIcon.prepend("image://theme/");
+        }
+    }
+
     Q_EMIT secondaryIconChanged(p->secondaryIcon);
     Q_EMIT dataChanged(p->id);
 }

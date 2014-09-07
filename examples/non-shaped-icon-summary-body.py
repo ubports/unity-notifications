@@ -51,6 +51,6 @@ if __name__ == '__main__':
 				   "next weekend? Will you join me "
 				   "and Anna?",
 				   os.getcwd() + "/assets/avatar2-with-alpha.png")
-	n.set_hint_string ("x-canonical-secondary-icon", os.getcwd() + "/assets/icon_message.png")
+	n.set_hint_string ("x-canonical-secondary-icon", "message")
 	n.set_hint_string ("x-canonical-non-shaped-icon", "true")
 	n.show ()

@@ -62,7 +62,8 @@ def pushNotification (title, body, icon):
 
 	# set the button-tint hint so that the right/positive button is tinted and
 	# not using the stock clear-color
-	n.set_hint_string ("x-canonical-private-button-tint", "true");
+	n.set_hint_string ("x-canonical-private-affirmative-tint", "true");
+	n.set_hint_string ("x-canonical-private-rejection-tint", "true");
 	n.set_hint_string ("x-canonical-non-shaped-icon", "true");
 
 	n.show ()
@@ -79,13 +80,23 @@ if __name__ == '__main__':
 	example.printCaps ()
 
 	# be nice and check for required capabilities
-	if not example.capabilities['x-canonical-private-button-tint'] and not example.capabilities['x-canonical-snap-decisions']:
+	if not example.capabilities['x-canonical-private-affirmative-tint'] \
+		and not example.capabilities['x-canonical-private-rejection-tint'] \
+		and not example.capabilities['x-canonical-snap-decisions']:
 		sys.exit (2)
 
 	loop = gobject.MainLoop ()
 	n = pushNotification ("Uses much text",
-                          "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
-						  "messages")
+		"Lorem ipsum dolor sit amet,"
+		" consetetur sadipscing elitr,"
+		" sed diam nonumy eirmod tempor"
+		" invidunt ut labore et dolore"
+		" magna aliquyam erat, sed diam"
+		" voluptua. At vero eos et accusam"
+		" et justo duo dolores et ea rebum."
+		" Stet clita kasd gubergren, no sea"
+		" takimata sanctus est Lorem ipsum"
+		" dolor sit amet.",
+		"message")
 	n.connect ("closed", example.closedHandler, loop)
-
 	loop.run ()

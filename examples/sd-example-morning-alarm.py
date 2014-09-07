@@ -60,6 +60,7 @@ def pushNotification (title, body, icon):
 	# indicate to the notification-daemon, that we want to use snap-decisions
 	n.set_hint_string ("x-canonical-snap-decisions", "true");
 	n.set_hint_string ("x-canonical-non-shaped-icon", "true");
+	n.set_hint_string ("x-canonical-private-affirmative-tint", "true");
 
 	n.show ()
 	return n
@@ -81,7 +82,7 @@ if __name__ == '__main__':
 	loop = gobject.MainLoop ()
 	n = pushNotification ("Morning alarm",
                           "It's 6:30... time to get up!",
-                          os.getcwd() + "/assets/notification-weekday-alarm.svg")
+                          "alarm-clock")
 	n.connect ("closed", example.closedHandler, loop)
 	
 	loop.run ()

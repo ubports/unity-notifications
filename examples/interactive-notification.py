@@ -47,7 +47,7 @@ def pushNotification (icon, value):
 				   "Click this notification to trigger the attached action.",
 				   icon);
 	n.set_hint_string ("x-canonical-switch-to-application", value);
-	n.set_hint_string ("x-canonical-secondary-icon", os.getcwd() + "/assets/icon_message.png");
+	n.set_hint_string ("x-canonical-secondary-icon", "message");
         n.add_action ("action_id", "dummy", action_callback);
         return n
 

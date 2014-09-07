@@ -62,23 +62,6 @@ NotificationID NotificationClient::sendNotification(Notification::Type ntype, No
     return result.value();
 }
 
-NotificationID NotificationClient::appendText(NotificationID id, const QString &text) {
-    QString app_name("append");
-    QString app_icon;
-    QString summary;
-    QStringList actions;
-    QMap<QString, QVariant> hints;
-    hints[APPEND_HINT] = QVariant(true);
-    int timeout = 5000;
-    QDBusReply<unsigned int> result = service.call("Notify",
-            app_name, id, app_icon, summary, text, actions, hints, timeout);
-    if(!result.isValid()) {
-        return (NotificationID) -1;
-    }
-    return result.value();
-
-}
-
 void NotificationClient::NotificationClosed(NotificationID id, unsigned int reason) {
     Q_EMIT closed(id, reason);
     QString msg("Got NotificationClosed signal for notification ");

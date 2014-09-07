@@ -34,29 +34,29 @@
 import pynotify
 
 # even in Python this is globally nasty :), do something nicer in your own code
-capabilities = {'actions':                           False,
-				'body':                              False,
-				'body-hyperlinks':                   False,
-				'body-images':                       False,
-				'body-markup':                       False,
-				'icon-multi':                        False,
-				'icon-static':                       False,
-				'sound':                             False,
-				'sound-file':                        False,
-				'suppress-sound':                    False,
-				'image/svg+xml':                     False,
-				'urgency':                           False,
-				'x-canonical-private-synchronous':   False,
-				'x-canonical-append':                False,
-				'x-canonical-private-icon-only':     False,
-				'x-canonical-truncation':            False,
-				'x-canonical-snap-decisions':        False,
-				'x-canonical-snap-decisions-timeout':False,
-				'x-canonical-switch-to-application': False,
-				'x-canonical-secondary-icon':        False,
-				'x-canonical-private-button-tint':   False,
-				'x-canonical-private-menu-model':    False,
-				'x-canonical-non-shaped-icon':       False}
+capabilities = {'actions':                              False,
+		'body':                                 False,
+		'body-hyperlinks':                      False,
+		'body-images':                          False,
+		'body-markup':                          False,
+		'icon-multi':                           False,
+		'icon-static':                          False,
+		'sound':                                False,
+		'sound-file':                           False,
+		'suppress-sound':                       False,
+		'image/svg+xml':                        False,
+		'urgency':                              False,
+		'x-canonical-private-synchronous':      False,
+		'x-canonical-private-icon-only':        False,
+		'x-canonical-truncation':               False,
+		'x-canonical-snap-decisions':           False,
+		'x-canonical-snap-decisions-timeout':   False,
+		'x-canonical-switch-to-application':    False,
+		'x-canonical-secondary-icon':           False,
+		'x-canonical-private-affirmative-tint': False,
+		'x-canonical-private-rejection-tint':   False,
+		'x-canonical-private-menu-model':       False,
+		'x-canonical-non-shaped-icon':          False}
 
 def initCaps ():
 	caps = pynotify.get_server_caps ()
@@ -106,8 +106,6 @@ def printCaps ():
 		print "\timage/svg+xml"
 	if capabilities['x-canonical-private-synchronous']:
 		print "\tx-canonical-private-synchronous"
-	if capabilities['x-canonical-append']:
-		print "\tx-canonical-append"
 	if capabilities['x-canonical-private-icon-only']:
 		print "\tx-canonical-private-icon-only"
 	if capabilities['x-canonical-truncation']:
@@ -120,8 +118,10 @@ def printCaps ():
 		print "\tx-canonical-switch-to-application"
 	if capabilities['x-canonical-secondary-icon']:
 		print "\tx-canonical-secondary-icon"
-	if capabilities['x-canonical-private-button-tint']:
-		print "\tx-canonical-private-button-tint"
+	if capabilities['x-canonical-private-affirmative-tint']:
+		print "\tx-canonical-private-affirmative-tint"
+	if capabilities['x-canonical-private-rejection-tint']:
+		print "\tx-canonical-private-rejection-tint"
 	if capabilities['x-canonical-private-menu-model']:
 		print "\tx-canonical-private-menu-model"
 	if capabilities['x-canonical-non-shaped-icon']:

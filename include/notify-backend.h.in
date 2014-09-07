@@ -65,9 +65,9 @@ class Notification;
 #define SECONDARY_ICON_HINT "x-canonical-secondary-icon"
 #define NON_SHAPED_ICON_HINT "x-canonical-non-shaped-icon"
 #define ICON_ONLY_HINT "x-canonical-private-icon-only"
-#define BUTTON_TINT_HINT "x-canonical-private-button-tint"
+#define AFFIRMATIVE_TINT_HINT "x-canonical-private-affirmative-tint"
+#define REJECTION_TINT_HINT "x-canonical-private-rejection-tint"
 #define TRUNCATION_HINT "x-canonical-truncation"
-#define APPEND_HINT "x-canonical-append"
 #define TIMEOUT_HINT "x-canonical-snap-decisions-timeout"
 
 #endif
