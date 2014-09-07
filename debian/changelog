@@ -1,3 +1,13 @@
+unity-notifications (0.1.2+14.10.20140907-0ubuntu1) utopic; urgency=low
+
+  [ Mirco Müller ]
+  * Renamed and added hints to expose the new button-tint hints for
+    snap-decisions, which are needed to comply with the visual changes
+    coming from Design (for RTM). Updated examples to reflect these
+    changes. (LP: #1348092)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Sun, 07 Sep 2014 19:46:29 +0000
+
 unity-notifications (0.1.2+14.10.20140717-0ubuntu1) utopic; urgency=low
 
   [ Mirco Müller ]
