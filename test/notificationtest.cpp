@@ -16,6 +16,7 @@ class TestNotifications: public QObject
         void testVisualSDQueueWithoutCritical();
         void testVisualSDQueueWithCritical();
         void testVisualSDQueueMax();
+        void testConfirmationValue();
 };
 
 void TestNotifications::testSimpleInsertion() {
@@ -177,6 +178,27 @@ void TestNotifications::testVisualSDQueueWithoutCritical() {
     QCOMPARE(m.getDisplayedNotification(3)->getBody(), QString("snap-decision-2"));
     QCOMPARE(m.getDisplayedNotification(2)->getBody(), QString("snap-decision-3"));
     QCOMPARE(m.getDisplayedNotification(1)->getBody(), QString("snap-decision-4"));
+}
+
+void TestNotifications::testConfirmationValue() {
+    const int timeout = 3000;
+    NotificationModel m;
+
+    QSharedPointer<Notification> confirmation(new Notification(1, timeout, Notification::Normal, "", Notification::Confirmation));
+    QSharedPointer<Notification> ephemeral(new Notification(2, timeout, Notification::Normal, "ephemeral", Notification::Ephemeral));
+
+    confirmation->setValue(42);
+    QCOMPARE(confirmation->getValue(), 42);
+    confirmation->setValue(-10);
+    QCOMPARE(confirmation->getValue(), -10);
+    confirmation->setValue(0);
+    QCOMPARE(confirmation->getValue(), 0);
+
+    m.insertNotification(ephemeral);
+    m.insertNotification(confirmation);
+
+    QCOMPARE(m.getDisplayedNotification(2)->getBody(), QString("ephemeral"));
+    QCOMPARE(m.getDisplayedNotification(1)->getBody(), QString(""));
 }
 
 QTEST_MAIN(TestNotifications)

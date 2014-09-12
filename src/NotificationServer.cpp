@@ -46,6 +46,7 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back("body-markup");
     capabilities.push_back("icon-static");
     capabilities.push_back("image/svg+xml");
+    capabilities.push_back(VALUE_HINT);
     capabilities.push_back(URGENCY_HINT);
     capabilities.push_back(SOUND_HINT);
     capabilities.push_back(SUPPRESS_SOUND_HINT);
@@ -172,6 +173,9 @@ unsigned int NotificationServer::Notify (const QString &app_name, unsigned int r
 
     QVariant secondaryIcon = hints[SECONDARY_ICON_HINT].variant();
     notification->setSecondaryIcon(secondaryIcon.toString());
+
+    QVariant value = hints[VALUE_HINT].variant();
+    notification->setValue(value.toInt());
 
     if(replaces_id) {
         model.notificationUpdated(currentId);
