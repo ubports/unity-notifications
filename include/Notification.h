@@ -118,6 +118,9 @@ public:
     Q_INVOKABLE void close();
 
     bool operator<(const Notification &n) const; // Order by "interestingness".
+
+private:
+    QString filterText(const QString& text);
 };
 
 #endif /* NOTIFICATION_HPP_ */
