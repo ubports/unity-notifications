@@ -21,7 +21,7 @@
 #include "NotificationServer.h"
 #include "Notification.h"
 #include <string>
-#include <QRegularExpression>
+#include <QXmlStreamReader>
 
 using namespace std;
 
@@ -252,37 +252,20 @@ void Notification::close() {
     Q_EMIT completed(p->id);
 }
 
-#define TAG_REPLACE_REGEX "<(b|i|u|big|a|img|span|s|sub|small|tt|html|qt)\\b[^>]*>|</(b|i|u|big|a|img|span|s|sub|small|tt|html|qt)>"
-#define CHARACTER_LT_REGEX "&(lt;|#60;|#x3c;)"
-#define CHARACTER_GT_REGEX "&(gt;|#62;|#x3e;)"
-#define CHARACTER_AMP_REGEX "&(amp;|#38;|#x26;)"
-#define CHARACTER_APOS_REGEX "&apos;"
-#define CHARACTER_QUOT_REGEX "&quot;"
-#define CHARACTER_NEWLINE_REGEX " *((<br[^/>]*/?>|\r|\n)+ *)+"
-
-typedef struct {
-    const char* regex;
-    const char* replacement;
-} ReplaceMarkupData;
-
 QString Notification::filterText(const QString& text) {
-    QString filtered = text;
-    filtered = filtered.replace(QRegularExpression(TAG_REPLACE_REGEX), QString(""));
+    QString plaintext;
 
-    static ReplaceMarkupData data[] = {
-        { CHARACTER_AMP_REGEX, "&" },
-        { CHARACTER_LT_REGEX, "<" },
-        { CHARACTER_GT_REGEX, ">" },
-        { CHARACTER_APOS_REGEX, "'" },
-        { CHARACTER_QUOT_REGEX, "\"" },
-        { CHARACTER_NEWLINE_REGEX, "\n" },
-        { NULL, NULL }
-    };
+    QXmlStreamReader reader("<p>" + text + "</p>");
 
-    for (int i = 0; data[i].regex != NULL; i++) {
-        filtered = filtered.replace(QRegularExpression(data[i].regex), QString(data[i].replacement));
-
+    while (!reader.atEnd() && !reader.hasError()) {
+        QXmlStreamReader::TokenType token = reader.readNext();
+        if (token == QXmlStreamReader::Characters) {
+            plaintext.append(reader.text().toString());
+        }
     }
-
-    return filtered;
+    if (reader.hasError()) {
+        // Not valid xml. Return as is.
+        return text;
+    }
+    return plaintext;
 }

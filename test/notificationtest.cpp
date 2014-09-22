@@ -220,9 +220,8 @@ void TestNotifications::testTextFilter_data() {
     QTest::newRow("& 3/4") << "Love &#x26; War" <<                                     "Love & War";
     QTest::newRow("& 4/4") << "Peace &amp; Love" <<                                    "Peace & Love";
     QTest::newRow("apostrophe") << "Kick him while he&apos;s down" <<                  "Kick him while he's down";
-    QTest::newRow("mixed tags") << "<b>So broken</i>" <<                               "So broken";
-    QTest::newRow("newline 1/2") << "First line <br dumb> \r \n Second line" <<        "First line\nSecond line";
-    QTest::newRow("newline 2/2") << "First line\n<br /> <br>\n2nd line\r\n3rd line" << "First line\n2nd line\n3rd line";
+    QTest::newRow("newline 1/2") << "First line\r\nSecond line" <<        "First line\nSecond line";
+    QTest::newRow("newline 2/2") << "First line\n2nd line\r\n3rd line" << "First line\n2nd line\n3rd line";
 }
 
 void TestNotifications::testTextFilter() {
