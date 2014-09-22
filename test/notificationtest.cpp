@@ -3,6 +3,11 @@
 
 #include <QtTest/QtTest>
 
+typedef struct {
+    const char* before;
+    const char* expected;
+} TextComparisons;
+
 class TestNotifications: public QObject
 {
     Q_OBJECT
@@ -185,32 +190,38 @@ void TestNotifications::testTextFilter_data() {
     QTest::addColumn<QString>("string");
     QTest::addColumn<QString>("result");
 
-    QTest::newRow("URL") << "<a href=\"http://www.ubuntu.com/\">Ubuntu</a>" << "Ubuntu";
-    QTest::newRow("as is") << "Don't rock the boat" <<                         "Don't rock the boat";
-    QTest::newRow("italic") << "<i>Not italic</i>" <<                          "Not italic";
-    QTest::newRow("unterline") << "<u>Test</u>" <<                             "Test";
-    QTest::newRow("bold") << "<b>Bold</b>" <<                                  "Bold";
-    QTest::newRow("span") << "<span>Span</span>" <<                            "Span";
-    QTest::newRow("s-tag") << "<s>E-flat</s>" <<                               "E-flat";
-    QTest::newRow("sub") << "<sub>Sandwich</sub>" <<                           "Sandwich";
-    QTest::newRow("small") << "<small>Fry</small>" <<                          "Fry";
-    QTest::newRow("tt") << "<tt>Testing tag</tt>" <<                           "Testing tag";
-    QTest::newRow("html") << "<html>Surrounded by html</html>" <<              "Surrounded by html";
-    QTest::newRow("qt") << "<qt>Surrounded by qt</qt>" <<                      "Surrounded by qt";
-    QTest::newRow("quotes") << "\"Film spectators are quiet vampires.\"" <<    "\"Film spectators are quiet vampires.\"";
-    QTest::newRow("> 1/4") << "7 > 3" <<                                       "7 > 3";
-    QTest::newRow("> 2/4") << "7 &gt; 3" <<                                    "7 > 3";
-    QTest::newRow("> 3/4") << "7 &#62; 3" <<                                   "7 > 3";
-    QTest::newRow("> 4/4") << "7 &#x3e; 3" <<                                  "7 > 3";
-    QTest::newRow("< 1/3") << "14 &lt; 42" <<                                  "14 < 42";
-    QTest::newRow("< 2/3") << "14 &#60; 42" <<                                 "14 < 42";
-    QTest::newRow("< 3/3") << "14 &#x3c; 42" <<                                "14 < 42";
-    QTest::newRow("& 1/4") << "War & Peace" <<                                 "War & Peace";
-    QTest::newRow("& 2/4") << "Law &#38; Order" <<                             "Law & Order";
-    QTest::newRow("& 3/4") << "Love &#x26; War" <<                             "Love & War";
-    QTest::newRow("& 4/4") << "Peace &amp; Love" <<                            "Peace & Love";
-    QTest::newRow("apostrophe") << "Kick him while he&apos;s down" <<          "Kick him while he's down";
-    QTest::newRow("mixed tags") << "<b>So broken</i>" <<                       "So broken";
+    QTest::newRow("URL") << "<a href=\"http://www.ubuntu.com/\">Ubuntu</a>" <<         "Ubuntu";
+    QTest::newRow("as is") << "Don't rock the boat" <<                                 "Don't rock the boat";
+    QTest::newRow("img") << "<img src=\"foobar.png\" />Nothing to see" <<              "Nothing to see";
+    QTest::newRow("italic") << "<i>Not italic</i>" <<                                  "Not italic";
+    QTest::newRow("unterline") << "<u>Test</u>" <<                                     "Test";
+    QTest::newRow("bold") << "<b>Bold</b>" <<                                          "Bold";
+    QTest::newRow("span") << "<span>Span</span>" <<                                    "Span";
+    QTest::newRow("s-tag") << "<s>E-flat</s>" <<                                       "E-flat";
+    QTest::newRow("sub") << "<sub>Sandwich</sub>" <<                                   "Sandwich";
+    QTest::newRow("small") << "<small>Fry</small>" <<                                  "Fry";
+    QTest::newRow("tt") << "<tt>Testing tag</tt>" <<                                   "Testing tag";
+    QTest::newRow("html") << "<html>Surrounded by html</html>" <<                      "Surrounded by html";
+    QTest::newRow("qt") << "<qt>Surrounded by qt</qt>" <<                              "Surrounded by qt";
+    QTest::newRow("non-tag 1/3") << "><" <<                                            "><";
+    QTest::newRow("non-tag 2/3") << "<>" <<                                            "<>";
+    QTest::newRow("non-tag 3/3") << "< this is not a tag >" <<                         "< this is not a tag >";
+    QTest::newRow("quotes") << "\"Film spectators are quiet vampires.\"" <<            "\"Film spectators are quiet vampires.\"";
+    QTest::newRow("> 1/4") << "7 > 3" <<                                               "7 > 3";
+    QTest::newRow("> 2/4") << "7 &gt; 3" <<                                            "7 > 3";
+    QTest::newRow("> 3/4") << "7 &#62; 3" <<                                           "7 > 3";
+    QTest::newRow("> 4/4") << "7 &#x3e; 3" <<                                          "7 > 3";
+    QTest::newRow("< 1/4") << "14 < 42" <<                                             "14 < 42";
+    QTest::newRow("< 2/4") << "14 &lt; 42" <<                                          "14 < 42";
+    QTest::newRow("< 3/4") << "14 &#60; 42" <<                                         "14 < 42";
+    QTest::newRow("< 4/4") << "14 &#x3c; 42" <<                                        "14 < 42";
+    QTest::newRow("& 1/4") << "War & Peace" <<                                         "War & Peace";
+    QTest::newRow("& 2/4") << "Law &#38; Order" <<                                     "Law & Order";
+    QTest::newRow("& 3/4") << "Love &#x26; War" <<                                     "Love & War";
+    QTest::newRow("& 4/4") << "Peace &amp; Love" <<                                    "Peace & Love";
+    QTest::newRow("apostrophe") << "Kick him while he&apos;s down" <<                  "Kick him while he's down";
+    QTest::newRow("newline 1/2") << "First line\r\nSecond line" <<        "First line\nSecond line";
+    QTest::newRow("newline 2/2") << "First line\n2nd line\r\n3rd line" << "First line\n2nd line\n3rd line";
 }
 
 void TestNotifications::testTextFilter() {

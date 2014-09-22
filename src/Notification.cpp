@@ -21,7 +21,7 @@
 #include "NotificationServer.h"
 #include "Notification.h"
 #include <string>
-#include <QTextDocument>
+#include <QXmlStreamReader>
 
 using namespace std;
 
@@ -253,7 +253,19 @@ void Notification::close() {
 }
 
 QString Notification::filterText(const QString& text) {
-    QTextDocument filtered;
-    filtered.setHtml(text);
-    return filtered.toPlainText();
+    QString plaintext;
+
+    QXmlStreamReader reader("<p>" + text + "</p>");
+
+    while (!reader.atEnd() && !reader.hasError()) {
+        QXmlStreamReader::TokenType token = reader.readNext();
+        if (token == QXmlStreamReader::Characters) {
+            plaintext.append(reader.text().toString());
+        }
+    }
+    if (reader.hasError()) {
+        // Not valid xml. Return as is.
+        return text;
+    }
+    return plaintext;
 }
