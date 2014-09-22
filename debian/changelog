@@ -1,3 +1,10 @@
+unity-notifications (0.1.2+14.10.20140922-0ubuntu1) utopic; urgency=low
+
+  [ Mirco Müller ]
+  * Use a more robust filterText() and don't filter newline-characters.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 22 Sep 2014 17:42:23 +0000
+
 unity-notifications (0.1.2+14.10.20140918-0ubuntu1) utopic; urgency=low
 
   [ Mirco Müller ]
