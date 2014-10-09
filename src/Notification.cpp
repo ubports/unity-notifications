@@ -21,6 +21,7 @@
 #include "NotificationServer.h"
 #include "Notification.h"
 #include <string>
+#include <QXmlStreamReader>
 
 using namespace std;
 
@@ -81,9 +82,10 @@ QString Notification::getBody() const {
 }
 
 void Notification::setBody(const QString &text) {
-    if(p->body != text) {
-        p->body = text;
-        Q_EMIT bodyChanged(text);
+    QString filtered = filterText(text);
+    if(p->body != filtered) {
+        p->body = filtered;
+        Q_EMIT bodyChanged(p->body);
         Q_EMIT dataChanged(p->id);
     }
 }
@@ -153,8 +155,9 @@ QString Notification::getSummary() const {
 }
 
 void Notification::setSummary(const QString &summary) {
-    if(p->summary != summary) {
-        p->summary = summary;
+    QString filtered = filterText(summary);
+    if(p->summary != filtered) {
+        p->summary = filtered;
         Q_EMIT summaryChanged(p->summary);
         Q_EMIT dataChanged(p->id);
     }
@@ -247,4 +250,22 @@ void Notification::invokeAction(const QString &action) {
 
 void Notification::close() {
     Q_EMIT completed(p->id);
+}
+
+QString Notification::filterText(const QString& text) {
+    QString plaintext;
+
+    QXmlStreamReader reader("<p>" + text + "</p>");
+
+    while (!reader.atEnd() && !reader.hasError()) {
+        QXmlStreamReader::TokenType token = reader.readNext();
+        if (token == QXmlStreamReader::Characters) {
+            plaintext.append(reader.text().toString());
+        }
+    }
+    if (reader.hasError()) {
+        // Not valid xml. Return as is.
+        return text;
+    }
+    return plaintext;
 }
