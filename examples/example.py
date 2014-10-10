@@ -47,6 +47,7 @@ capabilities = {'actions':                              False,
 		'image/svg+xml':                        False,
 		'urgency':                              False,
 		'value':                                False,
+		'x-canonical-value-bar-tint':           False,
 		'x-canonical-private-synchronous':      False,
 		'x-canonical-private-icon-only':        False,
 		'x-canonical-truncation':               False,
@@ -105,6 +106,8 @@ def printCaps ():
 		print "\turgency"
 	if capabilities['value']:
 		print "\tvalue"
+	if capabilities['x-canonical-value-bar-tint']:
+		print "\tx-canonical-value-bar-tint"
 	if capabilities['image/svg+xml']:
 		print "\timage/svg+xml"
 	if capabilities['x-canonical-private-synchronous']:

@@ -48,9 +48,12 @@ def pushNotification (icon, value):
 def updateNotification (n, icon, value):
 	n.clear_hints()
 	n.update("Volume", # for a11y-reasons supply something meaning full
-			 "", # this needs to be empty!
+			 ("", "High Volume")[bool(value > 75)],
 			 icon);
 	n.set_hint_int32 ("value", value);
+
+	if value > 75:
+		n.set_hint_string ("x-canonical-value-bar-tint", "true");
 	n.set_hint_string ("x-canonical-private-synchronous", "true");
 	n.set_hint_string ("x-canonical-non-shaped-icon", "true");
 	n.show ()
@@ -66,12 +69,17 @@ if __name__ == '__main__':
 	example.printCaps ()
 
 	# try the icon-value case
-	if example.capabilities['x-canonical-private-synchronous'] and example.capabilities['x-canonical-non-shaped-icon'] and example.capabilities['value']:
+	if example.capabilities['x-canonical-private-synchronous'] and \
+		example.capabilities['x-canonical-non-shaped-icon'] and \
+		example.capabilities['value'] and \
+		example.capabilities['x-canonical-value-bar-tint']:
 		n = pushNotification ("audio-volume-muted", 0);
 		time.sleep (1)
-		updateNotification (n, "audio-volume-low", 33);
+		updateNotification (n, "audio-volume-low", 25);
 		time.sleep (1)
-		updateNotification (n, "audio-volume-medium", 66);
+		updateNotification (n, "audio-volume-medium", 50);
+		time.sleep (1)
+		updateNotification (n, "audio-volume-high", 76);
 		time.sleep (1)
 		updateNotification (n, "audio-volume-high", 100);
 		time.sleep (1)
@@ -79,11 +87,14 @@ if __name__ == '__main__':
 		# trigger "overshoot"-effect
 		updateNotification (n, "audio-volume-high", 100);
 		time.sleep (1)
-		updateNotification (n, "audio-volume-medium", 66);
+		updateNotification (n, "audio-volume-high", 76);
 		time.sleep (1)
-		updateNotification (n, "audio-volume-low", 33);
+		updateNotification (n, "audio-volume-medium", 50);
+		time.sleep (1)
+		updateNotification (n, "audio-volume-low", 25);
 		time.sleep (1)
 		updateNotification (n, "audio-volume-muted", 0);
+		time.sleep (1)
 
 	else:
-		print "The daemon does not support the x-canonical-private-icon-only, x-canonical-non-shaped-icon and value hints!"
+		print "The daemon does not support the x-canonical-private-icon-only, x-canonical-non-shaped-icon, value and value-hint hints!"
