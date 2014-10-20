@@ -47,6 +47,7 @@ void NotificationPlugin::registerTypes(const char *uri) {
     qmlRegisterUncreatableType<ModelInterface>(uri, 1, 0, "ModelInterface", "Abstract Interface. Cannot be instantiated.");
     qmlRegisterSingletonType<NotificationModel>(uri, 1, 0, "Model", modelProvider);
     qmlRegisterUncreatableType<Notification>(uri, 1, 0, "Notification", "Notification objects can only be created by the plugin");
+    qmlRegisterUncreatableType<ActionModel>(uri, 1, 0, "ActionModel", "Abstract Interface. Cannot be instantiated.");
 }
 
 void NotificationPlugin::initializeEngine(QQmlEngine *engine, const char *uri) {
