@@ -94,6 +94,7 @@ def pushNotification (title, body, icon):
 
 	# indicate to the notification-daemon, that we want to use snap-decisions
 	n.set_hint_string ("x-canonical-snap-decisions", "true");
+	n.set_hint_string ("x-canonical-snap-decisions-swipe", "true");
 	n.set_hint_string ("x-canonical-private-affirmative-tint", "true");
 	n.set_hint_string ("x-canonical-private-rejection-tint", "true");
 	n.set_hint_string ("x-canonical-secondary-icon", "incoming-call");
