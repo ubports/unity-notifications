@@ -1,3 +1,11 @@
+unity-notifications (0.1.2+15.04.20141030-0ubuntu1) vivid; urgency=low
+
+  [ Mirco Müller ]
+  * Added support, examples and tests for synchronous/confirmation
+    notifications. (LP: #1232633)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 30 Oct 2014 10:59:34 +0000
+
 unity-notifications (0.1.2+14.10.20140922-0ubuntu1) utopic; urgency=low
 
   [ Mirco Müller ]
