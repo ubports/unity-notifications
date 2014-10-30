@@ -55,6 +55,8 @@ class Notification;
 #define DBUS_PATH         "/org/freedesktop/Notifications"
 #endif
 
+#define VALUE_HINT "value"
+#define VALUE_TINT_HINT "x-canonical-value-bar-tint"
 #define URGENCY_HINT "urgency"
 #define SOUND_HINT "sound-file"
 #define SUPPRESS_SOUND_HINT "suppress-sound"
