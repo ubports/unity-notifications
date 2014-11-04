@@ -1,3 +1,10 @@
+unity-notifications (0.1.2+15.04.20141104-0ubuntu1) vivid; urgency=low
+
+  [ Mirco Müller ]
+  * Added new hint for SwipeToAct-widget.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 04 Nov 2014 13:03:34 +0000
+
 unity-notifications (0.1.2+15.04.20141030-0ubuntu1) vivid; urgency=low
 
   [ Mirco Müller ]
