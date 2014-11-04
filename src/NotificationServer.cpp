@@ -62,6 +62,7 @@ QStringList NotificationServer::GetCapabilities() const {
     capabilities.push_back(MENU_MODEL_HINT);
     capabilities.push_back(INTERACTIVE_HINT);
     capabilities.push_back(TIMEOUT_HINT);
+    capabilities.push_back(SWIPE_HINT);
 
     return capabilities;
 }

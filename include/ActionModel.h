@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Canonical, Ltd.
+ * Copyright (C) 2014 Canonical, Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 3, as published
@@ -21,11 +21,6 @@
 
 struct ActionModelPrivate;
 
-enum ActionsRoles {
-    RoleActionLabel = Qt::UserRole + 1,
-    RoleActionId    = Qt::UserRole + 2
-};
-
 class ActionModel : public QStringListModel {
 	Q_OBJECT
 
@@ -36,6 +31,13 @@ public:
     virtual int rowCount(const QModelIndex &index) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual QHash<int, QByteArray> roleNames() const;
+
+    Q_ENUMS(ActionsRoles)
+    enum ActionsRoles {
+        RoleActionLabel = Qt::UserRole + 1,
+        RoleActionId    = Qt::UserRole + 2
+    };
+    Q_INVOKABLE QVariant data(int row, int role) const;
 
     void insertAction(const QString &id, const QString &label);
 

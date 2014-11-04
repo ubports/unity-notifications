@@ -53,6 +53,7 @@ capabilities = {'actions':                              False,
 		'x-canonical-truncation':               False,
 		'x-canonical-snap-decisions':           False,
 		'x-canonical-snap-decisions-timeout':   False,
+		'x-canonical-snap-decisions-swipe':     False,
 		'x-canonical-switch-to-application':    False,
 		'x-canonical-secondary-icon':           False,
 		'x-canonical-private-affirmative-tint': False,
@@ -120,6 +121,8 @@ def printCaps ():
 		print "\tx-canonical-snap-decisions"
 	if capabilities['x-canonical-snap-decisions-timeout']:
 		print "\tx-canonical-snap-decisions-timeout"
+	if capabilities['x-canonical-snap-decisions-swipe']:
+		print "\tx-canonical-snap-decisions-swipe"
 	if capabilities['x-canonical-switch-to-application']:
 		print "\tx-canonical-switch-to-application"
 	if capabilities['x-canonical-secondary-icon']:
