@@ -1,5 +1,6 @@
 #include "Notification.h"
 #include "NotificationModel.h"
+#include "NotificationServer.h"
 
 #include <QtTest/QtTest>
 
@@ -24,6 +25,7 @@ class TestNotifications: public QObject
         void testConfirmationValue();
         void testTextFilter();
         void testTextFilter_data();
+        void testReverseClose();
 };
 
 void TestNotifications::testSimpleInsertion() {
@@ -55,43 +57,50 @@ void TestNotifications::testTypeSimple() {
 }
 
 void TestNotifications::testOrder() {
-    const int timeout = 5000;
-    QSharedPointer<Notification> n1(new Notification(1, timeout, Notification::Low, "low", Notification::Ephemeral));
-    QSharedPointer<Notification> n2(new Notification(2, timeout, Notification::Normal, "high", Notification::Ephemeral));
-    QSharedPointer<Notification> n3(new Notification(3, timeout, Notification::Critical, "critical", Notification::Ephemeral));
-    NotificationModel m;
+    const int timeout = 1000;
+    static NotificationModel *m = new NotificationModel();
+    static NotificationServer *s = new NotificationServer(*m);
+    QStringList actions = QStringList();
+    Hints hints;
+    int id[3];
 
-    m.insertNotification(n1);
-    QVERIFY(m.showingNotification(n1->getID()));
+    hints[URGENCY_HINT] = QDBusVariant(Notification::Urgency::Low);
+    id[0] = s->Notify ("test-name-low", 0, "icon-low", "summary-low", "body-low", actions, hints, timeout);
+    QVERIFY(m->showingNotification(id[0]));
 
-    m.insertNotification(n2);
-    QVERIFY(!m.showingNotification(n1->getID()));
-    QVERIFY(m.showingNotification(n2->getID()));
-    QVERIFY(m.queued() == 1);
+    hints[URGENCY_HINT] = QDBusVariant(Notification::Urgency::Normal);
+    id[1] = s->Notify ("test-name-normal", 0, "icon-normal", "summary-normal", "body-normal", actions, hints, timeout);
+    QVERIFY(!m->showingNotification(id[0]));
+    QVERIFY(m->showingNotification(id[1]));
+    QVERIFY(m->queued() == 1);
 
-    m.insertNotification(n3);
-    QVERIFY(!m.showingNotification(n1->getID()));
-    QVERIFY(!m.showingNotification(n2->getID()));
-    QVERIFY(m.showingNotification(n3->getID()));
-    QCOMPARE(m.queued(), 2);
+    hints[URGENCY_HINT] = QDBusVariant(Notification::Urgency::Critical);
+    id[2] = s->Notify ("test-name-critical", 0, "icon-critical", "summary-critical", "body-critical", actions, hints, timeout);
+    QVERIFY(!m->showingNotification(id[0]));
+    QVERIFY(!m->showingNotification(id[1]));
+    QVERIFY(m->showingNotification(id[2]));
+    QCOMPARE(m->queued(), 2);
 
-    m.removeNotification(n3->getID());
-    QVERIFY(!m.showingNotification(n1->getID()));
-    QVERIFY(m.showingNotification(n2->getID()));
-    QVERIFY(!m.showingNotification(n3->getID()));
-    QCOMPARE(m.queued(), 1);
+    m->removeNotification(id[2]);
+    QVERIFY(!m->showingNotification(id[0]));
+    QVERIFY(m->showingNotification(id[1]));
+    QVERIFY(!m->showingNotification(id[2]));
+    QCOMPARE(m->queued(), 1);
 
-    m.removeNotification(n2->getID());
-    QVERIFY(m.showingNotification(n1->getID()));
-    QVERIFY(!m.showingNotification(n2->getID()));
-    QVERIFY(!m.showingNotification(n3->getID()));
-    QCOMPARE(m.queued(), 0);
+    m->removeNotification(id[1]);
+    QVERIFY(m->showingNotification(id[0]));
+    QVERIFY(!m->showingNotification(id[1]));
+    QVERIFY(!m->showingNotification(id[2]));
+    QCOMPARE(m->queued(), 0);
 
-    m.removeNotification(n1->getID());
-    QVERIFY(!m.showingNotification(n1->getID()));
-    QVERIFY(!m.showingNotification(n2->getID()));
-    QVERIFY(!m.showingNotification(n3->getID()));
-    QCOMPARE(m.queued(), 0);
+    m->removeNotification(id[0]);
+    QVERIFY(!m->showingNotification(id[0]));
+    QVERIFY(!m->showingNotification(id[1]));
+    QVERIFY(!m->showingNotification(id[2]));
+    QCOMPARE(m->queued(), 0);
+
+    delete s;
+    delete m;
 }
 
 void TestNotifications::testHas() {
@@ -257,6 +266,39 @@ void TestNotifications::testTextFilter() {
     QCOMPARE(n.getSummary(), result);
     n.setBody(string);
     QCOMPARE(n.getBody(), result);
+}
+
+void TestNotifications::testReverseClose() {
+    const int timeout = 1000;
+    const int max = 20;
+    static NotificationModel *m = new NotificationModel();
+    static NotificationServer *s = new NotificationServer(*m);
+    QStringList actions = QStringList();
+    Hints hints = Hints();
+    int before = m->numNotifications();
+
+    for (int i = 1; i <= max; i++) {
+        s->Notify ("test-app-name",
+                   0,
+                   "test-icon",
+                   "test-summary",
+                   "test-body",
+                   actions,
+                   hints,
+                   timeout);
+    }
+
+    QCOMPARE(m->numNotifications(), max+1);
+
+    for (int i = max; i >= 1; i--) {
+        m->getNotification(i)->close();
+        QCOMPARE(m->numNotifications(), i);
+    }
+
+    QCOMPARE(m->numNotifications(), before);
+
+    delete s;
+    delete m;
 }
 
 QTEST_MAIN(TestNotifications)

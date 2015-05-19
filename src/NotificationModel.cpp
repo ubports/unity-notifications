@@ -202,37 +202,47 @@ bool NotificationModel::hasNotification(NotificationID id) const {
 }
 
 void NotificationModel::removeNotification(const NotificationID id) {
-    for(int i=0; i<p->ephemeralQueue.size(); i++) {
-        if(p->ephemeralQueue[i]->getID() == id) {
-            p->ephemeralQueue.erase(p->ephemeralQueue.begin() + i);
-            Q_EMIT queueSizeChanged(queued());
-            return;
-        }
-    }
-
-    for(int i=0; i<p->snapQueue.size(); i++) {
-        if(p->snapQueue[i]->getID() == id) {
-            p->snapQueue.erase(p->snapQueue.begin() + i);
-            Q_EMIT queueSizeChanged(queued());
-            return;
-        }
-    }
-
-    for(int i=0; i<p->interactiveQueue.size(); i++) {
-        if(p->interactiveQueue[i]->getID() == id) {
-            p->interactiveQueue.erase(p->interactiveQueue.begin() + i);
-            Q_EMIT queueSizeChanged(queued());
-            return;
-        }
-    }
-
-    for(int i=0; i<p->displayedNotifications.size(); i++) {
+    for (int i = 0; i < p->displayedNotifications.size(); i++) {
         if(p->displayedNotifications[i]->getID() == id) {
             deleteFromVisible(i);
             timeout(); // Simulate a timeout so visual state is updated.
             return;
         }
     }
+
+    for (auto it = p->ephemeralQueue.begin(); it != p->ephemeralQueue.end(); ++it) {
+        QSharedPointer<Notification> n = *it;
+
+        if (n && n->getID() == id) {
+            p->ephemeralQueue.erase(it);
+            n.data()->deleteLater();
+            Q_EMIT queueSizeChanged(queued());
+            return;
+        }
+     }
+
+    for (auto it = p->snapQueue.begin(); it != p->snapQueue.end(); ++it) {
+        QSharedPointer<Notification> n = *it;
+
+        if (n && n->getID() == id) {
+            p->snapQueue.erase(it);
+            n.data()->deleteLater();
+            Q_EMIT queueSizeChanged(queued());
+            return;
+        }
+    }
+
+    for (auto it = p->interactiveQueue.begin(); it != p->interactiveQueue.end(); ++it) {
+        QSharedPointer<Notification> n = *it;
+
+        if (n && n->getID() == id) {
+            p->interactiveQueue.erase(it);
+            n.data()->deleteLater();
+            Q_EMIT queueSizeChanged(queued());
+            return;
+        }
+    }
+
     // The ID was not found in any queue. Should it be an error case or not?
 }
 
@@ -246,8 +256,9 @@ void NotificationModel::deleteFromVisible(int loc) {
     QModelIndex deletePoint = QModelIndex();
     beginRemoveRows(deletePoint, loc, loc);
     QSharedPointer<Notification> n = p->displayedNotifications[loc];
-    p->displayTimes.erase(p->displayTimes.find(n->getID()));
-    p->displayedNotifications.erase(p->displayedNotifications.begin() + loc);
+    p->displayTimes.remove(n->getID());
+    p->displayedNotifications.removeAt(loc);
+    n.clear();
     endRemoveRows();
 }
 
