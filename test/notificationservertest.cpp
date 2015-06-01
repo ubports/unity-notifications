@@ -42,91 +42,63 @@ void cleanup() {
     dbus.reset();
 }
 
-void testNotify() {
-    uint id = notificationsInterface->Notify("my app", 0, "icon", "summary", "body", QStringList(), QVariantMap(), 0);
-    QCOMPARE(id, uint(1));
+int notify(const QString& name) {
+        return int(
+                notificationsInterface->Notify("my app", 0, "icon " + name,
+                                               "summary " + name,
+                                               "body " + name, QStringList(),
+                                               QVariantMap(), 0));
+}
 
-    uint id2 = notificationsInterface->Notify("my app", 0, "icon 2", "summary 2", "body 2", QStringList(), QVariantMap(), 0);
+void expectNotification(const NotificationDataList& notifications, int index, int id, const QString& name) {
+    QCOMPARE(
+        notifications.at(index),
+        NotificationData()
+            .setAppName("my app")
+            .setId(id)
+            .setAppIcon("image://theme/icon " + name)
+            .setBody("body " + name)
+            .setSummary("summary " + name)
+            .setExpireTimeout(5000)
+        );
+}
+
+void testNotify() {
+    uint id1 = notify("1");
+    QCOMPARE(id1, uint(1));
+
+    uint id2 = notify("2");
     QCOMPARE(id2, uint(2));
 
     NotificationDataList notifications = notificationsInterface->GetNotifications("my app");
     QCOMPARE(notifications.size(), 2);
 
-    NotificationData notification = notifications[0];
-
-    QCOMPARE(
-        notifications[0],
-        NotificationData()
-            .setAppName("my app")
-            .setId(id)
-            .setAppIcon("image://theme/icon")
-            .setBody("body")
-            .setSummary("summary")
-            .setExpireTimeout(5000)
-        );
-
-    QCOMPARE(
-        notifications[1],
-        NotificationData()
-            .setAppName("my app")
-            .setId(id2)
-            .setAppIcon("image://theme/icon 2")
-            .setBody("body 2")
-            .setSummary("summary 2")
-            .setExpireTimeout(5000)
-        );
+    expectNotification(notifications, 0, id1, "1");
+    expectNotification(notifications, 1, id2, "2");
 }
 
 void testClose() {
-    uint id = notificationsInterface->Notify("my app", 0, "icon", "summary", "body", QStringList(), QVariantMap(), 0);
-    QCOMPARE(id, uint(1));
+    uint id1 = notify("1");
+    QCOMPARE(id1, uint(1));
 
-    uint id2 = notificationsInterface->Notify("my app", 0, "icon 2", "summary 2", "body 2", QStringList(), QVariantMap(), 0);
+    uint id2 = notify("2");
     QCOMPARE(id2, uint(2));
 
     {
         NotificationDataList notifications = notificationsInterface->GetNotifications("my app");
         QCOMPARE(notifications.size(), 2);
 
-        QCOMPARE(
-            notifications[0],
-            NotificationData()
-                .setAppName("my app")
-                .setId(id)
-                .setAppIcon("image://theme/icon")
-                .setBody("body")
-                .setSummary("summary")
-                .setExpireTimeout(5000)
-            );
-
-        QCOMPARE(
-            notifications[1],
-            NotificationData()
-                .setAppName("my app")
-                .setId(id2)
-                .setAppIcon("image://theme/icon 2")
-                .setBody("body 2")
-                .setSummary("summary 2")
-                .setExpireTimeout(5000)
-            );
+        expectNotification(notifications, 0, id1, "1");
+        expectNotification(notifications, 1, id2, "2");
     }
 
-    notificationsInterface->CloseNotification(id).waitForFinished();
+    notificationsInterface->CloseNotification(id1).waitForFinished();
 
     {
         NotificationDataList notifications = notificationsInterface->GetNotifications("my app");
         QCOMPARE(notifications.size(), 1);
 
-        QCOMPARE(
-            notifications[0],
-            NotificationData()
-                .setAppName("my app")
-                .setId(id2)
-                .setAppIcon("image://theme/icon 2")
-                .setBody("body 2")
-                .setSummary("summary 2")
-                .setExpireTimeout(5000)
-        );
+        expectNotification(notifications, 0, id2, "2");
     }
 }
 
