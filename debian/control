@@ -8,6 +8,7 @@ Build-Depends: debhelper (>= 9~),
                qtdeclarative5-dev,
                qtbase5-dev-tools,
                libunity-api-dev (>= 7.80.8),
+               libqtdbustest1-dev,
 # For Qml tests
                qtchooser,
                qt5-default,
