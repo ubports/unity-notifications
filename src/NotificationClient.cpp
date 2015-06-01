@@ -22,13 +22,16 @@
 #include <QStringList>
 #include <QDBusReply>
 
-NotificationClient::NotificationClient(QObject *parent) : QObject(parent),
-    service(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE) {
+NotificationClient::NotificationClient(const QDBusConnection& connection, QObject *parent) : QObject(parent),
+    m_interface(DBUS_SERVICE_NAME, DBUS_PATH, connection) {
 
+    DBusTypes::registerNotificationMetaTypes();
+
+    connect(&m_interface, &OrgFreedesktopNotificationsInterface::ActionInvoked, this, &NotificationClient::ActionInvoked);
+    connect(&m_interface, &OrgFreedesktopNotificationsInterface::NotificationClosed, this, &NotificationClient::NotificationClosed);
 }
 
 NotificationClient::~NotificationClient() {
-
 }
 
 NotificationID NotificationClient::sendNotification(Notification::Type ntype, Notification::Urgency urg, const QString &summary, const QString &body) {
@@ -54,8 +57,7 @@ NotificationID NotificationClient::sendNotification(Notification::Type ntype, No
         hints[INTERACTIVE_HINT] = "targetapp";
     }
     int timeout = 5000;
-    QDBusReply<unsigned int> result = service.call("Notify",
-            app_name, replaces_id, app_icon, summary, body, actions, hints, timeout);
+    QDBusReply<unsigned int> result = m_interface.Notify(app_name, replaces_id, app_icon, summary, body, actions, hints, timeout);
     if(!result.isValid()) {
         return (NotificationID) -1;
     }

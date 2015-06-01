@@ -20,19 +20,36 @@
 #include "NotificationModel.h"
 #include "NotificationServer.h"
 #include "Notification.h"
+#include <NotificationsAdaptor.h>
 #include <QDBusMetaType>
 #include <QDebug>
+#include <QDBusConnectionInterface>
 #include <QSharedPointer>
 
-NotificationServer::NotificationServer(NotificationModel &m, QObject *parent) :
-    QDBusAbstractAdaptor(parent), model(m), idCounter(1) {
-    qDBusRegisterMetaType<Hints>();
+NotificationServer::NotificationServer(const QDBusConnection& connection, NotificationModel &m, QObject *parent) :
+    QObject(parent), model(m), idCounter(1), m_connection(connection) {
+
+    DBusTypes::registerNotificationMetaTypes();
+
+    // Memory managed by Qt
+    new NotificationsAdaptor(this);
 
     connect(this, SIGNAL(dataChanged(unsigned int)), &m, SLOT(onDataChanged(unsigned int)));
+
+    if(!m_connection.registerObject(DBUS_PATH, this)) {
+        qWarning() << "Could not register to DBus object.";
+    }
+
+    QDBusConnectionInterface *iface = m_connection.interface();
+    auto reply = iface->registerService(DBUS_SERVICE_NAME, QDBusConnectionInterface::ReplaceExistingService,
+                                        QDBusConnectionInterface::DontAllowReplacement);
+    if(!reply.isValid() || reply.value() != QDBusConnectionInterface::ServiceRegistered) {
+        qWarning() << "Notification DBus name already taken.";
+    }
 }
 
 NotificationServer::~NotificationServer() {
-
+    m_connection.unregisterService(DBUS_SERVICE_NAME);
 }
 
 void NotificationServer::invokeAction(unsigned int id, const QString &action) {
@@ -67,11 +84,30 @@ QStringList NotificationServer::GetCapabilities() const {
     return capabilities;
 }
 
-Notification* NotificationServer::buildNotification(NotificationID id, const Hints &hints) {
+NotificationDataList NotificationServer::GetNotifications(const QString &app_name) {
+    NotificationDataList results;
+    for (auto notification: model.getAllNotifications()) {
+        NotificationData data;
+        data.appName = app_name;
+        data.id = notification->getID();
+        data.appIcon = notification->getIcon();
+        data.summary = notification->getSummary();
+        data.body = notification->getBody();
+//        data.actions = notification->getActions();
+//        data.hints = notification->getActions();
+        data.expireTimeout = notification->getDisplayTime();
+
+        results << data;
+    }
+
+    return results;
+}
+
+Notification* NotificationServer::buildNotification(NotificationID id, const QVariantMap &hints) {
     int expireTimeout = 0;
     Notification::Urgency urg = Notification::Urgency::Low;
     if(hints.find(URGENCY_HINT) != hints.end()) {
-        QVariant u = hints[URGENCY_HINT].variant();
+        QVariant u = hints[URGENCY_HINT];
         if(!u.canConvert(QVariant::Int)) {
             fprintf(stderr, "Invalid urgency value.\n");
         } else {
@@ -84,7 +120,7 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
         expireTimeout = 3000;
         ntype = Notification::Type::Confirmation;
     } else if (hints.find(SNAP_HINT) != hints.end()) {
-        QVariant u = hints[TIMEOUT_HINT].variant();
+        QVariant u = hints[TIMEOUT_HINT];
         if(!u.canConvert(QVariant::Int)) {
             expireTimeout = 60000;
         } else {
@@ -104,9 +140,10 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
     return n;
 }
 
-unsigned int NotificationServer::Notify (const QString &app_name, unsigned int replaces_id, const QString &app_icon,
-        const QString &summary, const QString &body,
-        const QStringList &actions, const Hints &hints, int expire_timeout) {
+unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_id,
+                           const QString &app_icon, const QString &summary,
+                           const QString &body, const QStringList &actions,
+                           const QVariantMap &hints, int expire_timeout) {
     const unsigned int FAILURE = 0; // Is this correct?
     const int minActions = 4;
     const int maxActions = 14;
@@ -168,15 +205,15 @@ unsigned int NotificationServer::Notify (const QString &app_name, unsigned int r
     notification->setSummary(summary);
 
     QVariantMap notifyHints;
-    for (Hints::const_iterator iter = hints.constBegin(), end = hints.constEnd(); iter != end; ++iter) {
-        notifyHints[iter.key()] = iter.value().variant();
+    for (auto iter = hints.constBegin(), end = hints.constEnd(); iter != end; ++iter) {
+        notifyHints[iter.key()] = iter.value();
     }
     notification->setHints(notifyHints);
 
-    QVariant secondaryIcon = hints[SECONDARY_ICON_HINT].variant();
+    QVariant secondaryIcon = hints[SECONDARY_ICON_HINT];
     notification->setSecondaryIcon(secondaryIcon.toString());
 
-    QVariant value = hints[VALUE_HINT].variant();
+    QVariant value = hints[VALUE_HINT];
     notification->setValue(value.toInt());
 
     if(replaces_id) {
@@ -192,11 +229,11 @@ void NotificationServer::CloseNotification (unsigned int id) {
     model.removeNotification(id);
 }
 
-void NotificationServer::GetServerInformation (QString &name, QString &vendor, QString &version, QString &specVersion) const {
+QString NotificationServer::GetServerInformation (QString &name, QString &vendor, QString &version) const {
     name = "Unity notification server";
     vendor = "Canonical Ltd";
     version = "1.2";
-    specVersion = "1.1";
+    return "1.1";
 }
 
 void NotificationServer::onDataChanged(unsigned int id) {

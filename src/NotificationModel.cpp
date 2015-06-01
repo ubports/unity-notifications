@@ -22,6 +22,7 @@
 
 #include <unity/shell/notifications/ModelInterface.h>
 
+#include <QDebug>
 #include <QTimer>
 #include <QList>
 #include <QVector>
@@ -66,7 +67,7 @@ NotificationModel::~NotificationModel() {
 }
 
 int NotificationModel::rowCount(const QModelIndex &parent) const {
-    //printf("Count %d\n", p->displayedNotifications.size());
+    printf("Count %d\n", p->displayedNotifications.size());
     return p->displayedNotifications.size();
 }
 
@@ -136,6 +137,24 @@ void NotificationModel::insertNotification(const QSharedPointer<Notification> &n
     p->timer.start();
 }
 
+QList<QSharedPointer<Notification>> NotificationModel::getAllNotifications() const {
+    QMap<NotificationID, QSharedPointer<Notification>> notifications;
+    for (const auto& notification : p->ephemeralQueue) {
+        notifications[notification->getID()] = notification;
+    }
+    for (const auto& notification : p->interactiveQueue) {
+        notifications[notification->getID()] = notification;
+    }
+    for (const auto& notification : p->snapQueue) {
+        notifications[notification->getID()] = notification;
+    }
+    for (const auto& notification : p->displayedNotifications) {
+        notifications[notification->getID()] = notification;
+    }
+    notifications.remove(0);
+    return notifications.values();
+}
+
 QSharedPointer<Notification> NotificationModel::getNotification(NotificationID id) const {
     for(int i=0; i<p->ephemeralQueue.size(); i++) {
         if(p->ephemeralQueue[i]->getID() == id) {
@@ -189,6 +208,7 @@ QSharedPointer<Notification> NotificationModel::getNotification(const QString &s
 }
 
 QSharedPointer<Notification> NotificationModel::getDisplayedNotification(int index) const {
+    qWarning() << __PRETTY_FUNCTION__ << index;
     if (index < p->displayedNotifications.size()) {
         return p->displayedNotifications[index];
     } else {

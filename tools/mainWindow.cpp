@@ -17,9 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "notify-backend.h"
-#include "notificationmodel.h"
+#include "NotificationModel.h"
 #include "mainWindow.h"
-#include "notification.h"
+#include "Notification.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setupUi(this);

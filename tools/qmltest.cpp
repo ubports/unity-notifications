@@ -1,6 +1,6 @@
-#include "notification.h"
-#include "notificationmodel.h"
-#include "notificationserver.h"
+#include "Notification.h"
+#include "NotificationModel.h"
+#include "NotificationServer.h"
 
 #include <QDBusAbstractAdaptor>
 #include <QDBusConnection>
@@ -16,16 +16,7 @@ int main(int argc, char *argv[]) {
     QQuickView view;
     NotificationModel *m = new NotificationModel();
 
-    new NotificationServer(*m, &app);
-
-    if(!QDBusConnection::sessionBus().registerService(DBUS_SERVICE_NAME)) {
-        printf("Service name already taken.\n");
-        return 1;
-    }
-    if(!QDBusConnection::sessionBus().registerObject(DBUS_PATH, &app)) {
-        printf("Could not register to DBus session.\n");
-        return 1;
-    }
+    new NotificationServer(QDBusConnection::sessionBus(), *m, &app);
 
     // Shared pointer problem: http://qt-project.org/wiki/SharedPointersAndQmlOwnership
     view.rootContext()->setContextProperty("notificationmodel", m);

@@ -31,14 +31,6 @@ void NotificationClientPlugin::registerTypes(const char *uri) {
 }
 
 void NotificationClientPlugin::initializeEngine(QQmlEngine *engine, const char *uri) {
-    NotificationClient *cl = new NotificationClient(engine);
-    if(!QDBusConnection::sessionBus().connect(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE,
-            "NotificationClosed", cl, SLOT(NotificationClosed(unsigned int, unsigned int)))) {
-        printf("Could not connect to NotificationClosed signal.\n\n");
-    }
-    if(!QDBusConnection::sessionBus().connect(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE,
-            "ActionInvoked", cl, SLOT(ActionInvoked(unsigned int, QString)))) {
-        printf("Could not connect to ActionInvoked signal.\n\n");
-    }
+    NotificationClient *cl = new NotificationClient(QDBusConnection::sessionBus(), engine);
     engine->rootContext()->setContextProperty("notificationclient", cl);
 }

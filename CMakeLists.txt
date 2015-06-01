@@ -10,7 +10,6 @@ if(PROJECT_BINARY_DIR STREQUAL PROJECT_SOURCE_DIR)
 endif()
 
 option(basic_warnings "Basic compiler warnings." ON)
-option(build_tools "Build developer tools." OFF)
 option(private_dbus "Use private dbus namespace to prevent clashes during development." OFF)
 
 include(cmake/coverage.cmake)
@@ -28,17 +27,26 @@ endif()
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+find_package(Qt5Core REQUIRED)
+include_directories(${Qt5Core_INCLUDE_DIRS})
+
+find_package(Qt5DBus REQUIRED)
+include_directories(${Qt5DBus_INCLUDE_DIRS})
+
 find_package(Qt5Widgets REQUIRED)
+include_directories(${Qt5Widgets_INCLUDE_DIRS})
+
 # Workaround for https://bugreports.qt-project.org/browse/QTBUG-29987
 set(QT_IMPORTS_DIR "${CMAKE_INSTALL_LIBDIR}/qt5/qml")
 
-include_directories(include)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
+include_directories("include")
+include_directories("${CMAKE_BINARY_DIR}/include")
+include_directories("src")
+include_directories("${CMAKE_BINARY_DIR}/src")
+
 add_subdirectory(include)
 add_subdirectory(src)
-if(${build_tools})
-  add_subdirectory(tools)
-endif()
+add_subdirectory(tools)
 
 # Disabled this until trunks of both Unity and notifications
 # have been updated to work together.
