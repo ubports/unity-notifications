@@ -76,7 +76,9 @@ Q_SIGNALS:
     void dataChanged(unsigned int id);
 
 private:
-    Notification* buildNotification(NotificationID id, const QVariantMap &hints);
+    void incrementCounter();
+
+    QSharedPointer<Notification> buildNotification(NotificationID id, const QVariantMap &hints);
     NotificationModel &model;
     unsigned int idCounter;
     QDBusConnection m_connection;

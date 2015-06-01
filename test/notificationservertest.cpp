@@ -5,6 +5,7 @@
 #include <libqtdbustest/DBusTestRunner.h>
 #include <libqtdbustest/QProcessDBusService.h>
 #include <QtTest/QtTest>
+#include <stdexcept>
 
 using namespace QtDBusTest;
 
@@ -42,12 +43,16 @@ void cleanup() {
     dbus.reset();
 }
 
-int notify(const QString& name) {
-        return int(
-                notificationsInterface->Notify("my app", 0, "icon " + name,
-                                               "summary " + name,
-                                               "body " + name, QStringList(),
-                                               QVariantMap(), 0));
+int notify(const QString& name, int replacesId = 0) {
+    auto reply = notificationsInterface->Notify("my app", replacesId, "icon " + name,
+                                                   "summary " + name,
+                                                   "body " + name, QStringList(),
+                                                   QVariantMap(), 0);
+    reply.waitForFinished();
+    if (reply.isError()) {
+        throw std::domain_error(reply.error().message().toStdString());
+    }
+    return reply;
 }
 
 void expectNotification(const NotificationDataList& notifications, int index, int id, const QString& name) {
@@ -99,6 +104,67 @@ void testClose() {
         QCOMPARE(notifications.size(), 1);
 
         expectNotification(notifications, 0, id2, "2");
+    }
+}
+
+void testNotifyCloseNotify() {
+    uint id1 = notify("1");
+    QCOMPARE(id1, uint(1));
+
+    {
+        NotificationDataList notifications = notificationsInterface->GetNotifications("my app");
+        QCOMPARE(notifications.size(), 1);
+
+        expectNotification(notifications, 0, id1, "1");
+    }
+
+    notificationsInterface->CloseNotification(id1).waitForFinished();
+
+    {
+        NotificationDataList notifications = notificationsInterface->GetNotifications("my app");
+        QCOMPARE(notifications.size(), 0);
+    }
+
+    id1 = notify("1", id1);
+    QCOMPARE(id1, uint(1));
+
+    {
+        NotificationDataList notifications = notificationsInterface->GetNotifications("my app");
+        QCOMPARE(notifications.size(), 1);
+
+        expectNotification(notifications, 0, id1, "1");
+    }
+}
+
+void testNotifyCounterIncrement() {
+    uint id1 = notify("1", 1);
+    QCOMPARE(id1, uint(1));
+
+    uint id2 = notify("2", 2);
+    QCOMPARE(id2, uint(2));
+
+    uint id4 = notify("4", 4);
+    QCOMPARE(id4, uint(4));
+
+    uint id5 = notify("5", 5);
+    QCOMPARE(id5, uint(5));
+
+    uint id3 = notify("3");
+    QCOMPARE(id3, uint(3));
+
+    uint id6 = notify("6");
+    QCOMPARE(id6, uint(6));
+
+    {
+        NotificationDataList notifications = notificationsInterface->GetNotifications("my app");
+        QCOMPARE(notifications.size(), 6);
+
+        expectNotification(notifications, 0, id1, "1");
+        expectNotification(notifications, 1, id2, "2");
+        expectNotification(notifications, 2, id3, "3");
+        expectNotification(notifications, 3, id4, "4");
+        expectNotification(notifications, 4, id5, "5");
+        expectNotification(notifications, 5, id6, "6");
     }
 }
 

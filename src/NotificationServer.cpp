@@ -27,7 +27,7 @@
 #include <QSharedPointer>
 
 NotificationServer::NotificationServer(const QDBusConnection& connection, NotificationModel &m, QObject *parent) :
-    QObject(parent), model(m), idCounter(1), m_connection(connection) {
+    QObject(parent), model(m), idCounter(0), m_connection(connection) {
 
     DBusTypes::registerNotificationMetaTypes();
 
@@ -103,7 +103,7 @@ NotificationDataList NotificationServer::GetNotifications(const QString &app_nam
     return results;
 }
 
-Notification* NotificationServer::buildNotification(NotificationID id, const QVariantMap &hints) {
+QSharedPointer<Notification> NotificationServer::buildNotification(NotificationID id, const QVariantMap &hints) {
     int expireTimeout = 0;
     Notification::Urgency urg = Notification::Urgency::Low;
     if(hints.find(URGENCY_HINT) != hints.end()) {
@@ -133,47 +133,60 @@ Notification* NotificationServer::buildNotification(NotificationID id, const QVa
         expireTimeout = 5000;
     }
 
-    Notification* n = new Notification(id, expireTimeout, urg, ntype, this);
-    connect(n, SIGNAL(dataChanged(unsigned int)), this, SLOT(onDataChanged(unsigned int)));
-    connect(n, SIGNAL(completed(unsigned int)), this, SLOT(onCompleted(unsigned int)));
+    QSharedPointer<Notification> n(new Notification(id, expireTimeout, urg, ntype));
+    connect(n.data(), SIGNAL(dataChanged(unsigned int)), this, SLOT(onDataChanged(unsigned int)));
+    connect(n.data(), SIGNAL(completed(unsigned int)), this, SLOT(onCompleted(unsigned int)));
 
     return n;
+}
+
+void NotificationServer::incrementCounter() {
+    idCounter++;
+    if(idCounter == 0) // Spec forbids zero as return value.
+        idCounter = 1;
 }
 
 unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_id,
                            const QString &app_icon, const QString &summary,
                            const QString &body, const QStringList &actions,
                            const QVariantMap &hints, int expire_timeout) {
-    const unsigned int FAILURE = 0; // Is this correct?
+    const unsigned int FAILURE = 0;
     const int minActions = 4;
     const int maxActions = 14;
     //QImage icon(app_icon);
-    int currentId = idCounter;
+    int currentId = 0;
+
+    bool newNotification = true;
+
     QSharedPointer<Notification> notification;
-    if(replaces_id != 0) {
-        if(!model.hasNotification(replaces_id)) {
-            fprintf(stderr, "Tried to change non-existing notification %d.\n", replaces_id);
-            return FAILURE;
+    if (replaces_id != 0) {
+        if (model.hasNotification(replaces_id)) {
+            newNotification = false;
+            notification = model.getNotification(replaces_id);
+        } else {
+            notification = buildNotification(replaces_id, hints);
         }
+
         currentId = replaces_id;
-        notification = model.getNotification(replaces_id);
     } else {
-        Notification *n = buildNotification(currentId, hints);
-        if(!n) {
-            fprintf(stderr, "Could not build notification object.\n");
-            return FAILURE;
+        incrementCounter();
+        while (model.hasNotification(idCounter)) {
+            incrementCounter();
         }
-        notification.reset(n);
-        idCounter++;
-        if(idCounter == 0) // Spec forbids zero as return value.
-            idCounter = 1;
+        notification = buildNotification(idCounter, hints);
+
+        currentId = idCounter;
     }
 
     Q_ASSERT(notification);
     if(notification->getType() == Notification::Type::Interactive) {
         int numActions = actions.size();
         if(numActions != 2) {
-            fprintf(stderr, "Wrong number of actions for an interactive notification. Has %d, requires %d.\n", numActions, 2);
+            sendErrorReply(
+                    QDBusError::InvalidArgs,
+                    QString::fromUtf8(
+                            "Wrong number of actions for an interactive notification. Has %1, requires 2.").arg(
+                            numActions));
             return FAILURE;
         }
         notification->setActions(actions);
@@ -186,16 +199,27 @@ unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_i
         int numActions = actions.size();
         if(numActions < minActions) {
             if (hints.find(MENU_MODEL_HINT) == hints.end()) {
-                fprintf(stderr, "Too few strings for Snap Decisions. Has %d, requires %d.\n", numActions, minActions);
+                sendErrorReply(
+                        QDBusError::InvalidArgs,
+                        QString::fromUtf8(
+                                "Too few strings for Snap Decisions. Has %1, requires %2.").arg(
+                                numActions).arg(minActions));
                 return FAILURE;
             }
         }
         if(numActions > maxActions) {
-            fprintf(stderr, "Too many strings for Snap Decisions. Has %d, maximum %d.\n", numActions, maxActions);
+            sendErrorReply(
+                    QDBusError::InvalidArgs,
+                    QString::fromUtf8(
+                            "Too many strings for Snap Decisions. Has %1, maximum %2.").arg(
+                            numActions).arg(maxActions));
             return FAILURE;
         }
         if(numActions % 2 != 0) {
-            fprintf(stderr, "Number of actions must be even, not odd.\n");
+            sendErrorReply(
+                    QDBusError::InvalidArgs,
+                    QString::fromUtf8(
+                            "Number of actions must be even, not odd."));
             return FAILURE;
         }
         notification->setActions(actions);
@@ -216,10 +240,10 @@ unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_i
     QVariant value = hints[VALUE_HINT];
     notification->setValue(value.toInt());
 
-    if(replaces_id) {
-        model.notificationUpdated(currentId);
-    } else {
+    if(newNotification) {
         model.insertNotification(notification);
+    } else {
+        model.notificationUpdated(currentId);
     }
     return currentId;
 }
