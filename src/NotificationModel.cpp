@@ -208,7 +208,6 @@ QSharedPointer<Notification> NotificationModel::getNotification(const QString &s
 }
 
 QSharedPointer<Notification> NotificationModel::getDisplayedNotification(int index) const {
-    qWarning() << __PRETTY_FUNCTION__ << index;
     if (index < p->displayedNotifications.size()) {
         return p->displayedNotifications[index];
     } else {
