@@ -93,8 +93,8 @@ NotificationDataList NotificationServer::GetNotifications(const QString &app_nam
         data.appIcon = notification->getIcon();
         data.summary = notification->getSummary();
         data.body = notification->getBody();
-//        data.actions = notification->getActions();
-//        data.hints = notification->getActions();
+        data.actions = notification->getActions()->getRawActions();
+        data.hints = notification->getHints();
         data.expireTimeout = notification->getDisplayTime();
 
         results << data;
