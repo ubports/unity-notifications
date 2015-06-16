@@ -67,7 +67,7 @@ NotificationModel::~NotificationModel() {
 }
 
 int NotificationModel::rowCount(const QModelIndex &parent) const {
-    printf("Count %d\n", p->displayedNotifications.size());
+    //printf("Count %d\n", p->displayedNotifications.size());
     return p->displayedNotifications.size();
 }
 
