@@ -63,7 +63,7 @@ public:
 
 public Q_SLOTS:
     void CloseNotification (unsigned int id);
-    QString GetServerInformation (QString &name, QString &vendor, QString &version) const;
+    QString GetServerInformation (QString &vendor, QString &version, QString &specVersion) const;
     QStringList GetCapabilities() const;
     NotificationDataList GetNotifications(const QString &app_name);
     unsigned int Notify(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantMap &hints, int expire_timeout);

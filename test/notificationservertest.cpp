@@ -159,8 +159,8 @@ void testGetCapabilities() {
 }
 
 void testGetServerInformation() {
-    QString name, vendor, version;
-    QString specVersion = notificationsInterface->GetServerInformation(name, vendor, version);
+    QString vendor, version, specVersion;
+    QString name = notificationsInterface->GetServerInformation(vendor, version, specVersion);
 
     QCOMPARE(name, QString("Unity notification server"));
     QCOMPARE(vendor, QString("Canonical Ltd"));

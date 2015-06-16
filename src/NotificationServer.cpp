@@ -229,11 +229,11 @@ void NotificationServer::CloseNotification (unsigned int id) {
     model.removeNotification(id);
 }
 
-QString NotificationServer::GetServerInformation (QString &name, QString &vendor, QString &version) const {
-    name = "Unity notification server";
+QString NotificationServer::GetServerInformation (QString &vendor, QString &version, QString &specVersion) const {
     vendor = "Canonical Ltd";
     version = "1.2";
-    return "1.1";
+    specVersion = "1.1";
+    return "Unity notification server";
 }
 
 void NotificationServer::onDataChanged(unsigned int id) {
