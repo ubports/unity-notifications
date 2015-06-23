@@ -41,6 +41,10 @@ NotificationServer::NotificationServer(const QDBusConnection& connection, Notifi
     // Memory managed by Qt
     new NotificationsAdaptor(this);
 
+    m_watcher.setConnection(m_connection);
+    m_watcher.setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
+    connect(&m_watcher, &QDBusServiceWatcher::serviceUnregistered, this, &NotificationServer::serviceUnregistered);
+
     connect(this, SIGNAL(dataChanged(unsigned int)), &m, SLOT(onDataChanged(unsigned int)));
 
     if(!m_connection.registerObject(DBUS_PATH, this)) {
@@ -149,8 +153,10 @@ QSharedPointer<Notification> NotificationServer::buildNotification(NotificationI
 
 void NotificationServer::incrementCounter() {
     idCounter++;
-    if(idCounter == 0) // Spec forbids zero as return value.
+    // Spec forbids zero as return value.
+    if(idCounter == 0) {
         idCounter = 1;
+}
 }
 
 QString NotificationServer::messageSender() {
@@ -159,6 +165,24 @@ QString NotificationServer::messageSender() {
                 sender = message().service();
         }
         return sender;
+}
+
+bool NotificationServer::isCmdLine() {
+    if (!calledFromDBus()) {
+        return false;
+    }
+    QString sender = message().service();
+    uint pid = connection().interface()->servicePid(sender);
+    QString path = QDir(QString("/proc/%1/exe").arg(pid)).canonicalPath();
+    return (path == "/usr/bin/notify-send");
+}
+
+void NotificationServer::serviceUnregistered(const QString &clientId) {
+    m_watcher.removeWatchedService(clientId);
+    auto notifications = model.removeAllNotificationsForClient(clientId);
+    for (auto notification: notifications) {
+        Q_EMIT NotificationClosed(notification->getID(), 1);
+    }
 }
 
 unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_id,
@@ -268,6 +292,10 @@ unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_i
     notification->setClientId(clientId);
 
     if (newNotification) {
+        // Don't clean up after the command line client closes
+        if (!isCmdLine()) {
+            m_watcher.addWatchedService(clientId);
+        }
         model.insertNotification(notification);
     } else {
         model.notificationUpdated(currentId);

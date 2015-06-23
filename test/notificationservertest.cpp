@@ -18,7 +18,7 @@ Q_OBJECT
 
     QSharedPointer<QDBusConnection> secondConnection;
 
-    QSharedPointer<OrgFreedesktopNotificationsInterface> notificationsInterfaceSecond;
+    QSharedPointer<OrgFreedesktopNotificationsInterface> secondNotificationsInterface;
 
 private Q_SLOTS:
 
@@ -48,7 +48,7 @@ void init() {
                             dbus->sessionBus() + "_second")));
 
     // Create a second connection to the server over a different dbus connection
-    notificationsInterfaceSecond.reset(
+    secondNotificationsInterface.reset(
                 new OrgFreedesktopNotificationsInterface(
                         DBUS_SERVICE_NAME,
                         DBUS_PATH,
@@ -56,7 +56,7 @@ void init() {
 }
 
 void cleanup() {
-    notificationsInterfaceSecond.reset();
+    secondNotificationsInterface.reset();
 
     secondConnection.reset();
 
@@ -84,7 +84,7 @@ int notifyFirst(const QString& name, int replacesId = 0) {
 }
 
 int notifySecond(const QString& name, int replacesId = 0, bool secondInterface = false) {
-    return _notify(notificationsInterfaceSecond, name, replacesId);
+    return _notify(secondNotificationsInterface, name, replacesId);
 }
 
 void expectNotification(const NotificationDataList& notifications, int index, int id, const QString& name) {
@@ -100,7 +100,7 @@ void expectNotification(const NotificationDataList& notifications, int index, in
         );
 }
 
-void close(QSharedPointer<OrgFreedesktopNotificationsInterface> interface, int id) {
+void _close(QSharedPointer<OrgFreedesktopNotificationsInterface> interface, int id) {
     auto reply = interface->CloseNotification(id);
     reply.waitForFinished();
     if (reply.isError()) {
@@ -109,11 +109,11 @@ void close(QSharedPointer<OrgFreedesktopNotificationsInterface> interface, int i
 }
 
 void closeFirst(int id) {
-    close(notificationsInterface, id);
+    _close(notificationsInterface, id);
 }
 
 void closeSecond(int id) {
-    close(notificationsInterfaceSecond, id);
+    _close(secondNotificationsInterface, id);
 }
 
 void testNotify() {
@@ -221,11 +221,78 @@ void testNotifyTwoClientsOneNaughty() {
     uint id1 = notifySecond("1");
     QCOMPARE(id1, uint(1));
 
+    qDebug() << "====== EXPECTED ERRORS BELOW ======";
+
     // Try and update notification from another client
     QVERIFY_EXCEPTION_THROWN(notifyFirst("2", id1), std::domain_error);
 
     // Try and close notification from another client
     QVERIFY_EXCEPTION_THROWN(closeFirst(id1), std::domain_error);
+
+    qDebug() << "====== EXPECTED ERRORS ABOVE ======";
+}
+
+void testNotifyOneClientDies() {
+    QSignalSpy closedSpy(notificationsInterface.data(), SIGNAL(NotificationClosed(uint, uint)));
+
+    uint id1 = notifySecond("1");
+    QCOMPARE(id1, uint(1));
+
+    uint id2 = notifySecond("2");
+    QCOMPARE(id2, uint(2));
+
+    uint id3 = notifySecond("3");
+    QCOMPARE(id3, uint(3));
+
+    uint id4 = notifySecond("4");
+    QCOMPARE(id4, uint(4));
+
+    // Kill off the client without cleaning up
+    QString connectionName = secondConnection->name();
+    secondNotificationsInterface.reset();
+    secondConnection.reset();
+    QDBusConnection::disconnectFromBus(connectionName);
+
+    QVERIFY2(closedSpy.wait(), "We should receive a closed notification");
+
+    // We shouldn't have any notifications left behind
+    {
+        NotificationDataList notifications = notificationsInterface->GetNotifications("my app");
+        QCOMPARE(notifications.size(), 0);
+    }
+}
+
+void testNotifyTwoClientsOneDies() {
+    QSignalSpy closedSpy(notificationsInterface.data(), SIGNAL(NotificationClosed(uint, uint)));
+
+    uint id1 = notifyFirst("1");
+    QCOMPARE(id1, uint(1));
+
+    uint id2 = notifySecond("2");
+    QCOMPARE(id2, uint(2));
+
+    uint id3 = notifyFirst("3");
+    QCOMPARE(id3, uint(3));
+
+    uint id4 = notifySecond("4");
+    QCOMPARE(id4, uint(4));
+
+    // Kill off the client without cleaning up
+    QString connectionName = secondConnection->name();
+    secondNotificationsInterface.reset();
+    secondConnection.reset();
+    QDBusConnection::disconnectFromBus(connectionName);
+
+    QVERIFY2(closedSpy.wait(), "We should receive a closed notification");
+
+    // We should only have notifications from the first client left behind
+    {
+        NotificationDataList notifications = notificationsInterface->GetNotifications("my app");
+        QCOMPARE(notifications.size(), 2);
+
+        expectNotification(notifications, 0, id1, "1");
+        expectNotification(notifications, 1, id3, "3");
+    }
 }
 
 void testGetCapabilities() {
