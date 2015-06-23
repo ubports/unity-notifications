@@ -45,6 +45,7 @@
 #include <QDBusVariant>
 #include <QDBusConnection>
 #include <QDBusContext>
+#include <QDBusServiceWatcher>
 
 class NotificationModel;
 class Notification;
@@ -70,6 +71,9 @@ public Q_SLOTS:
     void onDataChanged(unsigned int id);
     void onCompleted(unsigned int id);
 
+private Q_SLOTS:
+    void serviceUnregistered(const QString &service);
+
 Q_SIGNALS:
     void NotificationClosed(unsigned int id, unsigned int reason);
     void ActionInvoked(unsigned int id, const QString &action_key);
@@ -78,11 +82,13 @@ Q_SIGNALS:
 private:
     void incrementCounter();
     QString messageSender();
+    bool isCmdLine();
 
     QSharedPointer<Notification> buildNotification(NotificationID id, const QVariantMap &hints);
     NotificationModel &model;
     unsigned int idCounter;
     QDBusConnection m_connection;
+    QDBusServiceWatcher m_watcher;
 
 };
 
