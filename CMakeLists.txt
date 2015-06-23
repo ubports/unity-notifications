@@ -16,7 +16,7 @@ include(cmake/coverage.cmake)
 include(FindPkgConfig)
 include (GNUInstallDirs)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++0x")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11")
 add_definitions(-DQT_NO_KEYWORDS)
 
 if(${basic_warnings})
