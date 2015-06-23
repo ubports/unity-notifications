@@ -39,6 +39,7 @@ struct NotificationPrivate {
     ActionModel* actionsModel;
     QVariantMap hints;
     int displayTime;
+    QString clientId;
 };
 
 /*
@@ -203,6 +204,14 @@ void Notification::setActions(const QStringList &actions) {
             p->actionsModel->insertAction(p->actions[i], p->actions[i+1]);
         }
     }
+}
+
+QString Notification::getClientId() const {
+    return p->clientId;
+}
+
+void Notification::setClientId(const QString& clientId) {
+    p->clientId = clientId;
 }
 
 void Notification::detachFromServer() {
