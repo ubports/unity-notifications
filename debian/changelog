@@ -1,3 +1,13 @@
+unity-notifications (0.1.2+15.10.20150623-0ubuntu1) wily; urgency=medium
+
+  [ Pete Woods ]
+  * Add end to end DBus tests and use XML introspection data
+  * Handle client death by cleaning up notifications
+  * Handle reopening closed notifications
+  * Notifications are now owned by the client that opened them
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Tue, 23 Jun 2015 15:50:33 +0000
+
 unity-notifications (0.1.2+15.04.20141104-0ubuntu1) vivid; urgency=low
 
   [ Mirco Müller ]
