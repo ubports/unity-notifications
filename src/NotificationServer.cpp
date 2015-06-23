@@ -26,6 +26,13 @@
 #include <QDBusConnectionInterface>
 #include <QSharedPointer>
 
+static const char* LOCAL_OWNER = "local";
+
+static bool isAuthorised(const QString& clientId, QSharedPointer<Notification> notification)
+{
+    return (clientId == LOCAL_OWNER) || (notification->getClientId() == clientId);
+}
+
 NotificationServer::NotificationServer(const QDBusConnection& connection, NotificationModel &m, QObject *parent) :
     QObject(parent), model(m), idCounter(0), m_connection(connection) {
 
@@ -147,7 +154,7 @@ void NotificationServer::incrementCounter() {
 }
 
 QString NotificationServer::messageSender() {
-        QString sender("local");
+    QString sender(LOCAL_OWNER);
         if (calledFromDBus()) {
                 sender = message().service();
         }
@@ -172,7 +179,7 @@ unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_i
         if (model.hasNotification(replaces_id)) {
             newNotification = false;
             notification = model.getNotification(replaces_id);
-            if (notification->getClientId() != clientId) {
+            if (!isAuthorised(clientId, notification)) {
                 auto message =
                         QString::fromUtf8(
                                 "Client '%1' tried to update notification %2, which it does not own.").arg(
@@ -272,7 +279,8 @@ void NotificationServer::CloseNotification (unsigned int id) {
     if (model.hasNotification(id)) {
         auto clientId = messageSender();
         auto notification = model.getNotification(id);
-        if (notification->getClientId() != clientId) {
+        if (!isAuthorised(clientId, notification))
+        {
             auto message =
                     QString::fromUtf8(
                             "Client '%1' tried to close notification %2, which it does not own.").arg(
