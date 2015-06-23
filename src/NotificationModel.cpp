@@ -22,6 +22,7 @@
 
 #include <unity/shell/notifications/ModelInterface.h>
 
+#include <QDebug>
 #include <QTimer>
 #include <QList>
 #include <QVector>
@@ -134,6 +135,24 @@ void NotificationModel::insertNotification(const QSharedPointer<Notification> &n
     //Q_ASSERT(timeout > 0);
     p->timer.setInterval(timeout);
     p->timer.start();
+}
+
+QList<QSharedPointer<Notification>> NotificationModel::getAllNotifications() const {
+    QMap<NotificationID, QSharedPointer<Notification>> notifications;
+    for (const auto& notification : p->ephemeralQueue) {
+        notifications[notification->getID()] = notification;
+    }
+    for (const auto& notification : p->interactiveQueue) {
+        notifications[notification->getID()] = notification;
+    }
+    for (const auto& notification : p->snapQueue) {
+        notifications[notification->getID()] = notification;
+    }
+    for (const auto& notification : p->displayedNotifications) {
+        notifications[notification->getID()] = notification;
+    }
+    notifications.remove(0);
+    return notifications.values();
 }
 
 QSharedPointer<Notification> NotificationModel::getNotification(NotificationID id) const {

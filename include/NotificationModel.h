@@ -45,6 +45,7 @@ public:
     virtual QHash<int, QByteArray> roleNames() const;
 
     void insertNotification(const QSharedPointer<Notification> &n);
+    QList<QSharedPointer<Notification>> getAllNotifications() const;
     QSharedPointer<Notification> getNotification(NotificationID id) const;
     QSharedPointer<Notification> getNotification(const QString &summary) const;
     QSharedPointer<Notification> getDisplayedNotification(int index) const;

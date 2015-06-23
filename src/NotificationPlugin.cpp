@@ -26,7 +26,7 @@
 
 #include <qqml.h>
 
-#include <QtDBus>
+#include <QDBusConnection>
 #include <QQmlEngine>
 #include <QQmlContext>
 
@@ -52,15 +52,5 @@ void NotificationPlugin::registerTypes(const char *uri) {
 
 void NotificationPlugin::initializeEngine(QQmlEngine *engine, const char *uri) {
     m = new NotificationModel();
-    s = new NotificationServer(*m, engine);
-
-    QDBusConnectionInterface *iface = QDBusConnection::sessionBus().interface();
-    auto reply = iface->registerService(DBUS_SERVICE_NAME, QDBusConnectionInterface::ReplaceExistingService,
-                                        QDBusConnectionInterface::DontAllowReplacement);
-    if(!reply.isValid() || reply.value() != QDBusConnectionInterface::ServiceRegistered) {
-        fprintf(stderr, "Service name already taken.\n");
-    }
-    if(!QDBusConnection::sessionBus().registerObject(DBUS_PATH, engine)) {
-        fprintf(stderr, "Could not register to DBus session.\n");
-    }
+    s = new NotificationServer(QDBusConnection::sessionBus(), *m, engine);
 }

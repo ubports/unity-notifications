@@ -24,7 +24,7 @@
 #include <QListView>
 #include "ui_mainWindow.h"
 #include "notify-backend.h"
-#include "notification.h"
+#include "Notification.h"
 
 class NotificationModel;
 
@@ -50,10 +50,10 @@ private:
 
     void sendNotification(int id, Notification::Type type, Notification::Urgency urg, QString text) const;
 
-public slots:
+public Q_SLOTS:
     void queueSizeChanged(int newsize);
 
-private slots:
+private Q_SLOTS:
     void sendLowNotification();
     void sendNormalNotification();
     void sendCriticalNotification();

@@ -22,8 +22,9 @@
 
 #include "notify-backend.h"
 #include "Notification.h"
+#include <NotificationsInterface.h>
 #include <QObject>
-#include <QDBusInterface>
+#include <QDBusConnection>
 
 class ClientMainWindow;
 
@@ -31,7 +32,7 @@ class NotificationClient : public QObject {
     Q_OBJECT
 
 public:
-    NotificationClient(QObject *parent=nullptr);
+    NotificationClient(const QDBusConnection& connection, QObject *parent=nullptr);
     ~NotificationClient();
     NotificationID sendNotification(Notification::Type ntype, Notification::Urgency urg, const QString &summary, const QString &body);
 
@@ -49,7 +50,7 @@ Q_SIGNALS:
     void eventHappened(const QString &text);
 
 private:
-    QDBusInterface service;
+    OrgFreedesktopNotificationsInterface m_interface;
 
 };
 

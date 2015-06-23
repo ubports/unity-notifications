@@ -32,7 +32,7 @@ public:
     ServerMainWindow(NotificationModel &m, QWidget *parent=nullptr);
     ~ServerMainWindow();
 
-public slots:
+public Q_SLOTS:
     void queueSizeChanged(int newSize);
 
 private:

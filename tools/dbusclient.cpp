@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "notificationclient.h"
+#include "NotificationClient.h"
 #include "clientMainWindow.h"
 
 #include <QApplication>
@@ -49,8 +49,8 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, InfoStruct &mystr
     return argument;
 }
 
-void getCaps(QDBusInterface &service) {
-    QDBusReply<QStringList> reply = service.call("GetCapabilities");
+void getCaps(OrgFreedesktopNotificationsInterface &service) {
+    QDBusReply<QStringList> reply = service.GetCapabilities();
     if(!reply.isValid()) {
         printf("Got no reply for capability query.\n");
         return;
@@ -62,9 +62,9 @@ void getCaps(QDBusInterface &service) {
     }
 }
 
-void getInfo(QDBusInterface &service) {
+void getInfo(OrgFreedesktopNotificationsInterface &service) {
     QString name, vendor, version;
-    QDBusReply<InfoStruct> reply = service.call("GetServerInformation");
+    QDBusReply<InfoStruct> reply = service.GetServerInformation();
     if(!reply.isValid()) {
         printf("Got no reply for server info query.\n");
         return;
@@ -79,18 +79,10 @@ void getInfo(QDBusInterface &service) {
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
     qDBusRegisterMetaType<InfoStruct>();
-    NotificationClient *cl = new NotificationClient(&app);
+    NotificationClient *cl = new NotificationClient(QDBusConnection::sessionBus(), &app);
     ClientMainWindow *win = new ClientMainWindow(*cl);
     QObject::connect(cl, SIGNAL(eventHappened(QString)), win, SLOT(appendText(QString)));
-    QDBusInterface service(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE);
-    if(!QDBusConnection::sessionBus().connect(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE,
-            "NotificationClosed", cl, SLOT(NotificationClosed(unsigned int, unsigned int)))) {
-        printf("Could not connect to NotificationClosed signal.\n\n");
-    }
-    if(!QDBusConnection::sessionBus().connect(DBUS_SERVICE_NAME, DBUS_PATH, DBUS_INTERFACE,
-            "ActionInvoked", cl, SLOT(ActionInvoked(unsigned int, QString)))) {
-        printf("Could not connect to ActionInvoked signal.\n\n");
-    }
+    OrgFreedesktopNotificationsInterface service(DBUS_SERVICE_NAME, DBUS_PATH, QDBusConnection::sessionBus());
 
     getCaps(service);
     printf("\n");
