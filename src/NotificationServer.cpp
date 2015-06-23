@@ -133,7 +133,7 @@ QSharedPointer<Notification> NotificationServer::buildNotification(NotificationI
         expireTimeout = 5000;
     }
 
-    QSharedPointer<Notification> n(new Notification(id, expireTimeout, urg, ntype));
+    QSharedPointer<Notification> n(new Notification(id, expireTimeout, urg, ntype, this));
     connect(n.data(), SIGNAL(dataChanged(unsigned int)), this, SLOT(onDataChanged(unsigned int)));
     connect(n.data(), SIGNAL(completed(unsigned int)), this, SLOT(onCompleted(unsigned int)));
 
