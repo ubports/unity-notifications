@@ -109,6 +109,8 @@ public:
     void setType(Type type);
     ActionModel* getActions() const;
     void setActions(const QStringList &actions);
+    QString getClientId() const;
+    void setClientId(const QString& clientId);
     void detachFromServer();
 
     QVariantMap getHints() const;

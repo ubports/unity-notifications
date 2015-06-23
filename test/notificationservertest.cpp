@@ -16,6 +16,10 @@ Q_OBJECT
 
     QSharedPointer<OrgFreedesktopNotificationsInterface> notificationsInterface;
 
+    QSharedPointer<QDBusConnection> secondConnection;
+
+    QSharedPointer<OrgFreedesktopNotificationsInterface> notificationsInterfaceSecond;
+
 private Q_SLOTS:
 
 void init() {
@@ -31,20 +35,40 @@ void init() {
                                             QStringList{"--no-gui"})));
     dbus->startServices();
 
+    // Create a connection to the server
     notificationsInterface.reset(
                 new OrgFreedesktopNotificationsInterface(DBUS_SERVICE_NAME,
                                                          DBUS_PATH,
                                                          dbus->sessionConnection()));
+
+    secondConnection.reset(
+            new QDBusConnection(
+                    QDBusConnection::connectToBus(
+                            dbus->sessionBus(),
+                            dbus->sessionBus() + "_second")));
+
+    // Create a second connection to the server over a different dbus connection
+    notificationsInterfaceSecond.reset(
+                new OrgFreedesktopNotificationsInterface(
+                        DBUS_SERVICE_NAME,
+                        DBUS_PATH,
+                        *secondConnection));
 }
 
 void cleanup() {
+    notificationsInterfaceSecond.reset();
+
+    secondConnection.reset();
+
     notificationsInterface.reset();
 
     dbus.reset();
 }
 
-int notify(const QString& name, int replacesId = 0) {
-    auto reply = notificationsInterface->Notify("my app", replacesId, "icon " + name,
+int _notify(
+            QSharedPointer<OrgFreedesktopNotificationsInterface> interface,
+            const QString& name, int replacesId = 0) {
+    auto reply = interface->Notify("my app", replacesId, "icon " + name,
                                                    "summary " + name,
                                                    "body " + name, QStringList(),
                                                    QVariantMap(), 0);
@@ -53,6 +77,14 @@ int notify(const QString& name, int replacesId = 0) {
         throw std::domain_error(reply.error().message().toStdString());
     }
     return reply;
+}
+
+int notifyFirst(const QString& name, int replacesId = 0) {
+    return _notify(notificationsInterface, name, replacesId);
+}
+
+int notifySecond(const QString& name, int replacesId = 0, bool secondInterface = false) {
+    return _notify(notificationsInterfaceSecond, name, replacesId);
 }
 
 void expectNotification(const NotificationDataList& notifications, int index, int id, const QString& name) {
@@ -68,11 +100,27 @@ void expectNotification(const NotificationDataList& notifications, int index, in
         );
 }
 
+void close(QSharedPointer<OrgFreedesktopNotificationsInterface> interface, int id) {
+    auto reply = interface->CloseNotification(id);
+    reply.waitForFinished();
+    if (reply.isError()) {
+        throw std::domain_error(reply.error().message().toStdString());
+    }
+}
+
+void closeFirst(int id) {
+    close(notificationsInterface, id);
+}
+
+void closeSecond(int id) {
+    close(notificationsInterfaceSecond, id);
+}
+
 void testNotify() {
-    uint id1 = notify("1");
+    uint id1 = notifyFirst("1");
     QCOMPARE(id1, uint(1));
 
-    uint id2 = notify("2");
+    uint id2 = notifyFirst("2");
     QCOMPARE(id2, uint(2));
 
     NotificationDataList notifications = notificationsInterface->GetNotifications("my app");
@@ -83,10 +131,10 @@ void testNotify() {
 }
 
 void testClose() {
-    uint id1 = notify("1");
+    uint id1 = notifyFirst("1");
     QCOMPARE(id1, uint(1));
 
-    uint id2 = notify("2");
+    uint id2 = notifyFirst("2");
     QCOMPARE(id2, uint(2));
 
     {
@@ -97,7 +145,7 @@ void testClose() {
         expectNotification(notifications, 1, id2, "2");
     }
 
-    notificationsInterface->CloseNotification(id1).waitForFinished();
+    closeFirst(id1);
 
     {
         NotificationDataList notifications = notificationsInterface->GetNotifications("my app");
@@ -108,7 +156,7 @@ void testClose() {
 }
 
 void testNotifyCloseNotify() {
-    uint id1 = notify("1");
+    uint id1 = notifyFirst("1");
     QCOMPARE(id1, uint(1));
 
     {
@@ -118,14 +166,14 @@ void testNotifyCloseNotify() {
         expectNotification(notifications, 0, id1, "1");
     }
 
-    notificationsInterface->CloseNotification(id1).waitForFinished();
+    closeFirst(id1);
 
     {
         NotificationDataList notifications = notificationsInterface->GetNotifications("my app");
         QCOMPARE(notifications.size(), 0);
     }
 
-    id1 = notify("1", id1);
+    id1 = notifyFirst("1", id1);
     QCOMPARE(id1, uint(1));
 
     {
@@ -137,22 +185,22 @@ void testNotifyCloseNotify() {
 }
 
 void testNotifyCounterIncrement() {
-    uint id1 = notify("1", 1);
+    uint id1 = notifyFirst("1", 1);
     QCOMPARE(id1, uint(1));
 
-    uint id2 = notify("2", 2);
+    uint id2 = notifyFirst("2", 2);
     QCOMPARE(id2, uint(2));
 
-    uint id4 = notify("4", 4);
+    uint id4 = notifyFirst("4", 4);
     QCOMPARE(id4, uint(4));
 
-    uint id5 = notify("5", 5);
+    uint id5 = notifyFirst("5", 5);
     QCOMPARE(id5, uint(5));
 
-    uint id3 = notify("3");
+    uint id3 = notifyFirst("3");
     QCOMPARE(id3, uint(3));
 
-    uint id6 = notify("6");
+    uint id6 = notifyFirst("6");
     QCOMPARE(id6, uint(6));
 
     {
@@ -166,6 +214,18 @@ void testNotifyCounterIncrement() {
         expectNotification(notifications, 4, id5, "5");
         expectNotification(notifications, 5, id6, "6");
     }
+}
+
+void testNotifyTwoClientsOneNaughty() {
+    // Create notification from one client
+    uint id1 = notifySecond("1");
+    QCOMPARE(id1, uint(1));
+
+    // Try and update notification from another client
+    QVERIFY_EXCEPTION_THROWN(notifyFirst("2", id1), std::domain_error);
+
+    // Try and close notification from another client
+    QVERIFY_EXCEPTION_THROWN(closeFirst(id1), std::domain_error);
 }
 
 void testGetCapabilities() {

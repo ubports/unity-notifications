@@ -146,6 +146,14 @@ void NotificationServer::incrementCounter() {
         idCounter = 1;
 }
 
+QString NotificationServer::messageSender() {
+        QString sender("local");
+        if (calledFromDBus()) {
+                sender = message().service();
+        }
+        return sender;
+}
+
 unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_id,
                            const QString &app_icon, const QString &summary,
                            const QString &body, const QStringList &actions,
@@ -157,12 +165,22 @@ unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_i
     int currentId = 0;
 
     bool newNotification = true;
+    QString clientId = messageSender();
 
     QSharedPointer<Notification> notification;
     if (replaces_id != 0) {
         if (model.hasNotification(replaces_id)) {
             newNotification = false;
             notification = model.getNotification(replaces_id);
+            if (notification->getClientId() != clientId) {
+                auto message =
+                        QString::fromUtf8(
+                                "Client '%1' tried to update notification %2, which it does not own.").arg(
+                                clientId).arg(replaces_id);
+                qWarning() << message;
+                sendErrorReply(QDBusError::InvalidArgs, message);
+                return FAILURE;
+            }
         } else {
             notification = buildNotification(replaces_id, hints);
         }
@@ -240,7 +258,9 @@ unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_i
     QVariant value = hints[VALUE_HINT];
     notification->setValue(value.toInt());
 
-    if(newNotification) {
+    notification->setClientId(clientId);
+
+    if (newNotification) {
         model.insertNotification(notification);
     } else {
         model.notificationUpdated(currentId);
@@ -249,8 +269,21 @@ unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_i
 }
 
 void NotificationServer::CloseNotification (unsigned int id) {
-    Q_EMIT NotificationClosed(id, 1);
-    model.removeNotification(id);
+    if (model.hasNotification(id)) {
+        auto clientId = messageSender();
+        auto notification = model.getNotification(id);
+        if (notification->getClientId() != clientId) {
+            auto message =
+                    QString::fromUtf8(
+                            "Client '%1' tried to close notification %2, which it does not own.").arg(
+                            clientId).arg(id);
+            qWarning() << message;
+            sendErrorReply(QDBusError::InvalidArgs, message);
+            return;
+        }
+        Q_EMIT NotificationClosed(id, 1);
+        model.removeNotification(id);
+    }
 }
 
 QString NotificationServer::GetServerInformation (QString &vendor, QString &version, QString &specVersion) const {
