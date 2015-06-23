@@ -160,6 +160,16 @@ QString NotificationServer::messageSender() {
     return sender;
 }
 
+bool NotificationServer::isCmdLine() {
+    if (!calledFromDBus()) {
+        return false;
+    }
+    QString sender = message().service();
+    uint pid = connection().interface()->servicePid(sender);
+    QString path = QDir(QString("/proc/%1/exe").arg(pid)).canonicalPath();
+    return (path == "/usr/bin/notify-send");
+}
+
 void NotificationServer::serviceUnregistered(const QString &clientId) {
     m_watcher.removeWatchedService(clientId);
     auto notifications = model.removeAllNotificationsForClient(clientId);
@@ -275,7 +285,10 @@ unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_i
     notification->setClientId(clientId);
 
     if (newNotification) {
-        m_watcher.addWatchedService(clientId);
+        // Don't clean up after the command line client closes
+        if (!isCmdLine()) {
+            m_watcher.addWatchedService(clientId);
+        }
         model.insertNotification(notification);
     } else {
         model.notificationUpdated(currentId);
