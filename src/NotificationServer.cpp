@@ -34,6 +34,10 @@ NotificationServer::NotificationServer(const QDBusConnection& connection, Notifi
     // Memory managed by Qt
     new NotificationsAdaptor(this);
 
+    m_watcher.setConnection(m_connection);
+    m_watcher.setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
+    connect(&m_watcher, &QDBusServiceWatcher::serviceUnregistered, this, &NotificationServer::serviceUnregistered);
+
     connect(this, SIGNAL(dataChanged(unsigned int)), &m, SLOT(onDataChanged(unsigned int)));
 
     if(!m_connection.registerObject(DBUS_PATH, this)) {
@@ -142,16 +146,26 @@ QSharedPointer<Notification> NotificationServer::buildNotification(NotificationI
 
 void NotificationServer::incrementCounter() {
     idCounter++;
-    if(idCounter == 0) // Spec forbids zero as return value.
+    // Spec forbids zero as return value.
+    if(idCounter == 0) {
         idCounter = 1;
+    }
 }
 
 QString NotificationServer::messageSender() {
-        QString sender("local");
-        if (calledFromDBus()) {
-                sender = message().service();
-        }
-        return sender;
+    QString sender("local");
+    if (calledFromDBus()) {
+        sender = message().service();
+    }
+    return sender;
+}
+
+void NotificationServer::serviceUnregistered(const QString &clientId) {
+    m_watcher.removeWatchedService(clientId);
+    auto notifications = model.removeAllNotificationsForClient(clientId);
+    for (auto notification: notifications) {
+        Q_EMIT NotificationClosed(notification->getID(), 1);
+    }
 }
 
 unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_id,
@@ -261,6 +275,7 @@ unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_i
     notification->setClientId(clientId);
 
     if (newNotification) {
+        m_watcher.addWatchedService(clientId);
         model.insertNotification(notification);
     } else {
         model.notificationUpdated(currentId);
