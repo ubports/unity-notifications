@@ -304,24 +304,24 @@ unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_i
 }
 
 void NotificationServer::CloseNotification (unsigned int id) {
-    const auto clientId = messageSender();
-    if (model.hasNotification(id)) {
-        auto notification = model.getNotification(id);
-        if (!isAuthorised(clientId, notification)) {
-            auto message =
-                    QString::fromUtf8(
-                            "Client '%1' tried to close notification %2, which it does not own.").arg(
-                            clientId).arg(id);
-            qWarning() << message;
-            sendErrorReply(QDBusError::InvalidArgs, message);
-            return;
-        }
-        Q_EMIT NotificationClosed(id, 1);
-        model.removeNotification(id);
-    } else if (clientId == LOCAL_OWNER) {
-        // notification closed internally (e.g. by timeout), so notify clients...
-        Q_EMIT NotificationClosed(id, 1);
+
+    auto notification = model.getNotification(id);
+
+    // if this was called from the bus for a notification which doesn't
+    // exist or isn't owned by the caller, then return an error reply
+    if (calledFromDBus() && (!notification || !isAuthorised(messageSender(), notification))) {
+        auto err = QString::fromUtf8("Client '%1' tried to close notification %2, which it does not own.")
+                       .arg(clientId)
+                       .arg(id);
+        qWarning() << err;
+        sendErrorReply(QDBusError::InvalidArgs, err);
+        return;
     }
+
+    if (notification)
+        model.removeNotification(id);
+
+    Q_EMIT NotificationClosed(id, 1);
 }
 
 QString NotificationServer::GetServerInformation (QString &vendor, QString &version, QString &specVersion) const {
