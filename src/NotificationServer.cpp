@@ -304,11 +304,10 @@ unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_i
 }
 
 void NotificationServer::CloseNotification (unsigned int id) {
+    const auto clientId = messageSender();
     if (model.hasNotification(id)) {
-        auto clientId = messageSender();
         auto notification = model.getNotification(id);
-        if (!isAuthorised(clientId, notification))
-        {
+        if (!isAuthorised(clientId, notification)) {
             auto message =
                     QString::fromUtf8(
                             "Client '%1' tried to close notification %2, which it does not own.").arg(
@@ -319,6 +318,9 @@ void NotificationServer::CloseNotification (unsigned int id) {
         }
         Q_EMIT NotificationClosed(id, 1);
         model.removeNotification(id);
+    } else if (clientId == LOCAL_OWNER) {
+        // notification closed internally (e.g. by timeout), so notify clients...
+        Q_EMIT NotificationClosed(id, 1);
     }
 }
 
