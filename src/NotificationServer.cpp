@@ -318,8 +318,9 @@ void NotificationServer::CloseNotification (unsigned int id) {
         return;
     }
 
-    if (notification)
+    if (notification) {
         model.removeNotification(id);
+    }
 
     Q_EMIT NotificationClosed(id, 1);
 }
