@@ -306,13 +306,15 @@ unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_i
 void NotificationServer::CloseNotification (unsigned int id) {
 
     auto notification = model.getNotification(id);
+    const auto clientId = messageSender();
 
     // if this was called from the bus for a notification which doesn't
     // exist or isn't owned by the caller, then return an error reply
-    if (calledFromDBus() && (!notification || !isAuthorised(messageSender(), notification))) {
-        auto err = QString::fromUtf8("Client '%1' tried to close notification %2, which it does not own.")
-                       .arg(clientId)
-                       .arg(id);
+    if (calledFromDBus() && (!notification || !isAuthorised(clientId, notification))) {
+        auto err = QString::fromUtf8(
+                "Client '%1' tried to close notification %2, which it does not own or does not exist.")
+                .arg(clientId)
+                .arg(id);
         qWarning() << err;
         sendErrorReply(QDBusError::InvalidArgs, err);
         return;
