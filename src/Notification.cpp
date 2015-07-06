@@ -75,7 +75,7 @@ Notification::Notification(NotificationID id, int displayTime, const Urgency ur,
 
 Notification::~Notification() {
     if(p->server)
-        p->server->CloseNotification(p->id);
+        p->server->forceCloseNotification(p->id);
 }
 
 QString Notification::getBody() const {

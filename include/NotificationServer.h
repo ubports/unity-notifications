@@ -61,6 +61,7 @@ public:
     NotificationServer(const QDBusConnection& connection, NotificationModel &m, QObject *parent=nullptr);
     ~NotificationServer();
     void invokeAction(unsigned int id, const QString &action);
+    void forceCloseNotification (unsigned int id);
 
 public Q_SLOTS:
     void CloseNotification (unsigned int id);
