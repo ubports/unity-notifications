@@ -305,27 +305,33 @@ unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_i
 
 void NotificationServer::CloseNotification (unsigned int id) {
 
-    auto notification = model.getNotification(id);
-    const auto clientId = messageSender();
-
+    // Sanity checking the public bus method's arguments:
     // if this was called from the bus for a notification which doesn't
-    // exist or isn't owned by the caller, then return an error reply
-    if (calledFromDBus() && (!notification || !isAuthorised(clientId, notification))) {
-        auto err = QString::fromUtf8(
+    // exist or isn't owned by the caller, then reply with an error
+    if (calledFromDBus()) {
+        auto notification = model.getNotification(id);
+        const auto clientId = messageSender();
+        if (!notification || !isAuthorised(clientId, notification)) {
+            auto err = QString::fromUtf8(
                 "Client '%1' tried to close notification %2, which it does not own or does not exist.")
                 .arg(clientId)
                 .arg(id);
-        qWarning() << err;
-        sendErrorReply(QDBusError::InvalidArgs, err);
-        return;
+            qWarning() << err;
+            sendErrorReply(QDBusError::InvalidArgs, err);
+            return;
+        }
     }
 
-    if (notification) {
-        model.removeNotification(id);
-    }
+    forceCloseNotification(id);
+}
+
+void NotificationServer::forceCloseNotification (unsigned int id) {
+
+    model.removeNotification(id);
 
     Q_EMIT NotificationClosed(id, 1);
 }
+
 
 QString NotificationServer::GetServerInformation (QString &vendor, QString &version, QString &specVersion) const {
     vendor = "Canonical Ltd";
