@@ -1,3 +1,15 @@
+unity-notifications (0.1.2+15.10.20150623.is.0.1.2+15.10.20150706.1-0ubuntu1) wily; urgency=medium
+
+  [ CI Train Bot ]
+  * New rebuild forced.
+
+  [ Charles Kerr ]
+  * When a notification is closed due to internals (e.g. due to
+    timeout), ensure the NotificationClosed bus signal is emitted. (LP:
+    #1470031)
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Mon, 06 Jul 2015 18:14:35 +0000
+
 unity-notifications (0.1.2+15.10.20150623-0ubuntu1) wily; urgency=medium
 
   [ Pete Woods ]
