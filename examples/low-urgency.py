@@ -33,6 +33,7 @@
 import os
 import sys
 import pynotify
+import gobject
 import example
 
 if __name__ == '__main__':
@@ -45,6 +46,8 @@ if __name__ == '__main__':
 	# show what's supported
 	example.printCaps ()
 
+	loop = gobject.MainLoop ()
+
 	# try the icon-summary-body case
 	n = pynotify.Notification ("Gerhard Gepard",
 				   "No, I'd rather see paint dry, pal *yawn*",
@@ -52,3 +55,5 @@ if __name__ == '__main__':
 	n.set_urgency (pynotify.URGENCY_LOW)
 
 	n.show ()
+	n.connect ("closed", example.closedHandler, loop)
+	loop.run ()
