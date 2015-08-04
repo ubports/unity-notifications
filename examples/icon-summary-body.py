@@ -33,6 +33,7 @@
 import os
 import sys
 import pynotify
+import gobject
 import example
 
 if __name__ == '__main__':
@@ -45,6 +46,8 @@ if __name__ == '__main__':
 	# show what's supported
 	example.printCaps ()
 
+	loop = gobject.MainLoop ()
+
 	# try the icon-summary-body case
 	n = pynotify.Notification ("Bro Coly",
 				   "Hey pal, what's up with the party "
@@ -53,3 +56,5 @@ if __name__ == '__main__':
 				   os.getcwd() + "/assets/avatar2.jpg")
         n.set_hint_string ("x-canonical-secondary-icon", "message")
 	n.show ()
+	n.connect ("closed", example.closedHandler, loop)
+	loop.run ()

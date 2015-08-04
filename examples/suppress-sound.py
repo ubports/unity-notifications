@@ -33,6 +33,7 @@
 import os
 import sys
 import pynotify
+import gobject
 import example
 
 if __name__ == '__main__':
@@ -45,6 +46,8 @@ if __name__ == '__main__':
 	# show what's supported
 	example.printCaps ()
 
+	loop = gobject.MainLoop ()
+
 	# try suppress-sound support
 	n = pynotify.Notification ("Lotsof N. Oise",
 				   "With the popping up of this notification, you should NOT hear a sound being played.",
@@ -52,3 +55,5 @@ if __name__ == '__main__':
 	n.set_hint_string ("sound-file", "/usr/share/sounds/ubuntu/stereo/desktop-login.ogg")
 	n.set_hint_string ("suppress-sound", "true")
 	n.show ()
+	n.connect ("closed", example.closedHandler, loop)
+	loop.run ()
