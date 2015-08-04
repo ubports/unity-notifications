@@ -1,3 +1,10 @@
+unity-notifications (0.1.2+15.10.20150623.is.0.1.2+15.10.20150804-0ubuntu1) wily; urgency=medium
+
+  [ Mirco Müller ]
+  * Add main loop to loopless examples
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Tue, 04 Aug 2015 12:15:26 +0000
+
 unity-notifications (0.1.2+15.10.20150623.is.0.1.2+15.10.20150706.1-0ubuntu2~gcc5.1) wily; urgency=medium
 
   * No-change test rebuild for g++5 ABI transition
