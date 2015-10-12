@@ -58,23 +58,23 @@ void TestNotifications::testTypeSimple() {
 
 void TestNotifications::testOrder() {
     const int timeout = 1000;
-    static NotificationModel *m = new NotificationModel();
-    static NotificationServer *s = new NotificationServer(*m);
+    static NotificationModel *m = new NotificationModel(this);
+    static NotificationServer *s = new NotificationServer(QDBusConnection::sessionBus(), *m);
     QStringList actions = QStringList();
-    Hints hints;
+    QVariantMap hints;
     int id[3];
 
-    hints[URGENCY_HINT] = QDBusVariant(Notification::Urgency::Low);
+    hints[URGENCY_HINT] = QVariant::fromValue(Notification::Urgency::Low);
     id[0] = s->Notify ("test-name-low", 0, "icon-low", "summary-low", "body-low", actions, hints, timeout);
     QVERIFY(m->showingNotification(id[0]));
 
-    hints[URGENCY_HINT] = QDBusVariant(Notification::Urgency::Normal);
+    hints[URGENCY_HINT] = QVariant::fromValue(Notification::Urgency::Normal);
     id[1] = s->Notify ("test-name-normal", 0, "icon-normal", "summary-normal", "body-normal", actions, hints, timeout);
     QVERIFY(!m->showingNotification(id[0]));
     QVERIFY(m->showingNotification(id[1]));
     QVERIFY(m->queued() == 1);
 
-    hints[URGENCY_HINT] = QDBusVariant(Notification::Urgency::Critical);
+    hints[URGENCY_HINT] = QVariant::fromValue(Notification::Urgency::Critical);
     id[2] = s->Notify ("test-name-critical", 0, "icon-critical", "summary-critical", "body-critical", actions, hints, timeout);
     QVERIFY(!m->showingNotification(id[0]));
     QVERIFY(!m->showingNotification(id[1]));
@@ -272,9 +272,9 @@ void TestNotifications::testReverseClose() {
     const int timeout = 1000;
     const int max = 20;
     static NotificationModel *m = new NotificationModel();
-    static NotificationServer *s = new NotificationServer(*m);
+    static NotificationServer *s = new NotificationServer(QDBusConnection::sessionBus(), *m);
     QStringList actions = QStringList();
-    Hints hints = Hints();
+    QVariantMap hints;
     int before = m->numNotifications();
 
     for (int i = 1; i <= max; i++) {
