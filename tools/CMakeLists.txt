@@ -1,29 +1,69 @@
 qt5_wrap_ui(GUI_HEADERS mainWindow.ui serverMainWindow.ui clientMainWindow.ui)
 
+# Viewer app
+############
+
 add_executable(viewer
-viewer.cpp
-mainWindow.cpp
-mainWindow.h
-${GUI_HEADERS}
+  viewer.cpp
+  mainWindow.cpp
+  mainWindow.h
+  ${GUI_HEADERS}
 )
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
 qt5_use_modules(viewer Widgets)
+
 target_link_libraries(viewer notifybackend)
 
-add_executable(qmltest qmltest.cpp)
+# QMLtest app
+#############
 
-qt5_use_modules(qmltest Qml Quick DBus Widgets)
+add_executable(qmltest
+  qmltest.cpp
+)
+
+qt5_use_modules(qmltest
+  Qml
+  Quick
+  DBus
+  Widgets
+)
+
 target_link_libraries(qmltest notifybackend)
 
-add_executable(dbusserver dbusserver.cpp serverMainWindow.cpp)
-qt5_use_modules(dbusserver Widgets DBus)
+# DBus server app
+#################
+
+add_executable(dbusserver
+  dbusserver.cpp
+  serverMainWindow.cpp
+  ${GUI_HEADERS}
+)
+
+qt5_use_modules(dbusserver
+  Widgets
+  DBus
+)
+
 target_link_libraries(dbusserver notifybackend)
 
-add_executable(dbusclient dbusclient.cpp clientMainWindow.cpp)
-qt5_use_modules(dbusclient Widgets DBus)
+# DBus client app
+#################
+
+add_executable(dbusclient
+  dbusclient.cpp
+  clientMainWindow.cpp
+  ${GUI_HEADERS}
+)
+
+qt5_use_modules(dbusclient
+  Widgets
+  DBus
+)
+
 target_link_libraries(dbusclient notifybackend)
+
+# Move files around
+###################
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Notifications
     DESTINATION ${CMAKE_BINARY_DIR}/tools

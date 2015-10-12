@@ -45,10 +45,12 @@ public:
     virtual QHash<int, QByteArray> roleNames() const;
 
     void insertNotification(const QSharedPointer<Notification> &n);
+    QList<QSharedPointer<Notification>> getAllNotifications() const;
     QSharedPointer<Notification> getNotification(NotificationID id) const;
     QSharedPointer<Notification> getNotification(const QString &summary) const;
     QSharedPointer<Notification> getDisplayedNotification(int index) const;
     bool hasNotification(NotificationID id) const;
+    QList<QSharedPointer<Notification>> removeAllNotificationsForClient(const QString& clientId);
 
     // getRaw() is only meant to be used from QML, since QML cannot handle
     // QSharedPointers... on C++-side only use getNotification()
@@ -86,7 +88,7 @@ private:
     void insertSnap(const QSharedPointer<Notification> &n);
     void insertExtSnap(const QSharedPointer<Notification> &n);
     void insertToVisible(const QSharedPointer<Notification> &n, int location=-1);
-    void deleteFromVisible(int loc);
+    QSharedPointer<Notification> deleteFromVisible(int loc);
     void deleteFirst();
     int findFirst(const Notification::Type type) const;
     int countShowing(const Notification::Type type) const;

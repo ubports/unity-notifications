@@ -38,34 +38,42 @@
  *
  */
 
+#include <DBusTypes.h>
+
 #include <QDBusAbstractAdaptor>
 #include <QStringList>
 #include <QDBusVariant>
-
-typedef QMap<QString, QDBusVariant> Hints;
-
-Q_DECLARE_METATYPE(Hints)
+#include <QDBusConnection>
+#include <QDBusContext>
+#include <QDBusServiceWatcher>
 
 class NotificationModel;
 class Notification;
+class NotificationsAdaptor;
 
-class NotificationServer : public QDBusAbstractAdaptor {
+class NotificationServer : public QObject, protected QDBusContext {
+
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", DBUS_INTERFACE)
+
+    friend NotificationsAdaptor;
 
 public:
-    NotificationServer(NotificationModel &m, QObject *parent=nullptr);
+    NotificationServer(const QDBusConnection& connection, NotificationModel &m, QObject *parent=nullptr);
     ~NotificationServer();
     void invokeAction(unsigned int id, const QString &action);
+    void forceCloseNotification (unsigned int id);
 
 public Q_SLOTS:
     void CloseNotification (unsigned int id);
-    void GetServerInformation (QString &name, QString &vendor, QString &version, QString &specVersion) const;
+    QString GetServerInformation (QString &vendor, QString &version, QString &specVersion) const;
     QStringList GetCapabilities() const;
-    unsigned int Notify (const QString &app_name, unsigned int replaces_id, const QString &app_icon, const QString &summary, const QString &body,
-            const QStringList &actions, const Hints &hints, int expire_timeout);
+    NotificationDataList GetNotifications(const QString &app_name);
+    unsigned int Notify(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantMap &hints, int expire_timeout);
     void onDataChanged(unsigned int id);
     void onCompleted(unsigned int id);
+
+private Q_SLOTS:
+    void serviceUnregistered(const QString &service);
 
 Q_SIGNALS:
     void NotificationClosed(unsigned int id, unsigned int reason);
@@ -73,9 +81,15 @@ Q_SIGNALS:
     void dataChanged(unsigned int id);
 
 private:
-    Notification* buildNotification(NotificationID id, const Hints &hints);
+    void incrementCounter();
+    QString messageSender();
+    bool isCmdLine();
+
+    QSharedPointer<Notification> buildNotification(NotificationID id, const QVariantMap &hints);
     NotificationModel &model;
     unsigned int idCounter;
+    QDBusConnection m_connection;
+    QDBusServiceWatcher m_watcher;
 
 };
 

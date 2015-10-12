@@ -33,6 +33,7 @@
 import os
 import sys
 import pynotify
+import gobject
 import example
 
 if __name__ == '__main__':
@@ -45,6 +46,8 @@ if __name__ == '__main__':
 	# show what's supported
 	example.printCaps ()
 
+	loop = gobject.MainLoop ()
+
 	# try the icon-summary case
 	n = pynotify.Notification ("Upload of image completed",
 				   "",
@@ -52,3 +55,5 @@ if __name__ == '__main__':
         n.set_hint_string ("x-canonical-non-shaped-icon", "true")
 
 	n.show ()
+	n.connect ("closed", example.closedHandler, loop)
+	loop.run ()

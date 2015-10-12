@@ -17,27 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "notificationmodel.h"
-#include "notificationserver.h"
+#include "NotificationModel.h"
+#include "NotificationServer.h"
 #include "serverMainWindow.h"
 #include <QApplication>
-#include <QDBusConnection>
+#include <QDebug>
 
 int main(int argc, char **argv) {
-    QApplication app(argc, argv);
-    NotificationModel model;
-    ServerMainWindow *w = new ServerMainWindow(model);
-    new NotificationServer(model, &app);
+    bool gui = !(argc == 2 && QString::fromUtf8(argv[1]) == "--no-gui");
 
-    if(!QDBusConnection::sessionBus().registerService(DBUS_SERVICE_NAME)) {
-        printf("Service name already taken.\n");
-        return 1;
+    QSharedPointer<QCoreApplication> app;
+    if (gui) {
+        app.reset(new QApplication(argc, argv));
+    } else {
+        app.reset(new QCoreApplication(argc, argv));
     }
-    if(!QDBusConnection::sessionBus().registerObject(DBUS_PATH, &app)) {
-        printf("Could not register to DBus session.\n");
-        return 1;
+
+    NotificationModel model;
+    new NotificationServer(QDBusConnection::sessionBus(), model, app.data());
+
+    if (gui) {
+        ServerMainWindow *w = new ServerMainWindow(model);
+        w->show();
     }
-    w->show();
-    app.exec();
-    return 0;
+    return app->exec();
 }

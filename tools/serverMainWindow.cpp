@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include"notificationmodel.h"
-#include"serverMainWindow.h"
+#include "NotificationModel.h"
+#include "serverMainWindow.h"
 
 ServerMainWindow::ServerMainWindow(NotificationModel &m, QWidget *parent) :
     QMainWindow(parent), model(m) {

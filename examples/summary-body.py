@@ -33,6 +33,7 @@
 
 import sys
 import pynotify
+import gobject
 import example
 
 if __name__ == '__main__':
@@ -45,7 +46,11 @@ if __name__ == '__main__':
 	# show what's supported
 	example.printCaps ()
 
+	loop = gobject.MainLoop ()
+
 	# try the summary-body case
 	n = pynotify.Notification ("Totem",
 				   "This is a superfluous notification")
 	n.show ()
+	n.connect ("closed", example.closedHandler, loop)
+	loop.run ()

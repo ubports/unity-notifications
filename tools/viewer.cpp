@@ -1,7 +1,7 @@
 #include <QApplication>
 #include <QListView>
 #include <QTimer>
-#include "notificationmodel.h"
+#include "NotificationModel.h"
 #include "mainWindow.h"
 
 int main(int argc, char **argv) {

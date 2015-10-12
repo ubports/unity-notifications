@@ -20,19 +20,47 @@
 #include "NotificationModel.h"
 #include "NotificationServer.h"
 #include "Notification.h"
+#include <NotificationsAdaptor.h>
 #include <QDBusMetaType>
 #include <QDebug>
+#include <QDBusConnectionInterface>
 #include <QSharedPointer>
 
-NotificationServer::NotificationServer(NotificationModel &m, QObject *parent) :
-    QDBusAbstractAdaptor(parent), model(m), idCounter(1) {
-    qDBusRegisterMetaType<Hints>();
+static const char* LOCAL_OWNER = "local";
+
+static bool isAuthorised(const QString& clientId, QSharedPointer<Notification> notification)
+{
+    return (clientId == LOCAL_OWNER) || (notification->getClientId() == clientId);
+}
+
+NotificationServer::NotificationServer(const QDBusConnection& connection, NotificationModel &m, QObject *parent) :
+    QObject(parent), model(m), idCounter(0), m_connection(connection) {
+
+    DBusTypes::registerNotificationMetaTypes();
+
+    // Memory managed by Qt
+    new NotificationsAdaptor(this);
+
+    m_watcher.setConnection(m_connection);
+    m_watcher.setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
+    connect(&m_watcher, &QDBusServiceWatcher::serviceUnregistered, this, &NotificationServer::serviceUnregistered);
 
     connect(this, SIGNAL(dataChanged(unsigned int)), &m, SLOT(onDataChanged(unsigned int)));
+
+    if(!m_connection.registerObject(DBUS_PATH, this)) {
+        qWarning() << "Could not register to DBus object.";
+    }
+
+    QDBusConnectionInterface *iface = m_connection.interface();
+    auto reply = iface->registerService(DBUS_SERVICE_NAME, QDBusConnectionInterface::ReplaceExistingService,
+                                        QDBusConnectionInterface::DontAllowReplacement);
+    if(!reply.isValid() || reply.value() != QDBusConnectionInterface::ServiceRegistered) {
+        qWarning() << "Notification DBus name already taken.";
+    }
 }
 
 NotificationServer::~NotificationServer() {
-
+    m_connection.unregisterService(DBUS_SERVICE_NAME);
 }
 
 void NotificationServer::invokeAction(unsigned int id, const QString &action) {
@@ -67,11 +95,30 @@ QStringList NotificationServer::GetCapabilities() const {
     return capabilities;
 }
 
-Notification* NotificationServer::buildNotification(NotificationID id, const Hints &hints) {
+NotificationDataList NotificationServer::GetNotifications(const QString &app_name) {
+    NotificationDataList results;
+    for (auto notification: model.getAllNotifications()) {
+        NotificationData data;
+        data.appName = app_name;
+        data.id = notification->getID();
+        data.appIcon = notification->getIcon();
+        data.summary = notification->getSummary();
+        data.body = notification->getBody();
+        data.actions = notification->getActions()->getRawActions();
+        data.hints = notification->getHints();
+        data.expireTimeout = notification->getDisplayTime();
+
+        results << data;
+    }
+
+    return results;
+}
+
+QSharedPointer<Notification> NotificationServer::buildNotification(NotificationID id, const QVariantMap &hints) {
     int expireTimeout = 0;
     Notification::Urgency urg = Notification::Urgency::Low;
     if(hints.find(URGENCY_HINT) != hints.end()) {
-        QVariant u = hints[URGENCY_HINT].variant();
+        QVariant u = hints[URGENCY_HINT];
         if(!u.canConvert(QVariant::Int)) {
             fprintf(stderr, "Invalid urgency value.\n");
         } else {
@@ -84,7 +131,7 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
         expireTimeout = 3000;
         ntype = Notification::Type::Confirmation;
     } else if (hints.find(SNAP_HINT) != hints.end()) {
-        QVariant u = hints[TIMEOUT_HINT].variant();
+        QVariant u = hints[TIMEOUT_HINT];
         if(!u.canConvert(QVariant::Int)) {
             expireTimeout = 60000;
         } else {
@@ -97,46 +144,98 @@ Notification* NotificationServer::buildNotification(NotificationID id, const Hin
         expireTimeout = 5000;
     }
 
-    Notification* n = new Notification(id, expireTimeout, urg, ntype, this);
-    connect(n, SIGNAL(dataChanged(unsigned int)), this, SLOT(onDataChanged(unsigned int)));
-    connect(n, SIGNAL(completed(unsigned int)), this, SLOT(onCompleted(unsigned int)));
+    QSharedPointer<Notification> n(new Notification(id, expireTimeout, urg, ntype, this));
+    connect(n.data(), SIGNAL(dataChanged(unsigned int)), this, SLOT(onDataChanged(unsigned int)));
+    connect(n.data(), SIGNAL(completed(unsigned int)), this, SLOT(onCompleted(unsigned int)));
 
     return n;
 }
 
-unsigned int NotificationServer::Notify (const QString &app_name, unsigned int replaces_id, const QString &app_icon,
-        const QString &summary, const QString &body,
-        const QStringList &actions, const Hints &hints, int expire_timeout) {
-    const unsigned int FAILURE = 0; // Is this correct?
+void NotificationServer::incrementCounter() {
+    idCounter++;
+    // Spec forbids zero as return value.
+    if(idCounter == 0) {
+        idCounter = 1;
+}
+}
+
+QString NotificationServer::messageSender() {
+    QString sender(LOCAL_OWNER);
+        if (calledFromDBus()) {
+                sender = message().service();
+        }
+        return sender;
+}
+
+bool NotificationServer::isCmdLine() {
+    if (!calledFromDBus()) {
+        return false;
+    }
+    QString sender = message().service();
+    uint pid = connection().interface()->servicePid(sender);
+    QString path = QDir(QString("/proc/%1/exe").arg(pid)).canonicalPath();
+    return (path == "/usr/bin/notify-send");
+}
+
+void NotificationServer::serviceUnregistered(const QString &clientId) {
+    m_watcher.removeWatchedService(clientId);
+    auto notifications = model.removeAllNotificationsForClient(clientId);
+    for (auto notification: notifications) {
+        Q_EMIT NotificationClosed(notification->getID(), 1);
+    }
+}
+
+unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_id,
+                           const QString &app_icon, const QString &summary,
+                           const QString &body, const QStringList &actions,
+                           const QVariantMap &hints, int expire_timeout) {
+    const unsigned int FAILURE = 0;
     const int minActions = 4;
     const int maxActions = 14;
     //QImage icon(app_icon);
-    int currentId = idCounter;
+    int currentId = 0;
+
+    bool newNotification = true;
+    QString clientId = messageSender();
+
     QSharedPointer<Notification> notification;
-    if(replaces_id != 0) {
-        if(!model.hasNotification(replaces_id)) {
-            fprintf(stderr, "Tried to change non-existing notification %d.\n", replaces_id);
-            return FAILURE;
+    if (replaces_id != 0) {
+        if (model.hasNotification(replaces_id)) {
+            newNotification = false;
+            notification = model.getNotification(replaces_id);
+            if (!isAuthorised(clientId, notification)) {
+                auto message =
+                        QString::fromUtf8(
+                                "Client '%1' tried to update notification %2, which it does not own.").arg(
+                                clientId).arg(replaces_id);
+                qWarning() << message;
+                sendErrorReply(QDBusError::InvalidArgs, message);
+                return FAILURE;
+            }
+        } else {
+            notification = buildNotification(replaces_id, hints);
         }
+
         currentId = replaces_id;
-        notification = model.getNotification(replaces_id);
     } else {
-        Notification *n = buildNotification(currentId, hints);
-        if(!n) {
-            fprintf(stderr, "Could not build notification object.\n");
-            return FAILURE;
+        incrementCounter();
+        while (model.hasNotification(idCounter)) {
+            incrementCounter();
         }
-        notification.reset(n);
-        idCounter++;
-        if(idCounter == 0) // Spec forbids zero as return value.
-            idCounter = 1;
+        notification = buildNotification(idCounter, hints);
+
+        currentId = idCounter;
     }
 
     Q_ASSERT(notification);
     if(notification->getType() == Notification::Type::Interactive) {
         int numActions = actions.size();
         if(numActions != 2) {
-            fprintf(stderr, "Wrong number of actions for an interactive notification. Has %d, requires %d.\n", numActions, 2);
+            sendErrorReply(
+                    QDBusError::InvalidArgs,
+                    QString::fromUtf8(
+                            "Wrong number of actions for an interactive notification. Has %1, requires 2.").arg(
+                            numActions));
             return FAILURE;
         }
         notification->setActions(actions);
@@ -149,16 +248,27 @@ unsigned int NotificationServer::Notify (const QString &app_name, unsigned int r
         int numActions = actions.size();
         if(numActions < minActions) {
             if (hints.find(MENU_MODEL_HINT) == hints.end()) {
-                fprintf(stderr, "Too few strings for Snap Decisions. Has %d, requires %d.\n", numActions, minActions);
+                sendErrorReply(
+                        QDBusError::InvalidArgs,
+                        QString::fromUtf8(
+                                "Too few strings for Snap Decisions. Has %1, requires %2.").arg(
+                                numActions).arg(minActions));
                 return FAILURE;
             }
         }
         if(numActions > maxActions) {
-            fprintf(stderr, "Too many strings for Snap Decisions. Has %d, maximum %d.\n", numActions, maxActions);
+            sendErrorReply(
+                    QDBusError::InvalidArgs,
+                    QString::fromUtf8(
+                            "Too many strings for Snap Decisions. Has %1, maximum %2.").arg(
+                            numActions).arg(maxActions));
             return FAILURE;
         }
         if(numActions % 2 != 0) {
-            fprintf(stderr, "Number of actions must be even, not odd.\n");
+            sendErrorReply(
+                    QDBusError::InvalidArgs,
+                    QString::fromUtf8(
+                            "Number of actions must be even, not odd."));
             return FAILURE;
         }
         notification->setActions(actions);
@@ -168,35 +278,66 @@ unsigned int NotificationServer::Notify (const QString &app_name, unsigned int r
     notification->setSummary(summary);
 
     QVariantMap notifyHints;
-    for (Hints::const_iterator iter = hints.constBegin(), end = hints.constEnd(); iter != end; ++iter) {
-        notifyHints[iter.key()] = iter.value().variant();
+    for (auto iter = hints.constBegin(), end = hints.constEnd(); iter != end; ++iter) {
+        notifyHints[iter.key()] = iter.value();
     }
     notification->setHints(notifyHints);
 
-    QVariant secondaryIcon = hints[SECONDARY_ICON_HINT].variant();
+    QVariant secondaryIcon = hints[SECONDARY_ICON_HINT];
     notification->setSecondaryIcon(secondaryIcon.toString());
 
-    QVariant value = hints[VALUE_HINT].variant();
+    QVariant value = hints[VALUE_HINT];
     notification->setValue(value.toInt());
 
-    if(replaces_id) {
-        model.notificationUpdated(currentId);
-    } else {
+    notification->setClientId(clientId);
+
+    if (newNotification) {
+        // Don't clean up after the command line client closes
+        if (!isCmdLine()) {
+            m_watcher.addWatchedService(clientId);
+        }
         model.insertNotification(notification);
+    } else {
+        model.notificationUpdated(currentId);
     }
     return currentId;
 }
 
 void NotificationServer::CloseNotification (unsigned int id) {
-    Q_EMIT NotificationClosed(id, 1);
-    model.removeNotification(id);
+
+    // Sanity checking the public bus method's arguments:
+    // if this was called from the bus for a notification which doesn't
+    // exist or isn't owned by the caller, then reply with an error
+    if (calledFromDBus()) {
+        auto notification = model.getNotification(id);
+        const auto clientId = messageSender();
+        if (!notification || !isAuthorised(clientId, notification)) {
+            auto err = QString::fromUtf8(
+                "Client '%1' tried to close notification %2, which it does not own or does not exist.")
+                .arg(clientId)
+                .arg(id);
+            qWarning() << err;
+            sendErrorReply(QDBusError::InvalidArgs, err);
+            return;
+        }
+    }
+
+    forceCloseNotification(id);
 }
 
-void NotificationServer::GetServerInformation (QString &name, QString &vendor, QString &version, QString &specVersion) const {
-    name = "Unity notification server";
+void NotificationServer::forceCloseNotification (unsigned int id) {
+
+    model.removeNotification(id);
+
+    Q_EMIT NotificationClosed(id, 1);
+}
+
+
+QString NotificationServer::GetServerInformation (QString &vendor, QString &version, QString &specVersion) const {
     vendor = "Canonical Ltd";
     version = "1.2";
     specVersion = "1.1";
+    return "Unity notification server";
 }
 
 void NotificationServer::onDataChanged(unsigned int id) {

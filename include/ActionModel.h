@@ -41,6 +41,8 @@ public:
 
     void insertAction(const QString &id, const QString &label);
 
+    QStringList getRawActions() const;
+
 private:
     QScopedPointer<ActionModelPrivate> p;
 

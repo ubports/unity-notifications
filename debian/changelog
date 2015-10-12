@@ -1,3 +1,38 @@
+unity-notifications (0.1.2+15.10.20150623.is.0.1.2+15.10.20150804-0ubuntu1) wily; urgency=medium
+
+  [ Mirco Müller ]
+  * Add main loop to loopless examples
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Tue, 04 Aug 2015 12:15:26 +0000
+
+unity-notifications (0.1.2+15.10.20150623.is.0.1.2+15.10.20150706.1-0ubuntu2~gcc5.1) wily; urgency=medium
+
+  * No-change test rebuild for g++5 ABI transition
+
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Wed, 15 Jul 2015 16:23:37 +0000
+
+unity-notifications (0.1.2+15.10.20150623.is.0.1.2+15.10.20150706.1-0ubuntu1) wily; urgency=medium
+
+  [ CI Train Bot ]
+  * New rebuild forced.
+
+  [ Charles Kerr ]
+  * When a notification is closed due to internals (e.g. due to
+    timeout), ensure the NotificationClosed bus signal is emitted. (LP:
+    #1470031)
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Mon, 06 Jul 2015 18:14:35 +0000
+
+unity-notifications (0.1.2+15.10.20150623-0ubuntu1) wily; urgency=medium
+
+  [ Pete Woods ]
+  * Add end to end DBus tests and use XML introspection data
+  * Handle client death by cleaning up notifications
+  * Handle reopening closed notifications
+  * Notifications are now owned by the client that opened them
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Tue, 23 Jun 2015 15:50:33 +0000
+
 unity-notifications (0.1.2+15.04.20141104-0ubuntu1) vivid; urgency=low
 
   [ Mirco Müller ]

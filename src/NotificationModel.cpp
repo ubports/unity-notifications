@@ -22,6 +22,7 @@
 
 #include <unity/shell/notifications/ModelInterface.h>
 
+#include <QDebug>
 #include <QTimer>
 #include <QList>
 #include <QVector>
@@ -136,6 +137,24 @@ void NotificationModel::insertNotification(const QSharedPointer<Notification> &n
     p->timer.start();
 }
 
+QList<QSharedPointer<Notification>> NotificationModel::getAllNotifications() const {
+    QMap<NotificationID, QSharedPointer<Notification>> notifications;
+    for (const auto& notification : p->ephemeralQueue) {
+        notifications[notification->getID()] = notification;
+    }
+    for (const auto& notification : p->interactiveQueue) {
+        notifications[notification->getID()] = notification;
+    }
+    for (const auto& notification : p->snapQueue) {
+        notifications[notification->getID()] = notification;
+    }
+    for (const auto& notification : p->displayedNotifications) {
+        notifications[notification->getID()] = notification;
+    }
+    notifications.remove(0);
+    return notifications.values();
+}
+
 QSharedPointer<Notification> NotificationModel::getNotification(NotificationID id) const {
     for(int i=0; i<p->ephemeralQueue.size(); i++) {
         if(p->ephemeralQueue[i]->getID() == id) {
@@ -201,6 +220,54 @@ bool NotificationModel::hasNotification(NotificationID id) const {
     return !(getNotification(id).isNull());
 }
 
+QList<QSharedPointer<Notification>> NotificationModel::removeAllNotificationsForClient(const QString& clientId)
+{
+    QList<QSharedPointer<Notification>> notifications;
+
+    for(int i=0; i<p->ephemeralQueue.size();) {
+        if(p->ephemeralQueue[i]->getClientId() == clientId) {
+            notifications << p->ephemeralQueue.takeAt(i);
+            Q_EMIT queueSizeChanged(queued());
+        } else {
+            ++i;
+        }
+    }
+
+    for(int i=0; i<p->snapQueue.size();) {
+        if(p->snapQueue[i]->getClientId() == clientId) {
+            notifications << p->snapQueue.takeAt(i);
+            Q_EMIT queueSizeChanged(queued());
+        } else {
+            ++i;
+        }
+    }
+
+    for(int i=0; i<p->interactiveQueue.size();) {
+        if(p->interactiveQueue[i]->getClientId() == clientId) {
+            notifications << p->interactiveQueue.takeAt(i);
+            Q_EMIT queueSizeChanged(queued());
+        } else {
+            ++i;
+        }
+    }
+
+    bool needToTimeout = false;
+    for(int i=0; i<p->displayedNotifications.size();) {
+        if(p->displayedNotifications[i]->getClientId() == clientId) {
+            notifications << deleteFromVisible(i);
+            needToTimeout = true;
+        } else {
+            ++i;
+        }
+    }
+
+    if (needToTimeout) {
+        timeout(); // Simulate a timeout so visual state is updated.
+    }
+
+    return notifications;
+}
+
 void NotificationModel::removeNotification(const NotificationID id) {
     for (int i = 0; i < p->displayedNotifications.size(); i++) {
         if(p->displayedNotifications[i]->getID() == id) {
@@ -252,14 +319,14 @@ void NotificationModel::deleteFirst() {
     deleteFromVisible(0);
 }
 
-void NotificationModel::deleteFromVisible(int loc) {
+QSharedPointer<Notification> NotificationModel::deleteFromVisible(int loc) {
     QModelIndex deletePoint = QModelIndex();
     beginRemoveRows(deletePoint, loc, loc);
     QSharedPointer<Notification> n = p->displayedNotifications[loc];
-    p->displayTimes.remove(n->getID());
-    p->displayedNotifications.removeAt(loc);
-    n.clear();
+    p->displayTimes.erase(p->displayTimes.find(n->getID()));
+    auto notification = p->displayedNotifications.takeAt(loc);
     endRemoveRows();
+    return notification;
 }
 
 void NotificationModel::timeout() {
