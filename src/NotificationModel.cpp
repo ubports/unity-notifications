@@ -283,7 +283,6 @@ void NotificationModel::removeNotification(const NotificationID id) {
 
         if (n && n->getID() == id) {
             p->ephemeralQueue.erase(it);
-            n.clear();
             Q_EMIT queueSizeChanged(queued());
             return;
         }
@@ -294,7 +293,6 @@ void NotificationModel::removeNotification(const NotificationID id) {
 
         if (n && n->getID() == id) {
             p->snapQueue.erase(it);
-            n.clear();
             Q_EMIT queueSizeChanged(queued());
             return;
         }
@@ -305,7 +303,6 @@ void NotificationModel::removeNotification(const NotificationID id) {
 
         if (n && n->getID() == id) {
             p->interactiveQueue.erase(it);
-            n.clear();
             Q_EMIT queueSizeChanged(queued());
             return;
         }
