@@ -144,7 +144,7 @@ QSharedPointer<Notification> NotificationServer::buildNotification(NotificationI
         expireTimeout = 5000;
     }
 
-    QSharedPointer<Notification> n(new Notification(id, expireTimeout, urg, ntype, this));
+    QSharedPointer<Notification> n(new Notification(id, expireTimeout, urg, ntype, this), &QObject::deleteLater);
     connect(n.data(), SIGNAL(dataChanged(unsigned int)), this, SLOT(onDataChanged(unsigned int)));
     connect(n.data(), SIGNAL(completed(unsigned int)), this, SLOT(onCompleted(unsigned int)));
 
@@ -156,15 +156,15 @@ void NotificationServer::incrementCounter() {
     // Spec forbids zero as return value.
     if(idCounter == 0) {
         idCounter = 1;
-}
+    }
 }
 
 QString NotificationServer::messageSender() {
     QString sender(LOCAL_OWNER);
-        if (calledFromDBus()) {
-                sender = message().service();
-        }
-        return sender;
+    if (calledFromDBus()) {
+        sender = message().service();
+    }
+    return sender;
 }
 
 bool NotificationServer::isCmdLine() {

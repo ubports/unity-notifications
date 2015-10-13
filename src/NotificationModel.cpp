@@ -46,7 +46,8 @@ bool notificationCompare(const QSharedPointer<Notification> &first, const QShare
 }
 
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent), p(new NotificationModelPrivate) {
-    p->displayedNotifications.append(QSharedPointer<Notification>(new Notification(0, -1, Notification::Normal, QString(), Notification::PlaceHolder)));
+    p->displayedNotifications.append(QSharedPointer<Notification>(new Notification(0, -1, Notification::Normal, QString(), Notification::PlaceHolder),
+                                                                  &QObject::deleteLater));
     connect(&(p->timer), SIGNAL(timeout()), this, SLOT(timeout()));
     p->timer.setSingleShot(true);
 }
@@ -74,41 +75,41 @@ int NotificationModel::rowCount(const QModelIndex &parent) const {
 QVariant NotificationModel::data(const QModelIndex &index, int role) const {
     //printf("Data %d.\n", index.row());
     if (!index.isValid())
-            return QVariant();
+        return QVariant();
 
     switch(role) {
         case ModelInterface::RoleType:
-            return QVariant(p->displayedNotifications[index.row()]->getType());
+            return p->displayedNotifications[index.row()]->getType();
 
         case ModelInterface::RoleUrgency:
-            return QVariant(p->displayedNotifications[index.row()]->getUrgency());
+            return p->displayedNotifications[index.row()]->getUrgency();
 
         case ModelInterface::RoleId:
-            return QVariant(p->displayedNotifications[index.row()]->getID());
+            return p->displayedNotifications[index.row()]->getID();
 
         case ModelInterface::RoleSummary:
-            return QVariant(p->displayedNotifications[index.row()]->getSummary());
+            return p->displayedNotifications[index.row()]->getSummary();
 
         case ModelInterface::RoleBody:
-            return QVariant(p->displayedNotifications[index.row()]->getBody());
+            return p->displayedNotifications[index.row()]->getBody();
 
         case ModelInterface::RoleValue:
-            return QVariant(p->displayedNotifications[index.row()]->getValue());
+            return p->displayedNotifications[index.row()]->getValue();
 
         case ModelInterface::RoleIcon:
-            return QVariant(p->displayedNotifications[index.row()]->getIcon());
+            return p->displayedNotifications[index.row()]->getIcon();
 
         case ModelInterface::RoleSecondaryIcon:
-            return QVariant(p->displayedNotifications[index.row()]->getSecondaryIcon());
+            return p->displayedNotifications[index.row()]->getSecondaryIcon();
 
         case ModelInterface::RoleActions:
             return QVariant::fromValue(p->displayedNotifications[index.row()]->getActions());
 
         case ModelInterface::RoleHints:
-            return QVariant(p->displayedNotifications[index.row()]->getHints());
+            return p->displayedNotifications[index.row()]->getHints();
 
         case ModelInterface::RoleNotification:
-            return QVariant(p->displayedNotifications[index.row()]);
+            return QVariant::fromValue(p->displayedNotifications[index.row()]);
 
         default:
             return QVariant();
@@ -282,7 +283,7 @@ void NotificationModel::removeNotification(const NotificationID id) {
 
         if (n && n->getID() == id) {
             p->ephemeralQueue.erase(it);
-            n.data()->deleteLater();
+            n.clear();
             Q_EMIT queueSizeChanged(queued());
             return;
         }
@@ -293,7 +294,7 @@ void NotificationModel::removeNotification(const NotificationID id) {
 
         if (n && n->getID() == id) {
             p->snapQueue.erase(it);
-            n.data()->deleteLater();
+            n.clear();
             Q_EMIT queueSizeChanged(queued());
             return;
         }
@@ -304,7 +305,7 @@ void NotificationModel::removeNotification(const NotificationID id) {
 
         if (n && n->getID() == id) {
             p->interactiveQueue.erase(it);
-            n.data()->deleteLater();
+            n.clear();
             Q_EMIT queueSizeChanged(queued());
             return;
         }
