@@ -53,7 +53,7 @@ Notification::Notification(QObject *parent) : QObject(parent), p(new Notificatio
     p->body = "default text";
     p->server = nullptr;
     p->value = -2;
-    p->actionsModel = new ActionModel();
+    p->actionsModel = new ActionModel(this);
 }
 
 Notification::Notification(NotificationID id, int displayTime, const Urgency ur, const QString &text, Type type, NotificationServer *srv, QObject *parent) :
@@ -65,12 +65,12 @@ Notification::Notification(NotificationID id, int displayTime, const Urgency ur,
     p->server = srv;
     p->value = -2;
     p->displayTime = displayTime;
-    p->actionsModel = new ActionModel();
+    p->actionsModel = new ActionModel(this);
 }
 
 Notification::Notification(NotificationID id, int displayTime, const Urgency ur, Type type, NotificationServer *srv, QObject *parent) :
     Notification(id, displayTime, ur, QString(), type, srv, parent){
-    p->actionsModel = new ActionModel();
+    p->actionsModel = new ActionModel(this);
 }
 
 Notification::~Notification() {

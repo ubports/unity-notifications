@@ -46,7 +46,8 @@ bool notificationCompare(const QSharedPointer<Notification> &first, const QShare
 }
 
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent), p(new NotificationModelPrivate) {
-    p->displayedNotifications.append(QSharedPointer<Notification>(new Notification(0, -1, Notification::Normal, QString(), Notification::PlaceHolder)));
+    p->displayedNotifications.append(QSharedPointer<Notification>(new Notification(0, -1, Notification::Normal, QString(), Notification::PlaceHolder),
+                                                                  &QObject::deleteLater));
     connect(&(p->timer), SIGNAL(timeout()), this, SLOT(timeout()));
     p->timer.setSingleShot(true);
 }
@@ -74,41 +75,41 @@ int NotificationModel::rowCount(const QModelIndex &parent) const {
 QVariant NotificationModel::data(const QModelIndex &index, int role) const {
     //printf("Data %d.\n", index.row());
     if (!index.isValid())
-            return QVariant();
+        return QVariant();
 
     switch(role) {
         case ModelInterface::RoleType:
-            return QVariant(p->displayedNotifications[index.row()]->getType());
+            return p->displayedNotifications[index.row()]->getType();
 
         case ModelInterface::RoleUrgency:
-            return QVariant(p->displayedNotifications[index.row()]->getUrgency());
+            return p->displayedNotifications[index.row()]->getUrgency();
 
         case ModelInterface::RoleId:
-            return QVariant(p->displayedNotifications[index.row()]->getID());
+            return p->displayedNotifications[index.row()]->getID();
 
         case ModelInterface::RoleSummary:
-            return QVariant(p->displayedNotifications[index.row()]->getSummary());
+            return p->displayedNotifications[index.row()]->getSummary();
 
         case ModelInterface::RoleBody:
-            return QVariant(p->displayedNotifications[index.row()]->getBody());
+            return p->displayedNotifications[index.row()]->getBody();
 
         case ModelInterface::RoleValue:
-            return QVariant(p->displayedNotifications[index.row()]->getValue());
+            return p->displayedNotifications[index.row()]->getValue();
 
         case ModelInterface::RoleIcon:
-            return QVariant(p->displayedNotifications[index.row()]->getIcon());
+            return p->displayedNotifications[index.row()]->getIcon();
 
         case ModelInterface::RoleSecondaryIcon:
-            return QVariant(p->displayedNotifications[index.row()]->getSecondaryIcon());
+            return p->displayedNotifications[index.row()]->getSecondaryIcon();
 
         case ModelInterface::RoleActions:
             return QVariant::fromValue(p->displayedNotifications[index.row()]->getActions());
 
         case ModelInterface::RoleHints:
-            return QVariant(p->displayedNotifications[index.row()]->getHints());
+            return p->displayedNotifications[index.row()]->getHints();
 
         case ModelInterface::RoleNotification:
-            return QVariant(p->displayedNotifications[index.row()]);
+            return QVariant::fromValue(p->displayedNotifications[index.row()]);
 
         default:
             return QVariant();
@@ -269,37 +270,44 @@ QList<QSharedPointer<Notification>> NotificationModel::removeAllNotificationsFor
 }
 
 void NotificationModel::removeNotification(const NotificationID id) {
-    for(int i=0; i<p->ephemeralQueue.size(); i++) {
-        if(p->ephemeralQueue[i]->getID() == id) {
-            p->ephemeralQueue.erase(p->ephemeralQueue.begin() + i);
-            Q_EMIT queueSizeChanged(queued());
-            return;
-        }
-    }
-
-    for(int i=0; i<p->snapQueue.size(); i++) {
-        if(p->snapQueue[i]->getID() == id) {
-            p->snapQueue.erase(p->snapQueue.begin() + i);
-            Q_EMIT queueSizeChanged(queued());
-            return;
-        }
-    }
-
-    for(int i=0; i<p->interactiveQueue.size(); i++) {
-        if(p->interactiveQueue[i]->getID() == id) {
-            p->interactiveQueue.erase(p->interactiveQueue.begin() + i);
-            Q_EMIT queueSizeChanged(queued());
-            return;
-        }
-    }
-
-    for(int i=0; i<p->displayedNotifications.size(); i++) {
+    for (int i = 0; i < p->displayedNotifications.size(); i++) {
         if(p->displayedNotifications[i]->getID() == id) {
             deleteFromVisible(i);
             timeout(); // Simulate a timeout so visual state is updated.
             return;
         }
     }
+
+    for (auto it = p->ephemeralQueue.begin(); it != p->ephemeralQueue.end(); ++it) {
+        QSharedPointer<Notification> n = *it;
+
+        if (n && n->getID() == id) {
+            p->ephemeralQueue.erase(it);
+            Q_EMIT queueSizeChanged(queued());
+            return;
+        }
+     }
+
+    for (auto it = p->snapQueue.begin(); it != p->snapQueue.end(); ++it) {
+        QSharedPointer<Notification> n = *it;
+
+        if (n && n->getID() == id) {
+            p->snapQueue.erase(it);
+            Q_EMIT queueSizeChanged(queued());
+            return;
+        }
+    }
+
+    for (auto it = p->interactiveQueue.begin(); it != p->interactiveQueue.end(); ++it) {
+        QSharedPointer<Notification> n = *it;
+
+        if (n && n->getID() == id) {
+            p->interactiveQueue.erase(it);
+            Q_EMIT queueSizeChanged(queued());
+            return;
+        }
+    }
+
     // The ID was not found in any queue. Should it be an error case or not?
 }
 

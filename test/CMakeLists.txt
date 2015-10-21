@@ -1,4 +1,3 @@
-
 function(add_notification_test NAME)
     add_executable(${NAME} "${NAME}.cpp")
 

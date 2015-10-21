@@ -23,16 +23,16 @@ struct ActionModelPrivate;
 
 class ActionModel : public QStringListModel {
 	Q_OBJECT
+    Q_ENUMS(ActionsRoles)
 
 public:
     ActionModel(QObject *parent=nullptr);
     virtual ~ActionModel();
 
-    virtual int rowCount(const QModelIndex &index) const;
-    virtual QVariant data(const QModelIndex &index, int role) const;
-    virtual QHash<int, QByteArray> roleNames() const;
+    virtual int rowCount(const QModelIndex &index) const override;
+    virtual QVariant data(const QModelIndex &index, int role) const override;
+    virtual QHash<int, QByteArray> roleNames() const override;
 
-    Q_ENUMS(ActionsRoles)
     enum ActionsRoles {
         RoleActionLabel = Qt::UserRole + 1,
         RoleActionId    = Qt::UserRole + 2

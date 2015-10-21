@@ -125,4 +125,7 @@ private:
     QString filterText(const QString& text);
 };
 
+Q_DECLARE_METATYPE(Notification::Urgency)
+Q_DECLARE_METATYPE(Notification::Type)
+
 #endif /* NOTIFICATION_HPP_ */
