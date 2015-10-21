@@ -1,3 +1,9 @@
+unity-notifications (0.1.3-0ubuntu1) UNRELEASED; urgency=medium
+
+  * Fix version number
+
+ -- Michal Sawicz <michal.sawicz@canonical.com>  Thu, 15 Oct 2015 10:43:53 +0200
+
 unity-notifications (0.1.2+15.10.20150623.is.0.1.2+15.10.20150804-0ubuntu1) wily; urgency=medium
 
   [ Mirco Müller ]
