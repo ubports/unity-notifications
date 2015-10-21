@@ -1,8 +1,20 @@
-unity-notifications (0.1.3-0ubuntu1) UNRELEASED; urgency=medium
+unity-notifications (0.1.3+15.10.20151021-0ubuntu1) wily; urgency=medium
 
+  [ Michal Sawicz ]
   * Fix version number
 
- -- Michal Sawicz <michal.sawicz@canonical.com>  Thu, 15 Oct 2015 10:43:53 +0200
+  [ CI Train Bot ]
+  * New rebuild forced.
+
+  [ Lukáš Tinkl ]
+  * Merge and rebase older code to fix notifications crashing on closing
+    (LP: #1453958)
+
+  [ Mirco Müller ]
+  * Merge and rebase older code to fix notifications crashing on closing
+    (LP: #1453958)
+
+ -- Michał Sawicz <michal.sawicz@canonical.com>  Wed, 21 Oct 2015 11:48:57 +0000
 
 unity-notifications (0.1.2+15.10.20150623.is.0.1.2+15.10.20150804-0ubuntu1) wily; urgency=medium
 
