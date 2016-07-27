@@ -46,8 +46,6 @@ bool notificationCompare(const QSharedPointer<Notification> &first, const QShare
 }
 
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent), p(new NotificationModelPrivate) {
-    p->displayedNotifications.append(QSharedPointer<Notification>(new Notification(0, -1, Notification::Normal, QString(), Notification::PlaceHolder),
-                                                                  &QObject::deleteLater));
     connect(&(p->timer), SIGNAL(timeout()), this, SLOT(timeout()));
     p->timer.setSingleShot(true);
 }
@@ -484,7 +482,7 @@ void NotificationModel::insertSnap(const QSharedPointer<Notification> &n) {
         }
 
         if (!inserted) {
-            insertToVisible(n, 1);
+            insertToVisible(n, showingNotificationOfType(Notification::Type::Confirmation) ? 1 : 0);
         }
     }
 }

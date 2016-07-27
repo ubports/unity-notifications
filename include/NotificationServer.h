@@ -82,15 +82,14 @@ Q_SIGNALS:
 
 private:
     void incrementCounter();
-    QString messageSender();
-    bool isCmdLine();
+    QString messageSender() const;
+    bool isCmdLine() const;
 
     QSharedPointer<Notification> buildNotification(NotificationID id, const QVariantMap &hints);
     NotificationModel &model;
     unsigned int idCounter;
     QDBusConnection m_connection;
     QDBusServiceWatcher m_watcher;
-
 };
 
 #endif
