@@ -60,7 +60,7 @@ void TestNotifications::testOrder() {
     const int timeout = 1000;
     static NotificationModel *m = new NotificationModel(this);
     static NotificationServer *s = new NotificationServer(QDBusConnection::sessionBus(), *m);
-    QStringList actions = QStringList();
+    QStringList actions;
     QVariantMap hints;
     int id[3];
 
@@ -70,22 +70,24 @@ void TestNotifications::testOrder() {
 
     hints[URGENCY_HINT] = QVariant::fromValue(Notification::Urgency::Normal);
     id[1] = s->Notify ("test-name-normal", 0, "icon-normal", "summary-normal", "body-normal", actions, hints, timeout);
-    QVERIFY(!m->showingNotification(id[0]));
+    QVERIFY(m->showingNotification(id[0]));
     QVERIFY(m->showingNotification(id[1]));
-    QVERIFY(m->queued() == 1);
+    QVERIFY(m->getNotification(id[1]) == m->getDisplayedNotification(0)); // verify it's ordered by urgency
+    QVERIFY(m->queued() == 0);
 
     hints[URGENCY_HINT] = QVariant::fromValue(Notification::Urgency::Critical);
     id[2] = s->Notify ("test-name-critical", 0, "icon-critical", "summary-critical", "body-critical", actions, hints, timeout);
-    QVERIFY(!m->showingNotification(id[0]));
-    QVERIFY(!m->showingNotification(id[1]));
+    QVERIFY(m->showingNotification(id[0]));
+    QVERIFY(m->showingNotification(id[1]));
     QVERIFY(m->showingNotification(id[2]));
-    QCOMPARE(m->queued(), 2);
+    QVERIFY(m->getNotification(id[2]) == m->getDisplayedNotification(0)); // verify it's ordered by urgency
+    QCOMPARE(m->queued(), 0);
 
     m->removeNotification(id[2]);
-    QVERIFY(!m->showingNotification(id[0]));
+    QVERIFY(m->showingNotification(id[0]));
     QVERIFY(m->showingNotification(id[1]));
     QVERIFY(!m->showingNotification(id[2]));
-    QCOMPARE(m->queued(), 1);
+    QCOMPARE(m->queued(), 0);
 
     m->removeNotification(id[1]);
     QVERIFY(m->showingNotification(id[0]));

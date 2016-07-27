@@ -55,7 +55,7 @@ class NotificationServer : public QObject, protected QDBusContext {
 
     Q_OBJECT
 
-    friend NotificationsAdaptor;
+    friend class NotificationsAdaptor;
 
 public:
     NotificationServer(const QDBusConnection& connection, NotificationModel &m, QObject *parent=nullptr);
