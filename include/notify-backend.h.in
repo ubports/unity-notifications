@@ -22,38 +22,13 @@
 #ifndef NOTIFY_BACKEND_
 #define NOTIFY_BACKEND_
 
-#include <cstdlib>
-
 typedef unsigned int NotificationID;
-
-/*enum Urgency {
-    URGENCY_LOW,
-    URGENCY_NORMAL,
-    URGENCY_CRITICAL
-};
-
-enum NotificationType {
-    SYNCHRONOUS,
-    SNAP,
-    INTERACTIVE,
-    ASYNCHRONOUS
-};*/
 
 const unsigned int MAX_NOTIFICATIONS = 50;
 
-class Renderer;
-class NotificationBackend;
-class Notification;
-
-#if 0
-#define DBUS_SERVICE_NAME "com.canonical.notificationproto"
-#define DBUS_INTERFACE    "com.canonical.notificationproto"
-#define DBUS_PATH         "/com/canonical/notificationproto"
-#else
 #define DBUS_SERVICE_NAME "org.freedesktop.Notifications"
 #define DBUS_INTERFACE    "org.freedesktop.Notifications"
 #define DBUS_PATH         "/org/freedesktop/Notifications"
-#endif
 
 #define VALUE_HINT "value"
 #define VALUE_TINT_HINT "x-canonical-value-bar-tint"
