@@ -4,11 +4,6 @@
 
 #include <QtTest/QtTest>
 
-typedef struct {
-    const char* before;
-    const char* expected;
-} TextComparisons;
-
 class TestNotifications: public QObject
 {
     Q_OBJECT

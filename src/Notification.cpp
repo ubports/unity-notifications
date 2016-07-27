@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Canonical, Ltd.
+ * Copyright (C) 2013-2016 Canonical, Ltd.
  *
  * Authors:
  *    Jussi Pakkanen <jussi.pakkanen@canonical.com>
@@ -20,7 +20,7 @@
 
 #include "NotificationServer.h"
 #include "Notification.h"
-#include <string>
+
 #include <QXmlStreamReader>
 
 using namespace std;

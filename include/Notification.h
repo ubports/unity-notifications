@@ -26,7 +26,6 @@
 #include <QString>
 #include <QObject>
 #include <QScopedPointer>
-#include <QImage>
 #include <QStringList>
 
 struct NotificationPrivate;
