@@ -502,7 +502,7 @@ int NotificationModel::insertionPoint(const QSharedPointer<Notification> &n) con
         int i=0;
         for(; i<p->displayedNotifications.size(); i++) {
             if(p->displayedNotifications[i]->getType() > n->getType()) {
-                break;
+                return i+1;
             }
         }
         return i;
