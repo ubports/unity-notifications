@@ -417,7 +417,8 @@ void NotificationModel::insertEphemeral(const QSharedPointer<Notification> &n) {
             insertToVisible(n, loc+1);
         }
     } else {
-        insertToVisible(n);
+        int loc = insertionPoint(n);
+        insertToVisible(n, loc);
     }
 }
 
