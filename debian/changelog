@@ -1,3 +1,10 @@
+unity-notifications (0.1.3+16.10.20160809-0ubuntu1) yakkety; urgency=medium
+
+  [ Lukáš Tinkl ]
+  * Visible queue improvements (LP: #1606202)
+
+ -- Michał Sawicz <michal.sawicz@canonical.com>  Tue, 09 Aug 2016 23:00:28 +0000
+
 unity-notifications (0.1.3+15.10.20151021-0ubuntu1) wily; urgency=medium
 
   [ Michal Sawicz ]
