@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Canonical, Ltd.
+ * Copyright (C) 2013-2016 Canonical, Ltd.
  *
  * Authors:
  *    Jussi Pakkanen <jussi.pakkanen@canonical.com>
@@ -20,7 +20,7 @@
 
 #include "NotificationServer.h"
 #include "Notification.h"
-#include <string>
+
 #include <QXmlStreamReader>
 
 using namespace std;
@@ -74,8 +74,9 @@ Notification::Notification(NotificationID id, int displayTime, const Urgency ur,
 }
 
 Notification::~Notification() {
-    if(p->server)
+    if (p->server) {
         p->server->forceCloseNotification(p->id);
+    }
 }
 
 QString Notification::getBody() const {
@@ -116,8 +117,8 @@ QString Notification::getIcon() const {
 }
 
 void Notification::setIcon(const QString &icon) {
-    if (icon.startsWith(" ") || icon.size() == 0) {
-        p->icon = nullptr;
+    if (icon.startsWith(" ") || icon.isEmpty()) {
+        p->icon.clear();
     }
     else {
         p->icon = icon;
@@ -136,8 +137,8 @@ QString Notification::getSecondaryIcon() const {
 }
 
 void Notification::setSecondaryIcon(const QString &secondaryIcon) {
-    if (secondaryIcon.startsWith(" ") || secondaryIcon.size() == 0) {
-        p->secondaryIcon = nullptr;
+    if (secondaryIcon.startsWith(" ") || secondaryIcon.isEmpty()) {
+        p->secondaryIcon.clear();
     }
     else {
         p->secondaryIcon = secondaryIcon;
@@ -177,6 +178,7 @@ void Notification::setValue(int value) {
 Notification::Urgency Notification::getUrgency() const {
     return p->urg;
 }
+
 void Notification::setUrgency(Notification::Urgency urg) {
     if(p->urg != urg) {
         p->urg = urg;
@@ -236,14 +238,6 @@ void Notification::setHints(const QVariantMap& hints) {
         p->hints = hints;
         Q_EMIT hintsChanged(p->hints);
     }
-}
-
-void Notification::onHovered() {
-
-}
-
-void Notification::onDisplayed() {
-
 }
 
 void Notification::invokeAction(const QString &action) {

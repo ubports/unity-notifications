@@ -4,11 +4,6 @@
 
 #include <QtTest/QtTest>
 
-typedef struct {
-    const char* before;
-    const char* expected;
-} TextComparisons;
-
 class TestNotifications: public QObject
 {
     Q_OBJECT
@@ -33,11 +28,11 @@ void TestNotifications::testSimpleInsertion() {
     QSharedPointer<Notification> n(new Notification(42, timeout, Notification::Low, "this is text"));
     NotificationModel m;
 
-    QCOMPARE(m.numNotifications(), 1);
+    QCOMPARE(m.numNotifications(), 0);
     m.insertNotification(n);
-    QCOMPARE(m.numNotifications(), 2);
-    m.removeNotification(n->getID());
     QCOMPARE(m.numNotifications(), 1);
+    m.removeNotification(n->getID());
+    QCOMPARE(m.numNotifications(), 0);
 }
 
 void TestNotifications::testTypeSimple() {
@@ -60,9 +55,9 @@ void TestNotifications::testOrder() {
     const int timeout = 1000;
     static NotificationModel *m = new NotificationModel(this);
     static NotificationServer *s = new NotificationServer(QDBusConnection::sessionBus(), *m);
-    QStringList actions = QStringList();
+    QStringList actions;
     QVariantMap hints;
-    int id[3];
+    int id[4];
 
     hints[URGENCY_HINT] = QVariant::fromValue(Notification::Urgency::Low);
     id[0] = s->Notify ("test-name-low", 0, "icon-low", "summary-low", "body-low", actions, hints, timeout);
@@ -70,22 +65,41 @@ void TestNotifications::testOrder() {
 
     hints[URGENCY_HINT] = QVariant::fromValue(Notification::Urgency::Normal);
     id[1] = s->Notify ("test-name-normal", 0, "icon-normal", "summary-normal", "body-normal", actions, hints, timeout);
-    QVERIFY(!m->showingNotification(id[0]));
+    QVERIFY(m->showingNotification(id[0]));
     QVERIFY(m->showingNotification(id[1]));
-    QVERIFY(m->queued() == 1);
+    QVERIFY(m->getNotification(id[1]) == m->getDisplayedNotification(0)); // verify it's ordered by urgency
+    QVERIFY(m->queued() == 0);
 
     hints[URGENCY_HINT] = QVariant::fromValue(Notification::Urgency::Critical);
     id[2] = s->Notify ("test-name-critical", 0, "icon-critical", "summary-critical", "body-critical", actions, hints, timeout);
-    QVERIFY(!m->showingNotification(id[0]));
-    QVERIFY(!m->showingNotification(id[1]));
+    QVERIFY(m->showingNotification(id[0]));
+    QVERIFY(m->showingNotification(id[1]));
     QVERIFY(m->showingNotification(id[2]));
-    QCOMPARE(m->queued(), 2);
+    QVERIFY(m->getNotification(id[2]) == m->getDisplayedNotification(0)); // verify it's ordered by urgency
+    QCOMPARE(m->queued(), 0);
+
+    hints[SNAP_HINT] = QStringLiteral("true");
+    hints[URGENCY_HINT] = QVariant::fromValue(Notification::Urgency::Normal);
+    id[3] = s->Notify ("test-name-snap", 0, "icon-snap", "summary-snap", "body-snap", {"snap", "decision", "needs", "actions"}, hints, timeout);
+    QVERIFY(m->showingNotification(id[0]));
+    QVERIFY(m->showingNotification(id[1]));
+    QVERIFY(m->showingNotification(id[2]));
+    QVERIFY(m->showingNotification(id[3]));
+    QVERIFY(m->getNotification(id[3]) == m->getDisplayedNotification(0)); // verify it's ordered by urgency and type, snap comes first
+    QCOMPARE(m->queued(), 0);
+
+    m->removeNotification(id[3]);
+    QVERIFY(m->showingNotification(id[0]));
+    QVERIFY(m->showingNotification(id[1]));
+    QVERIFY(m->showingNotification(id[2]));
+    QVERIFY(!m->showingNotification(id[3]));
+    QCOMPARE(m->queued(), 0);
 
     m->removeNotification(id[2]);
-    QVERIFY(!m->showingNotification(id[0]));
+    QVERIFY(m->showingNotification(id[0]));
     QVERIFY(m->showingNotification(id[1]));
     QVERIFY(!m->showingNotification(id[2]));
-    QCOMPARE(m->queued(), 1);
+    QCOMPARE(m->queued(), 0);
 
     m->removeNotification(id[1]);
     QVERIFY(m->showingNotification(id[0]));
@@ -173,7 +187,7 @@ void TestNotifications::testVisualSDQueueWithCritical() {
     m.insertNotification(n3);
     m.insertNotification(n4);
 
-    QCOMPARE(m.getDisplayedNotification(1)->getBody(), QString("snap-decision-critical"));
+    QCOMPARE(m.getDisplayedNotification(0)->getBody(), QString("snap-decision-critical"));
 }
 
 void TestNotifications::testVisualSDQueueWithoutCritical() {
@@ -190,10 +204,10 @@ void TestNotifications::testVisualSDQueueWithoutCritical() {
     m.insertNotification(n3);
     m.insertNotification(n4);
 
-    QCOMPARE(m.getDisplayedNotification(4)->getBody(), QString("snap-decision-1"));
-    QCOMPARE(m.getDisplayedNotification(3)->getBody(), QString("snap-decision-2"));
-    QCOMPARE(m.getDisplayedNotification(2)->getBody(), QString("snap-decision-3"));
-    QCOMPARE(m.getDisplayedNotification(1)->getBody(), QString("snap-decision-4"));
+    QCOMPARE(m.getDisplayedNotification(3)->getBody(), QString("snap-decision-1"));
+    QCOMPARE(m.getDisplayedNotification(2)->getBody(), QString("snap-decision-2"));
+    QCOMPARE(m.getDisplayedNotification(1)->getBody(), QString("snap-decision-3"));
+    QCOMPARE(m.getDisplayedNotification(0)->getBody(), QString("snap-decision-4"));
 }
 
 void TestNotifications::testConfirmationValue() {
@@ -213,8 +227,8 @@ void TestNotifications::testConfirmationValue() {
     m.insertNotification(ephemeral);
     m.insertNotification(confirmation);
 
-    QCOMPARE(m.getDisplayedNotification(2)->getBody(), QString("ephemeral"));
-    QCOMPARE(m.getDisplayedNotification(1)->getBody(), QString(""));
+    QCOMPARE(m.getDisplayedNotification(1)->getBody(), QString("ephemeral"));
+    QCOMPARE(m.getDisplayedNotification(0)->getBody(), QString(""));
 }
 
 void TestNotifications::testTextFilter_data() {
@@ -273,11 +287,11 @@ void TestNotifications::testReverseClose() {
     const int max = 20;
     static NotificationModel *m = new NotificationModel();
     static NotificationServer *s = new NotificationServer(QDBusConnection::sessionBus(), *m);
-    QStringList actions = QStringList();
+    QStringList actions;
     QVariantMap hints;
     int before = m->numNotifications();
 
-    for (int i = 1; i <= max; i++) {
+    for (int i = 0; i < max; i++) {
         s->Notify ("test-app-name",
                    0,
                    "test-icon",
@@ -288,11 +302,11 @@ void TestNotifications::testReverseClose() {
                    timeout);
     }
 
-    QCOMPARE(m->numNotifications(), max+1);
+    QCOMPARE(m->numNotifications(), max);
 
     for (int i = max; i >= 1; i--) {
         m->getNotification(i)->close();
-        QCOMPARE(m->numNotifications(), i);
+        QCOMPARE(m->numNotifications(), i-1);
     }
 
     QCOMPARE(m->numNotifications(), before);

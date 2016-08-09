@@ -79,7 +79,6 @@ private:
     int nextTimeout() const;
     void incrementDisplayTimes(const int displayedTime) const;
     void pruneExpired();
-    void removeNonSnap();
 
     int insertionPoint(const QSharedPointer<Notification> &n) const;
     void insertEphemeral(const QSharedPointer<Notification> &n);

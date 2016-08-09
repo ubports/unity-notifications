@@ -29,9 +29,9 @@ public:
     ActionModel(QObject *parent=nullptr);
     virtual ~ActionModel();
 
-    virtual int rowCount(const QModelIndex &index) const override;
-    virtual QVariant data(const QModelIndex &index, int role) const override;
-    virtual QHash<int, QByteArray> roleNames() const override;
+    int rowCount(const QModelIndex &index) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
+    QHash<int, QByteArray> roleNames() const override;
 
     enum ActionsRoles {
         RoleActionLabel = Qt::UserRole + 1,

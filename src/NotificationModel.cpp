@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Canonical, Ltd.
+ * Copyright (C) 2013-2016 Canonical, Ltd.
  *
  * Authors:
  *    Jussi Pakkanen <jussi.pakkanen@canonical.com>
@@ -46,8 +46,6 @@ bool notificationCompare(const QSharedPointer<Notification> &first, const QShare
 }
 
 NotificationModel::NotificationModel(QObject *parent) : QAbstractListModel(parent), p(new NotificationModelPrivate) {
-    p->displayedNotifications.append(QSharedPointer<Notification>(new Notification(0, -1, Notification::Normal, QString(), Notification::PlaceHolder),
-                                                                  &QObject::deleteLater));
     connect(&(p->timer), SIGNAL(timeout()), this, SLOT(timeout()));
     p->timer.setSingleShot(true);
 }
@@ -178,8 +176,7 @@ QSharedPointer<Notification> NotificationModel::getNotification(NotificationID i
         }
     }
 
-    QSharedPointer<Notification> empty;
-    return empty;
+    return QSharedPointer<Notification>();
 }
 
 QSharedPointer<Notification> NotificationModel::getNotification(const QString &summary) const {
@@ -204,16 +201,14 @@ QSharedPointer<Notification> NotificationModel::getNotification(const QString &s
         }
     }
 
-    QSharedPointer<Notification> empty;
-    return empty;
+    return QSharedPointer<Notification>();
 }
 
 QSharedPointer<Notification> NotificationModel::getDisplayedNotification(int index) const {
     if (index < p->displayedNotifications.size()) {
         return p->displayedNotifications[index];
     } else {
-        QSharedPointer<Notification> empty;
-        return empty;
+        return QSharedPointer<Notification>();
     }
 }
 
@@ -318,8 +313,7 @@ void NotificationModel::deleteFirst() {
 }
 
 QSharedPointer<Notification> NotificationModel::deleteFromVisible(int loc) {
-    QModelIndex deletePoint = QModelIndex();
-    beginRemoveRows(deletePoint, loc, loc);
+    beginRemoveRows(QModelIndex(), loc, loc);
     QSharedPointer<Notification> n = p->displayedNotifications[loc];
     p->displayTimes.erase(p->displayTimes.find(n->getID()));
     auto notification = p->displayedNotifications.takeAt(loc);
@@ -345,8 +339,7 @@ void NotificationModel::timeout() {
     // Snap decisions override everything.
     if(showingNotificationOfType(Notification::Type::SnapDecision) || !p->snapQueue.empty()) {
         if(countShowing(Notification::Type::SnapDecision) < maxSnapsShown && !p->snapQueue.empty()) {
-            QSharedPointer<Notification> n = p->snapQueue[0];
-            p->snapQueue.pop_front();
+            QSharedPointer<Notification> n = p->snapQueue.takeFirst();
             insertToVisible(n, insertionPoint(n));
             restartTimer = true;
             Q_EMIT queueSizeChanged(queued());
@@ -365,15 +358,13 @@ void NotificationModel::timeout() {
 bool NotificationModel::nonSnapTimeout() {
     bool restartTimer;
     if(!showingNotificationOfType(Notification::Type::Interactive) && !p->interactiveQueue.empty()) {
-        QSharedPointer<Notification> n = p->interactiveQueue[0];
-        p->interactiveQueue.pop_front();
+        QSharedPointer<Notification> n = p->interactiveQueue.takeFirst();
         insertToVisible(n, insertionPoint(n));
         restartTimer = true;
         Q_EMIT queueSizeChanged(queued());
     }
     if(!showingNotificationOfType(Notification::Type::Ephemeral) && !p->ephemeralQueue.empty()) {
-        QSharedPointer<Notification> n = p->ephemeralQueue[0];
-        p->ephemeralQueue.pop_front();
+        QSharedPointer<Notification> n = p->ephemeralQueue.takeFirst();
         insertToVisible(n, insertionPoint(n));
         restartTimer = true;
         Q_EMIT queueSizeChanged(queued());
@@ -388,19 +379,6 @@ void NotificationModel::pruneExpired() {
         int totalTime = n->getDisplayTime();
         if(totalTime >= 0 && shownTime >= totalTime) {
             deleteFromVisible(i);
-        }
-    }
-}
-
-void NotificationModel::removeNonSnap() {
-    for(int i=p->displayedNotifications.size()-1; i>=0; i--) {
-        QSharedPointer<Notification> n = p->displayedNotifications[i];
-        switch(n->getType()) {
-        case Notification::Type::SnapDecision : break;
-        case Notification::Type::Confirmation : deleteFromVisible(i); break;
-        case Notification::Type::Ephemeral : deleteFromVisible(i); p->ephemeralQueue.push_front(n); queueSizeChanged(queued()); break;
-        case Notification::Type::Interactive : deleteFromVisible(i); p->interactiveQueue.push_front(n); queueSizeChanged(queued()); break;
-        case Notification::Type::PlaceHolder : break;
         }
     }
 }
@@ -430,51 +408,35 @@ int NotificationModel::nextTimeout() const {
 void NotificationModel::insertEphemeral(const QSharedPointer<Notification> &n) {
     Q_ASSERT(n->getType() == Notification::Type::Ephemeral);
 
-    if(showingNotificationOfType(Notification::Type::SnapDecision)) {
-        p->ephemeralQueue.push_back(n);
-        qStableSort(p->ephemeralQueue.begin(), p->ephemeralQueue.end(), notificationCompare);
-        Q_EMIT queueSizeChanged(queued());
-    } else if(showingNotificationOfType(Notification::Type::Ephemeral)) {
+    if(showingNotificationOfType(Notification::Type::Ephemeral)) {
         int loc = findFirst(Notification::Type::Ephemeral);
         QSharedPointer<Notification> showing = p->displayedNotifications[loc];
         if(n->getUrgency() > showing->getUrgency()) {
-            deleteFromVisible(loc);
-            insertToVisible(n, loc);
-            p->ephemeralQueue.push_front(showing);
+            insertToVisible(n, qMax(0, loc-1));
         } else {
-            p->ephemeralQueue.push_back(n);
+            insertToVisible(n, loc+1);
         }
-        qStableSort(p->ephemeralQueue.begin(), p->ephemeralQueue.end(), notificationCompare);
-        Q_EMIT queueSizeChanged(queued());
     } else {
-        insertToVisible(n);
+        int loc = insertionPoint(n);
+        insertToVisible(n, loc);
     }
 }
 
 void NotificationModel::insertInteractive(const QSharedPointer<Notification> &n) {
     Q_ASSERT(n->getType() == Notification::Type::Interactive);
 
-    if(showingNotificationOfType(Notification::Type::SnapDecision)) {
-        p->interactiveQueue.push_back(n);
-        qStableSort(p->interactiveQueue.begin(), p->interactiveQueue.end(), notificationCompare);
-        Q_EMIT queueSizeChanged(queued());
-    } else if(showingNotificationOfType(Notification::Type::Interactive)) {
+    if(showingNotificationOfType(Notification::Type::Interactive)) {
         int loc = findFirst(Notification::Type::Interactive);
         QSharedPointer<Notification> showing = p->displayedNotifications[loc];
         if(n->getUrgency() > showing->getUrgency()) {
-            deleteFromVisible(loc);
-            insertToVisible(n, loc);
-            p->interactiveQueue.push_front(showing);
+            insertToVisible(n, qMax(0, loc-1));
         } else {
-            p->interactiveQueue.push_back(n);
+            insertToVisible(n, loc+1);
         }
-        qStableSort(p->interactiveQueue.begin(), p->interactiveQueue.end(), notificationCompare);
-        Q_EMIT queueSizeChanged(queued());
     } else {
         int loc = insertionPoint(n);
         insertToVisible(n, loc);
     }
-
 }
 
 
@@ -489,7 +451,6 @@ void NotificationModel::insertConfirmation(const QSharedPointer<Notification> &n
 
 void NotificationModel::insertSnap(const QSharedPointer<Notification> &n) {
     Q_ASSERT(n->getType() == Notification::Type::SnapDecision);
-    removeNonSnap();
     int showing = countShowing(n->getType());
     if(showing >= maxSnapsShown) {
         int loc = findFirst(Notification::Type::SnapDecision);
@@ -522,7 +483,7 @@ void NotificationModel::insertSnap(const QSharedPointer<Notification> &n) {
         }
 
         if (!inserted) {
-            insertToVisible(n, 1);
+            insertToVisible(n, showingNotificationOfType(Notification::Type::Confirmation) ? 1 : 0);
         }
     }
 }
@@ -541,7 +502,7 @@ int NotificationModel::insertionPoint(const QSharedPointer<Notification> &n) con
         int i=0;
         for(; i<p->displayedNotifications.size(); i++) {
             if(p->displayedNotifications[i]->getType() > n->getType()) {
-                break;
+                return i+1;
             }
         }
         return i;
@@ -555,10 +516,7 @@ void NotificationModel::insertToVisible(const QSharedPointer<Notification> &n, i
         printf("Bad insert.\n");
         return;
     }
-    //QModelIndex insertionPoint = QAbstractItemModel::createIndex(location, 0);
-    //beginInsertRows(insertionPoint, location, location);
-    QModelIndex insertionPoint = QModelIndex();
-    beginInsertRows(insertionPoint, location, location);
+    beginInsertRows(QModelIndex(), location, location);
     p->displayedNotifications.insert(location, n);
     endInsertRows();
     p->displayTimes[n->getID()] = 0;

@@ -55,7 +55,7 @@ class NotificationServer : public QObject, protected QDBusContext {
 
     Q_OBJECT
 
-    friend NotificationsAdaptor;
+    friend class NotificationsAdaptor;
 
 public:
     NotificationServer(const QDBusConnection& connection, NotificationModel &m, QObject *parent=nullptr);
@@ -82,15 +82,14 @@ Q_SIGNALS:
 
 private:
     void incrementCounter();
-    QString messageSender();
-    bool isCmdLine();
+    QString messageSender() const;
+    bool isCmdLine() const;
 
     QSharedPointer<Notification> buildNotification(NotificationID id, const QVariantMap &hints);
     NotificationModel &model;
     unsigned int idCounter;
     QDBusConnection m_connection;
     QDBusServiceWatcher m_watcher;
-
 };
 
 #endif

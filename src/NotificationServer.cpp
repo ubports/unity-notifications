@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Canonical, Ltd.
+ * Copyright (C) 2013-2016 Canonical, Ltd.
  *
  * Authors:
  *    Jussi Pakkanen <jussi.pakkanen@canonical.com>
@@ -28,7 +28,7 @@
 
 static const char* LOCAL_OWNER = "local";
 
-static bool isAuthorised(const QString& clientId, QSharedPointer<Notification> notification)
+static bool isAuthorised(const QString& clientId, const QSharedPointer<Notification> &notification)
 {
     return (clientId == LOCAL_OWNER) || (notification->getClientId() == clientId);
 }
@@ -97,7 +97,7 @@ QStringList NotificationServer::GetCapabilities() const {
 
 NotificationDataList NotificationServer::GetNotifications(const QString &app_name) {
     NotificationDataList results;
-    for (auto notification: model.getAllNotifications()) {
+    Q_FOREACH(const auto &notification, model.getAllNotifications()) {
         NotificationData data;
         data.appName = app_name;
         data.id = notification->getID();
@@ -159,7 +159,7 @@ void NotificationServer::incrementCounter() {
     }
 }
 
-QString NotificationServer::messageSender() {
+QString NotificationServer::messageSender() const {
     QString sender(LOCAL_OWNER);
     if (calledFromDBus()) {
         sender = message().service();
@@ -167,7 +167,7 @@ QString NotificationServer::messageSender() {
     return sender;
 }
 
-bool NotificationServer::isCmdLine() {
+bool NotificationServer::isCmdLine() const {
     if (!calledFromDBus()) {
         return false;
     }
@@ -179,8 +179,8 @@ bool NotificationServer::isCmdLine() {
 
 void NotificationServer::serviceUnregistered(const QString &clientId) {
     m_watcher.removeWatchedService(clientId);
-    auto notifications = model.removeAllNotificationsForClient(clientId);
-    for (auto notification: notifications) {
+    const auto notifications = model.removeAllNotificationsForClient(clientId);
+    Q_FOREACH(const auto &notification,  notifications) {
         Q_EMIT NotificationClosed(notification->getID(), 1);
     }
 }
@@ -276,12 +276,7 @@ unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_i
     notification->setBody(body);
     notification->setIcon(app_icon);
     notification->setSummary(summary);
-
-    QVariantMap notifyHints;
-    for (auto iter = hints.constBegin(), end = hints.constEnd(); iter != end; ++iter) {
-        notifyHints[iter.key()] = iter.value();
-    }
-    notification->setHints(notifyHints);
+    notification->setHints(hints);
 
     QVariant secondaryIcon = hints[SECONDARY_ICON_HINT];
     notification->setSecondaryIcon(secondaryIcon.toString());

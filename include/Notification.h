@@ -26,7 +26,6 @@
 #include <QString>
 #include <QObject>
 #include <QScopedPointer>
-#include <QImage>
 #include <QStringList>
 
 struct NotificationPrivate;
@@ -69,10 +68,6 @@ Q_SIGNALS:
 
     void dismissed();
     void completed(unsigned int id);
-
-public Q_SLOTS:
-    void onHovered();
-    void onDisplayed();
 
 public:
     Notification(QObject *parent=nullptr);

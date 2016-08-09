@@ -17,8 +17,8 @@
 #include "ActionModel.h"
 
 struct ActionModelPrivate {
-    QList<QString> labels;
-    QList<QString> ids;
+    QStringList labels;
+    QStringList ids;
 };
 
 ActionModel::ActionModel(QObject *parent) : QStringListModel(parent), p(new ActionModelPrivate) {
@@ -33,17 +33,17 @@ int ActionModel::rowCount(const QModelIndex &index) const {
 
 QVariant ActionModel::data(const QModelIndex &index, int role) const {
     if (!index.isValid())
-            return QVariant();
+        return QVariant();
 
     switch(role) {
-        case RoleActionLabel:
-            return QVariant(p->labels[index.row()]);
+    case RoleActionLabel:
+        return p->labels.at(index.row());
 
-        case RoleActionId:
-            return QVariant(p->ids[index.row()]);
+    case RoleActionId:
+        return p->ids.at(index.row());
 
-        default:
-            return QVariant();
+    default:
+        return QVariant();
     }
 }
 
