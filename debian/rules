@@ -5,6 +5,10 @@
 #export DH_VERBOSE=1
 
 export DPKG_GENSYMBOLS_CHECK_LEVEL=4
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+DPKG_EXPORT_BUILDFLAGS = 1
+
+include /usr/share/dpkg/default.mk
 
 %:
 	dh $@ --parallel --fail-missing
@@ -14,4 +18,3 @@ override_dh_auto_configure:
 	# thus to use relwithdebinfo, which is defining -DNDEBUG which are
 	# breaking the tests
 	dh_auto_configure -- -DCMAKE_BUILD_TYPE=''
-
