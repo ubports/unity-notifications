@@ -278,7 +278,7 @@ unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_i
 
     if (newNotification) {
         // Don't clean up after the command line client closes
-        if (!calledFromDBus() || app_name != QStringLiteral("notify-send")) {
+        if (app_name != QStringLiteral("notify-send")) {
             m_watcher.addWatchedService(clientId);
         }
         model.insertNotification(notification);
