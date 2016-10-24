@@ -1,3 +1,11 @@
+unity-notifications (0.1.3+17.04.20161024-0ubuntu1) zesty; urgency=medium
+
+  [ Lukáš Tinkl ]
+  * Simplify the check for cmd line (notify-send) to make it work also
+    inside a container (LP: #1623142)
+
+ -- Michael Zanetti <michael.zanetti@canonical.com>  Mon, 24 Oct 2016 11:32:28 +0000
+
 unity-notifications (0.1.3+16.10.20160819-0ubuntu1) yakkety; urgency=medium
 
   [ Lukáš Tinkl ]
