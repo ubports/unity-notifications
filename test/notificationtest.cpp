@@ -53,8 +53,8 @@ void TestNotifications::testTypeSimple() {
 
 void TestNotifications::testOrder() {
     const int timeout = 1000;
-    static NotificationModel *m = new NotificationModel(this);
-    static NotificationServer *s = new NotificationServer(QDBusConnection::sessionBus(), *m);
+    NotificationModel *m = new NotificationModel(this);
+    NotificationServer *s = new NotificationServer(QDBusConnection::sessionBus(), *m);
     QStringList actions;
     QVariantMap hints;
     int id[4];
@@ -286,8 +286,8 @@ void TestNotifications::testReverseClose() {
     QSKIP("Crashing here in CI on all archs");
     const int timeout = 1000;
     const int max = 20;
-    static NotificationModel *m = new NotificationModel();
-    static NotificationServer *s = new NotificationServer(QDBusConnection::sessionBus(), *m);
+    NotificationModel *m = new NotificationModel();
+    NotificationServer *s = new NotificationServer(QDBusConnection::sessionBus(), *m);
     QStringList actions;
     QVariantMap hints;
     int before = m->numNotifications();
