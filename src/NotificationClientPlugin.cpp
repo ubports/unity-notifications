@@ -30,7 +30,7 @@ void NotificationClientPlugin::registerTypes(const char *uri) {
     qmlRegisterUncreatableType<NotificationClient>(uri, 1, 0, "NotificationClient", QString());
 }
 
-void NotificationClientPlugin::initializeEngine(QQmlEngine *engine, const char *uri) {
+void NotificationClientPlugin::initializeEngine(QQmlEngine *engine, const char * /* uri */) {
     NotificationClient *cl = new NotificationClient(QDBusConnection::sessionBus(), engine);
     engine->rootContext()->setContextProperty("notificationclient", cl);
 }

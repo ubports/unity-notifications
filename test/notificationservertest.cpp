@@ -83,7 +83,7 @@ int notifyFirst(const QString& name, int replacesId = 0) {
     return _notify(notificationsInterface, name, replacesId);
 }
 
-int notifySecond(const QString& name, int replacesId = 0, bool secondInterface = false) {
+int notifySecond(const QString& name, int replacesId = 0) {
     return _notify(secondNotificationsInterface, name, replacesId);
 }
 
