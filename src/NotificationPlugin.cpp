@@ -50,7 +50,7 @@ void NotificationPlugin::registerTypes(const char *uri) {
     qmlRegisterUncreatableType<ActionModel>(uri, 1, 0, "ActionModel", "Abstract Interface. Cannot be instantiated.");
 }
 
-void NotificationPlugin::initializeEngine(QQmlEngine *engine, const char *uri) {
+void NotificationPlugin::initializeEngine(QQmlEngine *engine, const char * /* uri */) {
     m = new NotificationModel();
     s = new NotificationServer(QDBusConnection::sessionBus(), *m, engine);
 }

@@ -178,7 +178,7 @@ void NotificationServer::serviceUnregistered(const QString &clientId) {
 unsigned int NotificationServer::Notify(const QString &app_name, uint replaces_id,
                            const QString &app_icon, const QString &summary,
                            const QString &body, const QStringList &actions,
-                           const QVariantMap &hints, int expire_timeout) {
+                           const QVariantMap &hints, int /* expire_timeout */) {
     const unsigned int FAILURE = 0;
     const int minActions = 4;
     const int maxActions = 14;

@@ -27,7 +27,7 @@ ActionModel::ActionModel(QObject *parent) : QStringListModel(parent), p(new Acti
 ActionModel::~ActionModel() {
 }
 
-int ActionModel::rowCount(const QModelIndex &index) const {
+int ActionModel::rowCount(const QModelIndex & /* index */) const {
     return p->labels.size();
 }
 
